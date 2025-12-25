@@ -39,6 +39,9 @@ yarn-error.log*
 # firebase
 .firebase/
 firebase-debug.log*
+*.json.key
+*-g4-*.json
+glassy-compiler-*.json
 
 # typescript
 *.tsbuildinfo
