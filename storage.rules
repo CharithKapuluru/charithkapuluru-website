@@ -1,0 +1,35 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Public read access for portfolio assets (images, videos, resume)
+    match /public/{allPaths=**} {
+      allow read: if true;
+      allow write: if false; // Only admin can upload via console
+    }
+
+    // Resume file - public read
+    match /resume/{fileName} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // Project images - public read
+    match /projects/{allPaths=**} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // Contact form attachments (if needed in future)
+    match /attachments/{fileName} {
+      allow read: if true;
+      // Allow uploads under 5MB
+      allow write: if request.resource.size < 5 * 1024 * 1024;
+    }
+
+    // Default deny all other paths
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}
