@@ -4,13 +4,13 @@ import { getStorage } from 'firebase/storage';
 import { getAnalytics, isSupported } from 'firebase/analytics';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBCR9HnlSOWx4h-qg-L6_StN4t3OSbbMA8",
-  authDomain: "charith-c014a.firebaseapp.com",
-  projectId: "charith-c014a",
-  storageBucket: "charith-c014a.firebasestorage.app",
-  messagingSenderId: "471604447420",
-  appId: "1:471604447420:web:41697e65cec06ddfab28b9",
-  measurementId: "G-08Q08R6R3S"
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
 };
 
 // Initialize Firebase (prevent multiple initializations)
