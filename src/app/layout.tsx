@@ -1,40 +1,30 @@
 import type { Metadata } from "next";
-import { Space_Grotesk, JetBrains_Mono } from "next/font/google";
+import { Inter, Fraunces, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
-const spaceGrotesk = Space_Grotesk({
-  variable: "--font-space-grotesk",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+  display: "swap",
+});
+
+const fraunces = Fraunces({
+  variable: "--font-fraunces",
+  subsets: ["latin"],
+  display: "swap",
+  axes: ["SOFT", "WONK", "opsz"],
 });
 
 const jetbrainsMono = JetBrains_Mono({
-  variable: "--font-jetbrains-mono",
+  variable: "--font-jetbrains",
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "Charith Kapuluru | Software Engineer",
-  description: "Software Engineer specializing in AI, Cloud Computing, and Cybersecurity. Building innovative solutions at the intersection of cutting-edge technology.",
-  keywords: ["Software Engineer", "AI", "Cloud Computing", "Cybersecurity", "Machine Learning", "AWS", "Full Stack Developer"],
-  authors: [{ name: "Charith Kapuluru" }],
-  openGraph: {
-    title: "Charith Kapuluru | Software Engineer",
-    description: "Software Engineer specializing in AI, Cloud Computing, and Cybersecurity.",
-    url: "https://charithkapuluru.com",
-    siteName: "Charith Kapuluru",
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Charith Kapuluru | Software Engineer",
-    description: "Software Engineer specializing in AI, Cloud Computing, and Cybersecurity.",
-  },
-  robots: {
-    index: true,
-    follow: true,
-  },
+  title: "Charith Kapuluru | Digital Craftsman",
+  description: "Crafting digital experiences at the edge of AI. Software Engineer specializing in intelligent systems and cloud architecture.",
+  keywords: ["Software Engineer", "AI", "Cloud Computing", "Cybersecurity", "Creative Developer"],
 };
 
 export default function RootLayout({
@@ -43,10 +33,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
-      <body
-        className={`${spaceGrotesk.variable} ${jetbrainsMono.variable} antialiased bg-black text-white`}
-      >
+    <html lang="en" className={`${inter.variable} ${fraunces.variable} ${jetbrainsMono.variable}`}>
+      <body className="bg-bg-paper text-text-charcoal font-sans antialiased selection:bg-accent-moss/20 selection:text-text-charcoal">
+        <div className="noise-overlay" />
         {children}
       </body>
     </html>

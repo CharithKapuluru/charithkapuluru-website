@@ -37,6 +37,12 @@ yarn-error.log*
 # vercel
 .vercel
 
+# playwright screenshots
+.playwright-mcp/
+
+# claude code local settings
+.claude/
+
 # firebase
 .firebase/
 firebase-debug.log*
