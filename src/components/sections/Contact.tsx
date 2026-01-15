@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
 import { useRef, useState } from "react";
-import { Send, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { db } from "@/lib/firebase";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 
@@ -46,12 +46,12 @@ const Contact = () => {
     <section id="contact" className="py-32 relative bg-bg-paper" ref={ref}>
       <div className="container mx-auto px-6 relative z-10">
         <div className="max-w-5xl mx-auto">
-          
+
           <div className="grid lg:grid-cols-2 gap-24">
-            
+
             {/* Left: Info */}
             <div>
-               <motion.h2 
+               <motion.h2
                  initial={{ opacity: 0, y: 20 }}
                  animate={isInView ? { opacity: 1, y: 0 } : {}}
                  className="text-6xl md:text-8xl font-serif text-text-charcoal mb-12 tracking-tight"
@@ -62,26 +62,27 @@ const Contact = () => {
                <div className="space-y-12">
                   <div>
                     <span className="block font-mono text-xs text-text-olive mb-2 uppercase tracking-widest">Email</span>
-                    <a href="mailto:charith@example.com" className="text-2xl md:text-3xl font-sans font-light text-text-charcoal hover:text-accent-terracotta transition-colors border-b border-text-charcoal/20 pb-1">
-                      charith@example.com
+                    <a href="mailto:kapulurucharith@gmail.com" className="text-2xl md:text-3xl font-sans font-light text-text-charcoal hover:text-accent-terracotta transition-colors border-b border-text-charcoal/20 pb-1">
+                      kapulurucharith@gmail.com
                     </a>
                   </div>
 
                   <div>
                     <span className="block font-mono text-xs text-text-olive mb-2 uppercase tracking-widest">Location</span>
                     <p className="text-2xl md:text-3xl font-sans font-light text-text-charcoal">
-                      San Francisco, CA
+                      Denton, TX
                     </p>
                   </div>
 
                   <div className="pt-12">
                      <span className="block font-mono text-xs text-text-olive mb-4 uppercase tracking-widest">Socials</span>
                      <div className="flex gap-8">
-                        {['GitHub', 'LinkedIn', 'Twitter'].map((social) => (
-                           <a key={social} href="#" className="text-lg font-serif italic text-text-charcoal hover:text-accent-moss transition-colors">
-                              {social}
-                           </a>
-                        ))}
+                        <a href="https://github.com/CharithKapuluru" target="_blank" rel="noopener noreferrer" className="text-lg font-serif italic text-text-charcoal hover:text-accent-moss transition-colors">
+                           GitHub
+                        </a>
+                        <a href="https://www.linkedin.com/in/charith-kapuluru-159456329/" target="_blank" rel="noopener noreferrer" className="text-lg font-serif italic text-text-charcoal hover:text-accent-moss transition-colors">
+                           LinkedIn
+                        </a>
                      </div>
                   </div>
                </div>
