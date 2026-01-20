@@ -146,9 +146,12 @@ export const ReadingPositionTracker = () => {
 
   const handleResume = () => {
     if (lastPosition) {
-      window.scrollTo({ top: lastPosition.scroll, behavior: "smooth" });
+      // Account for sticky header (approximately 48px)
+      const targetScroll = Math.max(0, lastPosition.scroll - 60);
+      window.scrollTo({ top: targetScroll, behavior: "smooth" });
     }
     setShowResume(false);
+    localStorage.removeItem("readingPosition");
   };
 
   const handleDismiss = () => {

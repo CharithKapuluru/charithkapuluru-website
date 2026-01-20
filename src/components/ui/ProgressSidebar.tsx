@@ -56,7 +56,7 @@ const ProgressSidebar = ({ currentPhase, onPhaseClick }: ProgressSidebarProps) =
     previousUserRef.current = user;
   }, [user, loading]);
 
-  // Effect 2: Load progress from storage
+  // Effect 2: Load progress from storage (only for signed-in users)
   useEffect(() => {
     if (loading) return;
 
@@ -80,22 +80,14 @@ const ProgressSidebar = ({ currentPhase, onPhaseClick }: ProgressSidebarProps) =
       );
       return () => unsubscribe();
     } else {
-      // Not logged in: Load from localStorage
-      const saved = localStorage.getItem("userCompletedPhases");
-      if (saved) {
-        try {
-          setCompletedPhases(JSON.parse(saved));
-        } catch (e) {
-          console.error("Error parsing localStorage:", e);
-          setCompletedPhases([]);
-        }
-      }
+      // Not logged in: Clear progress
+      setCompletedPhases([]);
     }
   }, [user, loading]);
 
-  // Effect 3: Auto-complete phases based on scroll position
+  // Effect 3: Auto-complete phases based on scroll position (only if signed in)
   useEffect(() => {
-    if (loading) return;
+    if (loading || !user) return; // Only track progress if signed in
 
     setCompletedPhases((prev) => {
       const newCompleted = new Set(prev);
@@ -112,33 +104,28 @@ const ProgressSidebar = ({ currentPhase, onPhaseClick }: ProgressSidebarProps) =
         return prev;
       }
 
-      // Save to appropriate storage
+      // Save to Firestore
       saveProgress(updated);
 
       return updated;
     });
-  }, [currentPhase]); // Only run when currentPhase changes!
+  }, [currentPhase, user, loading]); // Depend on user state
 
-  // Helper function to save progress to the right storage
+  // Helper function to save progress (only for signed-in users)
   const saveProgress = (phases: number[]) => {
-    if (user) {
-      // Logged in: Save to Firestore
-      const progressRef = doc(db, "users", user.uid, "progress", "completedPhases");
-      setDoc(progressRef, { phases }, { merge: true }).catch((error) => {
-        console.error("Error saving to Firestore:", error);
-      });
-    } else {
-      // Not logged in: Save to localStorage
-      try {
-        localStorage.setItem("userCompletedPhases", JSON.stringify(phases));
-      } catch (e) {
-        console.error("Error saving to localStorage:", e);
-      }
-    }
+    if (!user) return; // Don't save if not signed in
+
+    // Save to Firestore
+    const progressRef = doc(db, "users", user.uid, "progress", "completedPhases");
+    setDoc(progressRef, { phases }, { merge: true }).catch((error) => {
+      console.error("Error saving to Firestore:", error);
+    });
   };
 
-  // Toggle phase completion - manual checkbox only
+  // Toggle phase completion - manual checkbox only (requires sign-in)
   const togglePhase = (phaseId: number) => {
+    if (!user) return; // Require sign-in to track progress
+
     setCompletedPhases((prev) => {
       const newCompleted = prev.includes(phaseId)
         ? prev.filter((id) => id !== phaseId)
@@ -179,6 +166,13 @@ const ProgressSidebar = ({ currentPhase, onPhaseClick }: ProgressSidebarProps) =
             Your Progress
           </h3>
 
+          {!user && (
+            <div className="mb-4 p-3 bg-bg-cream rounded-lg border border-text-charcoal/10">
+              <p className="text-sm text-text-olive mb-2">Sign in to track your progress</p>
+              <p className="text-xs text-text-taupe">Your progress will be saved across devices</p>
+            </div>
+          )}
+
           <div className="space-y-2">
             {phases.map((phase) => {
               const isCompleted = completedPhases.includes(phase.id);
@@ -199,11 +193,12 @@ const ProgressSidebar = ({ currentPhase, onPhaseClick }: ProgressSidebarProps) =
                       e.stopPropagation();
                       togglePhase(phase.id);
                     }}
+                    disabled={!user}
                     className={`w-5 h-5 rounded border flex items-center justify-center flex-shrink-0 ${
                       isCompleted
                         ? "bg-accent-moss border-accent-moss text-white"
                         : "border-text-charcoal/30"
-                    }`}
+                    } ${!user ? "opacity-50 cursor-not-allowed" : ""}`}
                   >
                     {isCompleted && (
                       <svg
@@ -299,11 +294,12 @@ const ProgressSidebar = ({ currentPhase, onPhaseClick }: ProgressSidebarProps) =
                       e.stopPropagation();
                       togglePhase(phase.id);
                     }}
+                    disabled={!user}
                     className={`w-5 h-5 rounded border flex items-center justify-center flex-shrink-0 ${
                       isCompleted
                         ? "bg-accent-moss border-accent-moss text-white"
                         : "border-text-charcoal/30"
-                    }`}
+                    } ${!user ? "opacity-50 cursor-not-allowed" : ""}`}
                   >
                     {isCompleted && (
                       <svg
