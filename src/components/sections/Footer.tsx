@@ -13,7 +13,7 @@ const Footer = () => {
                 Let&apos;s <br /> <span className="italic text-accent-moss">Talk.</span>
               </h2>
               <div className="flex gap-6">
-                <a href="mailto:kapulurucharith@gmail.com" className="text-xl font-sans border-b border-text-charcoal pb-1 hover:text-accent-terracotta hover:border-accent-terracotta transition-colors">
+                <a href="mailto:kapulurucharith@gmail.com" className="text-xl font-serif border-b border-text-charcoal pb-1 hover:text-accent-terracotta hover:border-accent-terracotta transition-colors">
                   kapulurucharith@gmail.com
                 </a>
               </div>
@@ -30,8 +30,8 @@ const Footer = () => {
               </div>
 
               <div className="text-right space-y-1">
-                <p className="text-xs font-mono text-text-olive">DENTON, TX</p>
-                <p className="text-xs font-mono text-text-olive">&copy; {new Date().getFullYear()} CHARITH KAPULURU</p>
+                <p className="text-xs font-serif text-text-olive uppercase tracking-widest">Denton, TX</p>
+                <p className="text-xs font-serif text-text-olive">&copy; {new Date().getFullYear()} Charith Kapuluru</p>
               </div>
            </div>
 

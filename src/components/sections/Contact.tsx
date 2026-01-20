@@ -61,21 +61,21 @@ const Contact = () => {
 
                <div className="space-y-12">
                   <div>
-                    <span className="block font-mono text-xs text-text-olive mb-2 uppercase tracking-widest">Email</span>
-                    <a href="mailto:kapulurucharith@gmail.com" className="text-2xl md:text-3xl font-sans font-light text-text-charcoal hover:text-accent-terracotta transition-colors border-b border-text-charcoal/20 pb-1">
+                    <span className="block font-serif text-xs text-text-olive mb-2 uppercase tracking-widest">Email</span>
+                    <a href="mailto:kapulurucharith@gmail.com" className="text-2xl md:text-3xl font-serif font-light text-text-charcoal hover:text-accent-terracotta transition-colors border-b border-text-charcoal/20 pb-1">
                       kapulurucharith@gmail.com
                     </a>
                   </div>
 
                   <div>
-                    <span className="block font-mono text-xs text-text-olive mb-2 uppercase tracking-widest">Location</span>
-                    <p className="text-2xl md:text-3xl font-sans font-light text-text-charcoal">
+                    <span className="block font-serif text-xs text-text-olive mb-2 uppercase tracking-widest">Location</span>
+                    <p className="text-2xl md:text-3xl font-serif font-light text-text-charcoal">
                       Denton, TX
                     </p>
                   </div>
 
                   <div className="pt-12">
-                     <span className="block font-mono text-xs text-text-olive mb-4 uppercase tracking-widest">Socials</span>
+                     <span className="block font-serif text-xs text-text-olive mb-4 uppercase tracking-widest">Socials</span>
                      <div className="flex gap-8">
                         <a href="https://github.com/CharithKapuluru" target="_blank" rel="noopener noreferrer" className="text-lg font-serif italic text-text-charcoal hover:text-accent-moss transition-colors">
                            GitHub
@@ -97,41 +97,41 @@ const Contact = () => {
             >
                <form onSubmit={handleSubmit} className="space-y-12">
                   <div className="space-y-2">
-                     <label htmlFor="name" className="block font-mono text-xs text-text-olive uppercase tracking-widest">Name</label>
+                     <label htmlFor="name" className="block font-serif text-xs text-text-olive uppercase tracking-widest">Name</label>
                      <input
                         type="text"
                         id="name"
                         value={formState.name}
                         onChange={(e) => setFormState({ ...formState, name: e.target.value })}
                         required
-                        className="w-full bg-transparent border-b border-text-charcoal/20 py-4 text-xl font-sans text-text-charcoal focus:outline-none focus:border-accent-moss transition-colors placeholder:text-text-charcoal/20"
-                        placeholder="John Doe"
+                        className="w-full bg-transparent border-b border-text-charcoal/20 py-4 text-xl font-serif text-text-charcoal focus:outline-none focus:border-accent-moss transition-colors placeholder:text-text-charcoal/20"
+                        placeholder=""
                      />
                   </div>
 
                   <div className="space-y-2">
-                     <label htmlFor="email" className="block font-mono text-xs text-text-olive uppercase tracking-widest">Email</label>
+                     <label htmlFor="email" className="block font-serif text-xs text-text-olive uppercase tracking-widest">Email</label>
                      <input
                         type="email"
                         id="email"
                         value={formState.email}
                         onChange={(e) => setFormState({ ...formState, email: e.target.value })}
                         required
-                        className="w-full bg-transparent border-b border-text-charcoal/20 py-4 text-xl font-sans text-text-charcoal focus:outline-none focus:border-accent-moss transition-colors placeholder:text-text-charcoal/20"
-                        placeholder="john@example.com"
+                        className="w-full bg-transparent border-b border-text-charcoal/20 py-4 text-xl font-serif text-text-charcoal focus:outline-none focus:border-accent-moss transition-colors placeholder:text-text-charcoal/20"
+                        placeholder=""
                      />
                   </div>
 
                   <div className="space-y-2">
-                     <label htmlFor="message" className="block font-mono text-xs text-text-olive uppercase tracking-widest">Message</label>
+                     <label htmlFor="message" className="block font-serif text-xs text-text-olive uppercase tracking-widest">Message</label>
                      <textarea
                         id="message"
                         value={formState.message}
                         onChange={(e) => setFormState({ ...formState, message: e.target.value })}
                         required
                         rows={4}
-                        className="w-full bg-transparent border-b border-text-charcoal/20 py-4 text-xl font-sans text-text-charcoal focus:outline-none focus:border-accent-moss transition-colors placeholder:text-text-charcoal/20 resize-none"
-                        placeholder="Tell me about your project..."
+                        className="w-full bg-transparent border-b border-text-charcoal/20 py-4 text-xl font-serif text-text-charcoal focus:outline-none focus:border-accent-moss transition-colors placeholder:text-text-charcoal/20 resize-none"
+                        placeholder=""
                      />
                   </div>
 

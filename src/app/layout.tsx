@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter, Fraunces, JetBrains_Mono } from "next/font/google";
 import SmoothScroll from "@/components/SmoothScroll";
+import { ThemeProvider } from "@/components/ui/ThemeProvider";
+import { AuthProvider } from "@/context/AuthContext";
 import "./globals.css";
 
 const inter = Inter({
@@ -35,10 +37,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${inter.variable} ${fraunces.variable} ${jetbrainsMono.variable}`}>
-      <body className="bg-bg-paper text-text-charcoal font-sans antialiased selection:bg-accent-moss/20 selection:text-text-charcoal">
-        <SmoothScroll />
-        <div className="noise-overlay" />
-        {children}
+      <body className="font-sans antialiased">
+        <AuthProvider>
+          <ThemeProvider>
+            <SmoothScroll />
+            <div className="noise-overlay" />
+            {children}
+          </ThemeProvider>
+        </AuthProvider>
       </body>
     </html>
   );
