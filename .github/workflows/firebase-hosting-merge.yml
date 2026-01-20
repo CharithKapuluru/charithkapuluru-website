@@ -22,6 +22,14 @@ jobs:
 
       - name: Build
         run: npm run build
+        env:
+          NEXT_PUBLIC_FIREBASE_API_KEY: AIzaSyBCR9HnlSOWx4h-qg-L6_StN4t3OSbbMA8
+          NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: charith-c014a.firebaseapp.com
+          NEXT_PUBLIC_FIREBASE_PROJECT_ID: charith-c014a
+          NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET: charith-c014a.firebasestorage.app
+          NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID: 471604447420
+          NEXT_PUBLIC_FIREBASE_APP_ID: 1:471604447420:web:41697e65cec06ddfab28b9
+          NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID: G-08Q08R6R3S
 
       - name: Deploy to Firebase Hosting
         uses: FirebaseExtended/action-hosting-deploy@v0
