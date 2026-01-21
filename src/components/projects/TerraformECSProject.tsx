@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import PhaseTimeline from "@/components/ui/PhaseTimeline";
 import Flashcards from "@/components/ui/Flashcards";
 import KeyTakeaway from "@/components/ui/KeyTakeaway";
@@ -21,6 +21,9 @@ import ArchitectureDiagram from "@/components/ui/ArchitectureDiagram";
 import TrafficFlowAnimation from "@/components/ui/TrafficFlowAnimation";
 import TerraformResourceTree from "@/components/ui/TerraformResourceTree";
 import LaunchChecklist from "@/components/ui/LaunchChecklist";
+import { useAuth } from "@/context/AuthContext";
+import { db } from "@/lib/firebase";
+import { doc, deleteDoc } from "firebase/firestore";
 
 const phaseLabels = [
   "Intro",
@@ -72,12 +75,32 @@ const ecsFlashcards = [
   },
 ];
 
+const PROJECT_SLUG = "terraform-ecs-deployment";
+
 const TerraformECSProject = () => {
+  const { user } = useAuth();
   const [currentPhase, setCurrentPhase] = useState(0);
   const phaseRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [showConfetti, setShowConfetti] = useState(false);
   const [showCelebration, setShowCelebration] = useState(false);
   const [celebratedPhase, setCelebratedPhase] = useState<number | null>(null);
+
+  // Clear all progress (called by "Start Fresh" button)
+  const handleClearProgress = useCallback(async () => {
+    if (user) {
+      // Clear from Firestore
+      try {
+        const progressRef = doc(db, "users", user.uid, "progress", PROJECT_SLUG);
+        await deleteDoc(progressRef);
+      } catch (error) {
+        console.error("Error clearing progress:", error);
+      }
+    }
+    // Reset current phase to 0
+    setCurrentPhase(0);
+    // Force page reload to reset all state
+    window.location.reload();
+  }, [user]);
 
   const scrollToPhase = (phaseId: number) => {
     phaseRefs.current[phaseId]?.scrollIntoView({
@@ -116,7 +139,10 @@ const TerraformECSProject = () => {
       {/* Global Components */}
       <SearchBar />
       <NotesViewer />
-      <ReadingPositionTracker />
+      <ReadingPositionTracker
+        projectSlug={PROJECT_SLUG}
+        onClearProgress={handleClearProgress}
+      />
       <Confetti
         isActive={showConfetti}
         onComplete={() => setShowConfetti(false)}

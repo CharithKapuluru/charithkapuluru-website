@@ -102,13 +102,20 @@ const BookmarkButton = ({ phaseId, phaseName, projectSlug = "devsecops-pipeline"
 };
 
 // Reading position tracker
-export const ReadingPositionTracker = () => {
+interface ReadingPositionTrackerProps {
+  projectSlug?: string;
+  onClearProgress?: () => void;
+}
+
+export const ReadingPositionTracker = ({ projectSlug = "devsecops-pipeline", onClearProgress }: ReadingPositionTrackerProps) => {
   const [lastPosition, setLastPosition] = useState<{ phase: number; scroll: number } | null>(null);
   const [showResume, setShowResume] = useState(false);
 
+  const storageKey = `readingPosition_${projectSlug}`;
+
   useEffect(() => {
     // Load last position
-    const saved = localStorage.getItem("readingPosition");
+    const saved = localStorage.getItem(storageKey);
     if (saved) {
       const position = JSON.parse(saved);
       // Only show resume if user left mid-reading (not at top)
@@ -125,7 +132,7 @@ export const ReadingPositionTracker = () => {
         scroll: window.scrollY,
         timestamp: Date.now(),
       };
-      localStorage.setItem("readingPosition", JSON.stringify(position));
+      localStorage.setItem(storageKey, JSON.stringify(position));
     };
 
     const getCurrentPhase = () => {
@@ -147,7 +154,7 @@ export const ReadingPositionTracker = () => {
       clearInterval(interval);
       window.removeEventListener("beforeunload", savePosition);
     };
-  }, []);
+  }, [storageKey]);
 
   const handleResume = () => {
     if (lastPosition) {
@@ -156,12 +163,18 @@ export const ReadingPositionTracker = () => {
       window.scrollTo({ top: targetScroll, behavior: "smooth" });
     }
     setShowResume(false);
-    localStorage.removeItem("readingPosition");
+    localStorage.removeItem(storageKey);
   };
 
   const handleDismiss = () => {
     setShowResume(false);
-    localStorage.removeItem("readingPosition");
+    localStorage.removeItem(storageKey);
+    // Also clear phase completion progress
+    if (onClearProgress) {
+      onClearProgress();
+    }
+    // Scroll to top
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   if (!showResume) return null;
