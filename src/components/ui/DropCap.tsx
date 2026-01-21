@@ -23,9 +23,9 @@ const DropCap = ({ children, accentColor = "moss" }: DropCapProps) => {
   }
 
   return (
-    <p className="text-lg text-text-taupe leading-relaxed mb-6">
+    <p className="text-base md:text-lg text-text-taupe leading-relaxed mb-6">
       <span
-        className={`float-left text-6xl font-serif font-bold mr-3 mt-1 leading-none ${colorClasses[accentColor]}`}
+        className={`float-left text-4xl md:text-6xl font-serif font-bold mr-2 md:mr-3 mt-1 leading-none ${colorClasses[accentColor]}`}
         style={{ marginBottom: "-0.1em" }}
       >
         {firstLetter}

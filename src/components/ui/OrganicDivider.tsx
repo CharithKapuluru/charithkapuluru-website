@@ -31,10 +31,10 @@ const OrganicDivider = ({ variant = "wave", className = "" }: OrganicDividerProp
 
   if (variant === "wave") {
     return (
-      <div className={`my-16 flex items-center justify-center ${className}`}>
+      <div className={`my-8 md:my-16 flex items-center justify-center px-4 ${className}`}>
         <motion.svg
           viewBox="0 0 400 30"
-          className="w-full max-w-md h-8"
+          className="w-full max-w-xs md:max-w-md h-6 md:h-8"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-50px" }}
@@ -59,10 +59,10 @@ const OrganicDivider = ({ variant = "wave", className = "" }: OrganicDividerProp
 
   if (variant === "branch") {
     return (
-      <div className={`my-16 flex items-center justify-center gap-4 ${className}`}>
+      <div className={`my-8 md:my-16 flex items-center justify-center gap-2 md:gap-4 px-4 ${className}`}>
         <motion.svg
           viewBox="0 0 150 20"
-          className="w-32 h-5"
+          className="w-20 md:w-32 h-4 md:h-5"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-50px" }}
@@ -92,14 +92,14 @@ const OrganicDivider = ({ variant = "wave", className = "" }: OrganicDividerProp
           whileInView="visible"
           viewport={{ once: true, margin: "-50px" }}
         >
-          <svg viewBox="0 0 24 24" className="w-6 h-6" fill="currentColor">
+          <svg viewBox="0 0 24 24" className="w-5 h-5 md:w-6 md:h-6" fill="currentColor">
             <path d="M17,8C8,10 5.9,16.17 3.82,21.34L5.71,22L6.66,19.7C7.14,19.87 7.64,20 8,20C19,20 22,3 22,3C21,5 14,5.25 9,6.25C4,7.25 2,11.5 2,13.5C2,15.5 3.75,17.25 3.75,17.25C7,8 17,8 17,8Z" />
           </svg>
         </motion.div>
 
         <motion.svg
           viewBox="0 0 150 20"
-          className="w-32 h-5"
+          className="w-20 md:w-32 h-4 md:h-5"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-50px" }}
@@ -126,10 +126,10 @@ const OrganicDivider = ({ variant = "wave", className = "" }: OrganicDividerProp
 
   // Terrain variant - mountain silhouette (fits AWS/cloud theme)
   return (
-    <div className={`my-16 flex items-center justify-center ${className}`}>
+    <div className={`my-8 md:my-16 flex items-center justify-center px-4 ${className}`}>
       <motion.svg
         viewBox="0 0 400 40"
-        className="w-full max-w-lg h-10"
+        className="w-full max-w-xs md:max-w-lg h-8 md:h-10"
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, margin: "-50px" }}

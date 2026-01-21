@@ -42,9 +42,9 @@ const PhaseHeader = ({ phaseNumber, title, accentColor = "moss" }: PhaseHeaderPr
       viewport={{ once: true, margin: "-50px" }}
       transition={{ duration: 0.5 }}
     >
-      {/* Large faded phase number in background */}
+      {/* Large faded phase number in background - hidden on mobile */}
       <motion.div
-        className={`absolute -left-4 -top-8 text-[8rem] font-serif font-bold ${colors.number} select-none pointer-events-none leading-none`}
+        className={`absolute -left-2 md:-left-4 -top-4 md:-top-8 text-[4rem] md:text-[8rem] font-serif font-bold ${colors.number} select-none pointer-events-none leading-none hidden sm:block`}
         style={{ transform: "rotate(3deg)" }}
         initial={{ opacity: 0, x: -20 }}
         whileInView={{ opacity: 1, x: 0 }}
@@ -56,7 +56,7 @@ const PhaseHeader = ({ phaseNumber, title, accentColor = "moss" }: PhaseHeaderPr
 
       {/* Accent line with slight rotation */}
       <motion.div
-        className={`w-16 h-1 ${colors.line} mb-4 rounded-full`}
+        className={`w-12 md:w-16 h-1 ${colors.line} mb-3 md:mb-4 rounded-full`}
         style={{ transform: "rotate(-2deg)" }}
         initial={{ scaleX: 0, opacity: 0 }}
         whileInView={{ scaleX: 1, opacity: 1 }}
@@ -66,7 +66,7 @@ const PhaseHeader = ({ phaseNumber, title, accentColor = "moss" }: PhaseHeaderPr
 
       {/* Title */}
       <motion.h2
-        className="text-3xl font-serif text-text-charcoal relative z-10"
+        className="text-2xl md:text-3xl font-serif text-text-charcoal relative z-10"
         initial={{ opacity: 0, y: 10 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
