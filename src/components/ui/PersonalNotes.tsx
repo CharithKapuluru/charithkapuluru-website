@@ -15,20 +15,21 @@ interface Note {
 interface PersonalNotesProps {
   phaseId: number;
   phaseName: string;
+  projectSlug?: string;
 }
 
-const PersonalNotes = ({ phaseId, phaseName }: PersonalNotesProps) => {
+const PersonalNotes = ({ phaseId, phaseName, projectSlug = "devsecops-pipeline" }: PersonalNotesProps) => {
   const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [notes, setNotes] = useState<Note[]>([]);
   const [newNote, setNewNote] = useState("");
 
-  // Load notes from Firestore or localStorage
+  // Load notes from Firestore or localStorage (project-specific)
   useEffect(() => {
     if (user) {
-      // Listen to Firestore for real-time updates
+      // Listen to Firestore for real-time updates (filter by project and phase)
       const notesRef = collection(db, "users", user.uid, "notes");
-      const q = query(notesRef, where("phaseId", "==", phaseId));
+      const q = query(notesRef, where("phaseId", "==", phaseId), where("projectSlug", "==", projectSlug));
 
       const unsubscribe = onSnapshot(q, (snapshot) => {
         const notesData: Note[] = [];
@@ -40,40 +41,43 @@ const PersonalNotes = ({ phaseId, phaseName }: PersonalNotesProps) => {
 
       return () => unsubscribe();
     } else {
-      // Fall back to localStorage for non-logged-in users
-      const savedNotes = JSON.parse(localStorage.getItem("personalNotes") || "[]");
+      // Fall back to localStorage for non-logged-in users (project-specific)
+      const storageKey = `personalNotes_${projectSlug}`;
+      const savedNotes = JSON.parse(localStorage.getItem(storageKey) || "[]");
       const phaseNotes = savedNotes.filter((note: Note) => note.phaseId === phaseId);
       setNotes(phaseNotes);
     }
-  }, [phaseId, user]);
+  }, [phaseId, user, projectSlug]);
 
   const saveNote = useCallback(async () => {
     if (!newNote.trim()) return;
 
-    const note: Note = {
+    const note = {
       id: Date.now().toString(),
       phaseId,
+      projectSlug,
       content: newNote.trim(),
       timestamp: Date.now(),
     };
 
     if (user) {
-      // Save to Firestore
+      // Save to Firestore (with projectSlug)
       try {
         await setDoc(doc(db, "users", user.uid, "notes", note.id), note);
       } catch (error) {
         console.error("Error saving note:", error);
       }
     } else {
-      // Save to localStorage
-      const allNotes = JSON.parse(localStorage.getItem("personalNotes") || "[]");
+      // Save to localStorage (project-specific)
+      const storageKey = `personalNotes_${projectSlug}`;
+      const allNotes = JSON.parse(localStorage.getItem(storageKey) || "[]");
       const updatedNotes = [...allNotes, note];
-      localStorage.setItem("personalNotes", JSON.stringify(updatedNotes));
-      setNotes((prev) => [...prev, note]);
+      localStorage.setItem(storageKey, JSON.stringify(updatedNotes));
+      setNotes((prev) => [...prev, note as Note]);
     }
 
     setNewNote("");
-  }, [newNote, phaseId, user]);
+  }, [newNote, phaseId, user, projectSlug]);
 
   const deleteNote = useCallback(async (noteId: string) => {
     if (user) {
@@ -84,13 +88,14 @@ const PersonalNotes = ({ phaseId, phaseName }: PersonalNotesProps) => {
         console.error("Error deleting note:", error);
       }
     } else {
-      // Delete from localStorage
-      const allNotes = JSON.parse(localStorage.getItem("personalNotes") || "[]");
+      // Delete from localStorage (project-specific)
+      const storageKey = `personalNotes_${projectSlug}`;
+      const allNotes = JSON.parse(localStorage.getItem(storageKey) || "[]");
       const updatedNotes = allNotes.filter((note: Note) => note.id !== noteId);
-      localStorage.setItem("personalNotes", JSON.stringify(updatedNotes));
+      localStorage.setItem(storageKey, JSON.stringify(updatedNotes));
       setNotes((prev) => prev.filter((note) => note.id !== noteId));
     }
-  }, [user]);
+  }, [user, projectSlug]);
 
   const formatDate = (timestamp: number) => {
     return new Date(timestamp).toLocaleDateString("en-US", {

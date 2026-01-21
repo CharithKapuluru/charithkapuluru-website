@@ -9,7 +9,7 @@ interface Phase {
   label: string;
 }
 
-const phases: Phase[] = [
+const defaultPhases: Phase[] = [
   { id: 0, label: "Setup" },
   { id: 1, label: "API" },
   { id: 2, label: "Tests" },
@@ -23,9 +23,10 @@ const phases: Phase[] = [
 interface PhaseTimelineProps {
   currentPhase: number;
   onPhaseClick: (phaseId: number) => void;
+  phases?: Phase[];
 }
 
-const PhaseTimeline = ({ currentPhase, onPhaseClick }: PhaseTimelineProps) => {
+const PhaseTimeline = ({ currentPhase, onPhaseClick, phases = defaultPhases }: PhaseTimelineProps) => {
   const [completedPhases, setCompletedPhases] = useState<number[]>([]);
   const { user, loading, signInWithGoogle, logout } = useAuth();
   const [showMenu, setShowMenu] = useState(false);

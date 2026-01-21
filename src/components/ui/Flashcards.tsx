@@ -112,8 +112,18 @@ const flashcardsData: Flashcard[] = [
   },
 ];
 
-const Flashcards = () => {
+interface FlashcardsProps {
+  cards?: { front: string; back: string }[];
+  title?: string;
+}
+
+const Flashcards = ({ cards, title }: FlashcardsProps = {}) => {
   const [flippedCards, setFlippedCards] = useState<number[]>([]);
+
+  // Convert incoming cards to internal format or use defaults
+  const displayCards: Flashcard[] = cards
+    ? cards.map((card, index) => ({ id: index + 1, front: card.front, back: card.back }))
+    : flashcardsData;
 
   const toggleCard = (id: number) => {
     setFlippedCards((prev) =>
@@ -124,14 +134,14 @@ const Flashcards = () => {
   return (
     <div className="my-16">
       <h2 className="text-3xl font-serif text-text-charcoal mb-8">
-        Key Concepts Flashcards
+        {title || "Key Concepts Flashcards"}
       </h2>
       <p className="text-text-taupe mb-8">
         Click any card to flip and reveal the definition.
       </p>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {flashcardsData.map((card) => {
+        {displayCards.map((card) => {
           const isFlipped = flippedCards.includes(card.id);
 
           return (

@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { projects, getProjectBySlug } from "@/lib/projectsData";
 import DevSecOpsProject from "@/components/projects/DevSecOpsProject";
+import TerraformECSProject from "@/components/projects/TerraformECSProject";
 
 // Generate static params for all projects
 export function generateStaticParams() {
@@ -48,9 +49,10 @@ export default async function ProjectPage({
     <main className="min-h-screen bg-bg-paper">
       {/* Project Content */}
       {slug === "devsecops-pipeline" && <DevSecOpsProject />}
+      {slug === "terraform-ecs-deployment" && <TerraformECSProject />}
 
       {/* Fallback for future projects */}
-      {slug !== "devsecops-pipeline" && (
+      {slug !== "devsecops-pipeline" && slug !== "terraform-ecs-deployment" && (
         <div className="container mx-auto px-6 md:px-12 lg:px-16 max-w-6xl py-16">
           <h1 className="text-4xl md:text-5xl font-serif text-text-charcoal mb-8">
             {project.title}

@@ -8,10 +8,10 @@ import { doc, setDoc, onSnapshot } from "firebase/firestore";
 interface Phase {
   id: number;
   label: string;
-  title: string;
+  title?: string;
 }
 
-const phases: Phase[] = [
+const defaultPhases: Phase[] = [
   { id: 0, label: "Setup", title: "Repository Setup and Project Structure" },
   { id: 1, label: "API", title: "Build FastAPI Microservice MVP" },
   { id: 2, label: "Tests", title: "Add Automated Tests with Pytest" },
@@ -25,13 +25,21 @@ const phases: Phase[] = [
 interface ProgressSidebarProps {
   currentPhase: number;
   onPhaseClick: (phaseId: number) => void;
+  phases?: Phase[];
+  projectSlug?: string;
 }
 
-const ProgressSidebar = ({ currentPhase, onPhaseClick }: ProgressSidebarProps) => {
+const ProgressSidebar = ({
+  currentPhase,
+  onPhaseClick,
+  phases = defaultPhases,
+  projectSlug = "devsecops-pipeline"
+}: ProgressSidebarProps) => {
   const { user, loading } = useAuth();
   const [completedPhases, setCompletedPhases] = useState<number[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const previousUserRef = useRef(user);
+  const totalPhases = phases.length;
 
   // Effect 1: Handle auth state changes (login/logout)
   useEffect(() => {
@@ -61,8 +69,8 @@ const ProgressSidebar = ({ currentPhase, onPhaseClick }: ProgressSidebarProps) =
     if (loading) return;
 
     if (user) {
-      // Logged in: Listen to Firestore
-      const progressRef = doc(db, "users", user.uid, "progress", "completedPhases");
+      // Logged in: Listen to Firestore (project-specific)
+      const progressRef = doc(db, "users", user.uid, "progress", projectSlug);
       const unsubscribe = onSnapshot(
         progressRef,
         (snapshot) => {
@@ -83,7 +91,7 @@ const ProgressSidebar = ({ currentPhase, onPhaseClick }: ProgressSidebarProps) =
       // Not logged in: Clear progress
       setCompletedPhases([]);
     }
-  }, [user, loading]);
+  }, [user, loading, projectSlug]);
 
   // Effect 3: Auto-complete phases based on scroll position (only if signed in)
   useEffect(() => {
@@ -95,6 +103,11 @@ const ProgressSidebar = ({ currentPhase, onPhaseClick }: ProgressSidebarProps) =
       // Add all phases from 0 to (currentPhase - 1) as completed
       for (let i = 0; i < currentPhase; i++) {
         newCompleted.add(i);
+      }
+
+      // If on the last phase, also mark it as complete
+      if (currentPhase === totalPhases - 1) {
+        newCompleted.add(currentPhase);
       }
 
       const updated = Array.from(newCompleted);
@@ -109,15 +122,15 @@ const ProgressSidebar = ({ currentPhase, onPhaseClick }: ProgressSidebarProps) =
 
       return updated;
     });
-  }, [currentPhase, user, loading]); // Depend on user state
+  }, [currentPhase, user, loading, totalPhases]); // Depend on user state
 
   // Helper function to save progress (only for signed-in users)
-  const saveProgress = (phases: number[]) => {
+  const saveProgress = (completedPhaseIds: number[]) => {
     if (!user) return; // Don't save if not signed in
 
-    // Save to Firestore
-    const progressRef = doc(db, "users", user.uid, "progress", "completedPhases");
-    setDoc(progressRef, { phases }, { merge: true }).catch((error) => {
+    // Save to Firestore (project-specific)
+    const progressRef = doc(db, "users", user.uid, "progress", projectSlug);
+    setDoc(progressRef, { phases: completedPhaseIds }, { merge: true }).catch((error) => {
       console.error("Error saving to Firestore:", error);
     });
   };

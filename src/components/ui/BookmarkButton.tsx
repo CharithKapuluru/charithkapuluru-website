@@ -8,56 +8,61 @@ import { doc, setDoc, deleteDoc, onSnapshot } from "firebase/firestore";
 interface BookmarkButtonProps {
   phaseId: number;
   phaseName: string;
+  projectSlug?: string;
 }
 
-const BookmarkButton = ({ phaseId, phaseName }: BookmarkButtonProps) => {
+const BookmarkButton = ({ phaseId, phaseName, projectSlug = "devsecops-pipeline" }: BookmarkButtonProps) => {
   const { user } = useAuth();
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [showToast, setShowToast] = useState(false);
 
+  // Create a unique bookmark ID that includes the project
+  const bookmarkId = `${projectSlug}_phase${phaseId}`;
+
   useEffect(() => {
     if (user) {
-      // Listen to Firestore for real-time updates
-      const bookmarkRef = doc(db, "users", user.uid, "bookmarks", phaseId.toString());
+      // Listen to Firestore for real-time updates (project-specific)
+      const bookmarkRef = doc(db, "users", user.uid, "bookmarks", bookmarkId);
       const unsubscribe = onSnapshot(bookmarkRef, (doc) => {
         setIsBookmarked(doc.exists());
       });
       return () => unsubscribe();
     } else {
-      const bookmarks = JSON.parse(localStorage.getItem("bookmarkedPhases") || "[]");
+      const bookmarks = JSON.parse(localStorage.getItem(`bookmarkedPhases_${projectSlug}`) || "[]");
       setIsBookmarked(bookmarks.includes(phaseId));
     }
-  }, [phaseId, user]);
+  }, [phaseId, user, bookmarkId, projectSlug]);
 
   const toggleBookmark = useCallback(async () => {
     if (user) {
-      // Use Firestore
-      const bookmarkRef = doc(db, "users", user.uid, "bookmarks", phaseId.toString());
+      // Use Firestore (project-specific)
+      const bookmarkRef = doc(db, "users", user.uid, "bookmarks", bookmarkId);
       try {
         if (isBookmarked) {
           await deleteDoc(bookmarkRef);
         } else {
-          await setDoc(bookmarkRef, { phaseId, phaseName, timestamp: Date.now() });
+          await setDoc(bookmarkRef, { phaseId, phaseName, projectSlug, timestamp: Date.now() });
         }
       } catch (error) {
         console.error("Error toggling bookmark:", error);
       }
     } else {
-      // Use localStorage
-      const bookmarks = JSON.parse(localStorage.getItem("bookmarkedPhases") || "[]");
+      // Use localStorage (project-specific)
+      const storageKey = `bookmarkedPhases_${projectSlug}`;
+      const bookmarks = JSON.parse(localStorage.getItem(storageKey) || "[]");
       let newBookmarks;
       if (isBookmarked) {
         newBookmarks = bookmarks.filter((id: number) => id !== phaseId);
       } else {
         newBookmarks = [...bookmarks, phaseId];
       }
-      localStorage.setItem("bookmarkedPhases", JSON.stringify(newBookmarks));
+      localStorage.setItem(storageKey, JSON.stringify(newBookmarks));
       setIsBookmarked(!isBookmarked);
     }
 
     setShowToast(true);
     setTimeout(() => setShowToast(false), 2000);
-  }, [user, phaseId, phaseName, isBookmarked]);
+  }, [user, phaseId, phaseName, isBookmarked, bookmarkId, projectSlug]);
 
   return (
     <>
