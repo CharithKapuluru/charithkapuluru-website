@@ -21,6 +21,12 @@ import ArchitectureDiagram from "@/components/ui/ArchitectureDiagram";
 import TrafficFlowAnimation from "@/components/ui/TrafficFlowAnimation";
 import TerraformResourceTree from "@/components/ui/TerraformResourceTree";
 import LaunchChecklist from "@/components/ui/LaunchChecklist";
+import OrganicDivider from "@/components/ui/OrganicDivider";
+import RealTalk from "@/components/ui/RealTalk";
+import CodeBlock from "@/components/ui/CodeBlock";
+import PhaseHeader from "@/components/ui/PhaseHeader";
+import DropCap from "@/components/ui/DropCap";
+import PullQuote from "@/components/ui/PullQuote";
 import { useAuth } from "@/context/AuthContext";
 import { db } from "@/lib/firebase";
 import { doc, deleteDoc } from "firebase/firestore";
@@ -239,9 +245,7 @@ const TerraformECSProject = () => {
           className="mb-16 scroll-mt-32"
         >
           <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
-            <h2 className="text-3xl font-serif text-text-charcoal">
-              Introduction
-            </h2>
+            <PhaseHeader phaseNumber="0" title="Introduction" accentColor="moss" />
             <div className="flex flex-wrap gap-2">
               <BookmarkButton phaseId={0} phaseName="Introduction" projectSlug="terraform-ecs-deployment" />
               <ShareButtons title="Introduction" phaseId={0} />
@@ -259,13 +263,16 @@ const TerraformECSProject = () => {
           />
 
           {/* REWRITTEN INTRODUCTION - Only this paragraph is rewritten */}
-          <p className="text-lg text-text-taupe leading-relaxed mb-6">
+          <DropCap accentColor="moss">
             In this project, we&apos;re going to deploy a Flask app to AWS using ECS Fargate and Terraform. I&apos;ll walk you through the whole thing - setting up a VPC, understanding CIDR blocks, configuring security groups, and building a CI/CD pipeline with CodePipeline. If you&apos;re trying to get into DevOps or just want to actually understand how AWS infrastructure works instead of just clicking around the console, this is what you need.
-          </p>
+          </DropCap>
 
-          {/* Original content from PDF - kept verbatim */}
+          <RealTalk>
+            I want students like me to go through this project so that they get to know the basics, they get to know how things work at enterprise level, and also to get jobs in DevOps with Terraform and AWS services. My main motto is not to showcase my projects, I want others to grasp the fundamentals of the topics.
+          </RealTalk>
+
           <p className="text-lg text-text-taupe leading-relaxed mb-6">
-            I want students like me to go through this project so that they get to know the basics, they get to know how things work at enterprise level, and also to get jobs in DevOps with Terraform and AWS services. My main motto is not to showcase my projects, I want others to grasp the fundamentals of the topics. Mainly there are IP Networking fundamentals here like IP addresses, CIDR and all that - stuff that can help you in cybersecurity too.
+            Mainly there are IP networking fundamentals here like IP addresses, CIDR and all that - stuff that can help you in cybersecurity too.
           </p>
 
           <KeyTakeaway variant="blue">
@@ -276,6 +283,8 @@ const TerraformECSProject = () => {
           <ArchitectureDiagram />
         </div>
 
+        <OrganicDivider variant="branch" />
+
         {/* ============================================ */}
         {/* PHASE 1: FUNDAMENTALS */}
         {/* ============================================ */}
@@ -285,9 +294,7 @@ const TerraformECSProject = () => {
           className="mb-16 scroll-mt-32"
         >
           <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
-            <h2 className="text-3xl font-serif text-text-charcoal">
-              Fundamentals
-            </h2>
+            <PhaseHeader phaseNumber="1" title="Fundamentals" accentColor="sage" />
             <div className="flex flex-wrap gap-2">
               <BookmarkButton phaseId={1} phaseName="Fundamentals" projectSlug="terraform-ecs-deployment" />
               <ShareButtons title="Fundamentals" phaseId={1} />
@@ -396,15 +403,15 @@ const TerraformECSProject = () => {
             </p>
 
             <h4 className="text-lg font-serif text-text-charcoal mb-2">List your S3 buckets</h4>
-            <pre className="bg-bg-cream p-4 rounded-sm text-sm font-mono mb-4 overflow-x-auto">aws s3 ls</pre>
+            <CodeBlock code="aws s3 ls" language="bash" />
             <p className="text-text-taupe mb-4">This does the same thing as: AWS Console → S3 → View buckets</p>
 
             <h4 className="text-lg font-serif text-text-charcoal mb-2">Example with EC2</h4>
-            <pre className="bg-bg-cream p-4 rounded-sm text-sm font-mono mb-4 overflow-x-auto">aws ec2 describe-instances</pre>
-            <pre className="bg-bg-cream p-4 rounded-sm text-sm font-mono mb-4 overflow-x-auto">aws ec2 stop-instances --instance-ids i-0123456789abcdef</pre>
+            <CodeBlock code="aws ec2 describe-instances" language="bash" />
+            <CodeBlock code="aws ec2 stop-instances --instance-ids i-0123456789abcdef" language="bash" />
 
             <h4 className="text-lg font-serif text-text-charcoal mb-2">Example with ECS</h4>
-            <pre className="bg-bg-cream p-4 rounded-sm text-sm font-mono mb-4 overflow-x-auto">aws ecs list-clusters</pre>
+            <CodeBlock code="aws ecs list-clusters" language="bash" />
           </Collapsible>
 
           {/* VPC - from PDF */}
@@ -430,7 +437,7 @@ const TerraformECSProject = () => {
 
             <h4 className="text-lg font-serif text-text-charcoal mb-2">Simple example (realistic)</h4>
             <p className="text-text-taupe mb-2">You create a VPC:</p>
-            <pre className="bg-bg-cream p-4 rounded-sm text-sm font-mono mb-4 overflow-x-auto">VPC CIDR: 10.0.0.0/16</pre>
+            <CodeBlock code="VPC CIDR: 10.0.0.0/16" />
             <p className="text-text-taupe mb-4">Inside it:</p>
             <ul className="list-disc list-inside text-text-taupe ml-4 mb-4">
               <li><strong>Public subnet</strong>: 10.0.1.0/24 (Load Balancer)</li>
@@ -448,13 +455,13 @@ const TerraformECSProject = () => {
               A <strong>CIDR block</strong> defines a range of IP addresses.
             </p>
             <p className="text-text-taupe mb-2">Example:</p>
-            <pre className="bg-bg-cream p-4 rounded-sm text-sm font-mono mb-4 overflow-x-auto">10.0.0.0/16</pre>
+            <CodeBlock code="10.0.0.0/16" />
             <p className="text-text-taupe mb-4">Means: &quot;I am reserving a block of IP addresses starting from 10.0.0.0.&quot;</p>
             <p className="text-text-taupe mb-4">CIDR answers <strong>one question</strong>: &quot;How many IP addresses do I have to use?&quot;</p>
 
             <h4 className="text-lg font-serif text-text-charcoal mb-2">VPC CIDR (Big Network)</h4>
             <p className="text-text-taupe mb-2">Example VPC:</p>
-            <pre className="bg-bg-cream p-4 rounded-sm text-sm font-mono mb-4 overflow-x-auto">VPC CIDR: 10.0.0.0/16</pre>
+            <CodeBlock code="VPC CIDR: 10.0.0.0/16" />
             <p className="text-text-taupe mb-4">This means:</p>
             <ul className="list-disc list-inside text-text-taupe ml-4 mb-4">
               <li>Total IPs: <strong>65,536</strong></li>
@@ -489,7 +496,7 @@ const TerraformECSProject = () => {
             <h4 className="text-lg font-serif text-text-charcoal mb-2">Public Subnet (Simple)</h4>
             <p className="text-text-taupe mb-4">A <strong>public subnet</strong> is a subnet that <strong>can reach the internet directly</strong>.</p>
             <p className="text-text-taupe mb-2">Why? Because its route table has:</p>
-            <pre className="bg-bg-cream p-4 rounded-sm text-sm font-mono mb-4 overflow-x-auto">0.0.0.0/0 → Internet Gateway (IGW)</pre>
+            <CodeBlock code="0.0.0.0/0 → Internet Gateway (IGW)" />
             <p className="text-text-taupe mb-4">Typical use:</p>
             <ul className="list-disc list-inside text-text-taupe ml-4 mb-4">
               <li>Load Balancer (ALB)</li>
@@ -500,7 +507,7 @@ const TerraformECSProject = () => {
             <h4 className="text-lg font-serif text-text-charcoal mb-2">Private Subnet (Simple)</h4>
             <p className="text-text-taupe mb-4">A <strong>private subnet</strong> is a subnet that <strong>cannot be reached directly from the internet</strong>.</p>
             <p className="text-text-taupe mb-2">Why? Because it has <strong>no route to IGW</strong>. It may have:</p>
-            <pre className="bg-bg-cream p-4 rounded-sm text-sm font-mono mb-4 overflow-x-auto">0.0.0.0/0 → NAT Gateway</pre>
+            <CodeBlock code="0.0.0.0/0 → NAT Gateway" />
             <p className="text-text-taupe mb-4">(for outbound only)</p>
             <p className="text-text-taupe mb-4">Typical use:</p>
             <ul className="list-disc list-inside text-text-taupe ml-4 mb-4">
@@ -555,6 +562,8 @@ const TerraformECSProject = () => {
           />
         </div>
 
+        <OrganicDivider variant="wave" />
+
         {/* ============================================ */}
         {/* PHASE 2: PHASE A - Flask & Docker */}
         {/* ============================================ */}
@@ -564,9 +573,7 @@ const TerraformECSProject = () => {
           className="mb-16 scroll-mt-32"
         >
           <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
-            <h2 className="text-3xl font-serif text-text-charcoal">
-              Phase A: Create Flask Application and Docker Image
-            </h2>
+            <PhaseHeader phaseNumber="A" title="Create Flask Application and Docker Image" accentColor="terracotta" />
             <div className="flex flex-wrap gap-2">
               <BookmarkButton phaseId={2} phaseName="Phase A" projectSlug="terraform-ecs-deployment" />
               <ShareButtons title="Phase A: Flask & Docker" phaseId={2} />
@@ -665,7 +672,13 @@ const TerraformECSProject = () => {
           <KeyTakeaway variant="blue">
             This is a professional standard - keeps code organized and maintainable. The app/ folder contains application code. The terraform/ folder contains infrastructure code.
           </KeyTakeaway>
+
+          <RealTalk>
+            Docker can feel intimidating at first, but once you get your first container running, it clicks. You just packaged your app into something that runs identically everywhere - that&apos;s powerful.
+          </RealTalk>
         </div>
+
+        <OrganicDivider variant="terrain" />
 
         {/* ============================================ */}
         {/* PHASE 3: PHASE B - AWS CLI Setup */}
@@ -676,9 +689,7 @@ const TerraformECSProject = () => {
           className="mb-16 scroll-mt-32"
         >
           <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
-            <h2 className="text-3xl font-serif text-text-charcoal">
-              Phase B: AWS CLI Setup + IAM + Budget Alert
-            </h2>
+            <PhaseHeader phaseNumber="B" title="AWS CLI Setup + IAM + Budget Alert" accentColor="sand" />
             <div className="flex flex-wrap gap-2">
               <BookmarkButton phaseId={3} phaseName="Phase B" projectSlug="terraform-ecs-deployment" />
               <ShareButtons title="Phase B: AWS CLI Setup" phaseId={3} />
@@ -690,7 +701,7 @@ const TerraformECSProject = () => {
             items={[
               { label: "Time", value: "~10 min", icon: "clock" },
               { label: "Mode", value: "AWS Console + Terminal", icon: "code" },
-              { label: "Need", value: "An AWS account (free tier works)", icon: "tool" },
+              { label: "Need", value: "An AWS account (Free Tier works)", icon: "tool" },
               { label: "Watch out", value: "Don't skip the budget alert!", icon: "warning" },
             ]}
           />
@@ -725,6 +736,8 @@ const TerraformECSProject = () => {
           </KeyTakeaway>
         </div>
 
+        <OrganicDivider variant="branch" />
+
         {/* ============================================ */}
         {/* PHASE 4: PHASE C - ECR Repository */}
         {/* ============================================ */}
@@ -734,9 +747,7 @@ const TerraformECSProject = () => {
           className="mb-16 scroll-mt-32"
         >
           <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
-            <h2 className="text-3xl font-serif text-text-charcoal">
-              Phase C: ECR Repository + Push Image
-            </h2>
+            <PhaseHeader phaseNumber="C" title="ECR Repository + Push Image" accentColor="olive" />
             <div className="flex flex-wrap gap-2">
               <BookmarkButton phaseId={4} phaseName="Phase C" projectSlug="terraform-ecs-deployment" />
               <ShareButtons title="Phase C: ECR Repository" phaseId={4} />
@@ -826,6 +837,8 @@ const TerraformECSProject = () => {
           </KeyTakeaway>
         </div>
 
+        <OrganicDivider variant="wave" />
+
         {/* ============================================ */}
         {/* PHASE 5: PHASE D - VPC & ALB */}
         {/* ============================================ */}
@@ -835,9 +848,7 @@ const TerraformECSProject = () => {
           className="mb-16 scroll-mt-32"
         >
           <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
-            <h2 className="text-3xl font-serif text-text-charcoal">
-              Phase D: Terraform VPC + ALB Infrastructure
-            </h2>
+            <PhaseHeader phaseNumber="D" title="Terraform VPC + ALB Infrastructure" accentColor="moss" />
             <div className="flex flex-wrap gap-2">
               <BookmarkButton phaseId={5} phaseName="Phase D" projectSlug="terraform-ecs-deployment" />
               <ShareButtons title="Phase D: VPC & ALB" phaseId={5} />
@@ -920,6 +931,10 @@ const TerraformECSProject = () => {
             At this point, the ALB returns a 503 error because there are no targets yet — the ECS tasks haven&apos;t been deployed. This phase established the network foundation that our containers will run on.
           </KeyTakeaway>
 
+          <PullQuote>
+            Infrastructure as Code means you can destroy everything and rebuild it identically with a single command. That&apos;s power.
+          </PullQuote>
+
           <Quiz
             title="Phase D Quiz"
             questions={[
@@ -952,6 +967,8 @@ const TerraformECSProject = () => {
           />
         </div>
 
+        <OrganicDivider variant="terrain" />
+
         {/* ============================================ */}
         {/* PHASE 6: PHASE E - ECS Fargate */}
         {/* ============================================ */}
@@ -961,9 +978,7 @@ const TerraformECSProject = () => {
           className="mb-16 scroll-mt-32"
         >
           <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
-            <h2 className="text-3xl font-serif text-text-charcoal">
-              Phase E: ECS Fargate Deployment
-            </h2>
+            <PhaseHeader phaseNumber="E" title="ECS Fargate Deployment" accentColor="terracotta" />
             <div className="flex flex-wrap gap-2">
               <BookmarkButton phaseId={6} phaseName="Phase E" projectSlug="terraform-ecs-deployment" />
               <ShareButtons title="Phase E: ECS Fargate" phaseId={6} />
@@ -1078,7 +1093,13 @@ const TerraformECSProject = () => {
               { type: "output", content: '{"status":"ok","timestamp":"2026-01-18T12:00:00"}' },
             ]}
           />
+
+          <RealTalk>
+            When you see your app running on a real public URL for the first time - that feeling never gets old. You built this. It&apos;s live. Real users could access it right now.
+          </RealTalk>
         </div>
+
+        <OrganicDivider variant="branch" />
 
         {/* ============================================ */}
         {/* PHASE 7: PHASE F - Monitoring */}
@@ -1089,9 +1110,7 @@ const TerraformECSProject = () => {
           className="mb-16 scroll-mt-32"
         >
           <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
-            <h2 className="text-3xl font-serif text-text-charcoal">
-              Phase F: Monitoring & Alerting
-            </h2>
+            <PhaseHeader phaseNumber="F" title="Monitoring & Alerting" accentColor="sage" />
             <div className="flex flex-wrap gap-2">
               <BookmarkButton phaseId={7} phaseName="Phase F" projectSlug="terraform-ecs-deployment" />
               <ShareButtons title="Phase F: Monitoring" phaseId={7} />
@@ -1140,6 +1159,8 @@ const TerraformECSProject = () => {
           </KeyTakeaway>
         </div>
 
+        <OrganicDivider variant="wave" />
+
         {/* ============================================ */}
         {/* PHASE 8: PHASE G - CI/CD Pipeline */}
         {/* ============================================ */}
@@ -1149,9 +1170,7 @@ const TerraformECSProject = () => {
           className="mb-16 scroll-mt-32"
         >
           <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
-            <h2 className="text-3xl font-serif text-text-charcoal">
-              Phase G: CI/CD Pipeline with AWS CodePipeline
-            </h2>
+            <PhaseHeader phaseNumber="G" title="CI/CD Pipeline with AWS CodePipeline" accentColor="sand" />
             <div className="flex flex-wrap gap-2">
               <BookmarkButton phaseId={8} phaseName="Phase G" projectSlug="terraform-ecs-deployment" />
               <ShareButtons title="Phase G: CI/CD Pipeline" phaseId={8} />
@@ -1211,7 +1230,13 @@ const TerraformECSProject = () => {
           <KeyTakeaway variant="green">
             Now, whenever you git push to the main branch, the entire build-and-deploy process runs automatically — no manual steps required.
           </KeyTakeaway>
+
+          <RealTalk>
+            CI/CD is the turning point from &quot;I&apos;m learning&quot; to &quot;I&apos;m building like a professional.&quot; Automated deployments are how real teams ship code.
+          </RealTalk>
         </div>
+
+        <OrganicDivider variant="terrain" />
 
         {/* ============================================ */}
         {/* PHASE 9: PHASE H - Auto-Scaling */}
@@ -1222,9 +1247,7 @@ const TerraformECSProject = () => {
           className="mb-16 scroll-mt-32"
         >
           <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
-            <h2 className="text-3xl font-serif text-text-charcoal">
-              Phase H: Auto-Scaling with Fargate Spot
-            </h2>
+            <PhaseHeader phaseNumber="H" title="Auto-Scaling with Fargate Spot" accentColor="sage" />
             <div className="flex flex-wrap gap-2">
               <BookmarkButton phaseId={9} phaseName="Phase H" projectSlug="terraform-ecs-deployment" />
               <ShareButtons title="Phase H: Auto-Scaling" phaseId={9} />

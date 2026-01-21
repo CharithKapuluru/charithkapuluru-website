@@ -20,7 +20,17 @@ const Terminal = ({ title = "Terminal", lines, autoPlay = false }: TerminalProps
   const [isTyping, setIsTyping] = useState(false);
   const [isPlaying, setIsPlaying] = useState(autoPlay);
   const [isComplete, setIsComplete] = useState(false);
+  const [showThinkingDots, setShowThinkingDots] = useState(false);
   const terminalRef = useRef<HTMLDivElement>(null);
+
+  // Variable typing speed - slower at spaces and periods for realism
+  const getTypingDelay = (char: string, baseDelay: number): number => {
+    if (char === " ") return baseDelay + Math.random() * 30 + 20; // Slower at spaces
+    if (char === "." || char === ",") return baseDelay + Math.random() * 50 + 40; // Slower at punctuation
+    if (char === "-") return baseDelay + Math.random() * 20 + 10;
+    // Add slight random variation for natural feel
+    return baseDelay + (Math.random() * 20 - 10);
+  };
 
   useEffect(() => {
     if (!isPlaying || visibleLines >= lines.length) {
@@ -32,32 +42,53 @@ const Terminal = ({ title = "Terminal", lines, autoPlay = false }: TerminalProps
     }
 
     const currentLine = lines[visibleLines];
-    const delay = currentLine.delay || 50;
+    const baseDelay = currentLine.delay || 40;
 
     if (currentLine.type === "command") {
       setIsTyping(true);
       let charIndex = 0;
+      let timeoutId: NodeJS.Timeout;
 
-      const typeInterval = setInterval(() => {
+      const typeNextChar = () => {
         if (charIndex <= currentLine.content.length) {
           setCurrentText(currentLine.content.slice(0, charIndex));
+          const currentChar = currentLine.content[charIndex] || "";
+          const delay = getTypingDelay(currentChar, baseDelay);
           charIndex++;
+          timeoutId = setTimeout(typeNextChar, delay);
         } else {
-          clearInterval(typeInterval);
           setIsTyping(false);
-          setTimeout(() => {
-            setVisibleLines((prev) => prev + 1);
-            setCurrentText("");
-          }, 300);
+          // Show "thinking" dots before output appears
+          const nextLine = lines[visibleLines + 1];
+          if (nextLine && nextLine.type === "output" && nextLine.content.length > 0) {
+            setShowThinkingDots(true);
+            setTimeout(() => {
+              setShowThinkingDots(false);
+              setVisibleLines((prev) => prev + 1);
+              setCurrentText("");
+            }, 400 + Math.random() * 300);
+          } else {
+            setTimeout(() => {
+              setVisibleLines((prev) => prev + 1);
+              setCurrentText("");
+            }, 200);
+          }
         }
+      };
+
+      typeNextChar();
+
+      return () => {
+        if (timeoutId) clearTimeout(timeoutId);
+      };
+    } else {
+      // Output or comment - show with slight delay
+      const delay = currentLine.type === "output" ? 80 + Math.random() * 40 : 60;
+      const timeoutId = setTimeout(() => {
+        setVisibleLines((prev) => prev + 1);
       }, delay);
 
-      return () => clearInterval(typeInterval);
-    } else {
-      // Output or comment - show immediately
-      setTimeout(() => {
-        setVisibleLines((prev) => prev + 1);
-      }, 100);
+      return () => clearTimeout(timeoutId);
     }
   }, [isPlaying, visibleLines, lines]);
 
@@ -65,7 +96,7 @@ const Terminal = ({ title = "Terminal", lines, autoPlay = false }: TerminalProps
     if (terminalRef.current) {
       terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
     }
-  }, [visibleLines, currentText]);
+  }, [visibleLines, currentText, showThinkingDots]);
 
   const handlePlay = () => {
     if (isComplete) {
@@ -80,6 +111,7 @@ const Terminal = ({ title = "Terminal", lines, autoPlay = false }: TerminalProps
     setVisibleLines(lines.length);
     setIsTyping(false);
     setCurrentText("");
+    setShowThinkingDots(false);
     setIsComplete(true);
     setIsPlaying(false);
   };
@@ -151,8 +183,15 @@ const Terminal = ({ title = "Terminal", lines, autoPlay = false }: TerminalProps
           </div>
         )}
 
+        {/* Thinking dots before output */}
+        {showThinkingDots && (
+          <div className="flex items-center pl-4 text-gray-400">
+            <span className="animate-pulse">...</span>
+          </div>
+        )}
+
         {/* Cursor when idle */}
-        {!isTyping && !isComplete && isPlaying && (
+        {!isTyping && !isComplete && isPlaying && !showThinkingDots && (
           <div className="flex">
             <span className="text-accent-moss mr-2">$</span>
             <span className="text-white animate-pulse">▊</span>
