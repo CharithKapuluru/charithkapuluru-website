@@ -6,6 +6,7 @@ import { useRef, useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { db } from "@/lib/firebase";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import ResumeButton from "@/components/ui/ResumeButton";
 
 const Contact = () => {
   const ref = useRef(null);
@@ -84,6 +85,11 @@ const Contact = () => {
                            LinkedIn
                         </a>
                      </div>
+                  </div>
+
+                  <div className="pt-12">
+                     <span className="block font-serif text-xs text-text-olive mb-4 uppercase tracking-widest">Resume</span>
+                     <ResumeButton />
                   </div>
                </div>
             </div>
