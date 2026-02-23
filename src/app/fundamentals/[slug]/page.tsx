@@ -2,6 +2,9 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { topics, getTopicBySlug } from "@/lib/fundamentalsData";
 import ComputingBasics from "@/components/fundamentals/ComputingBasics";
+import NetworkingBasics from "@/components/fundamentals/NetworkingBasics";
+import LinuxFilesystem from "@/components/fundamentals/LinuxFilesystem";
+import FilePermissions from "@/components/fundamentals/FilePermissions";
 
 export function generateStaticParams() {
   return topics.map((topic) => ({
@@ -18,9 +21,7 @@ export async function generateMetadata({
   const topic = getTopicBySlug(slug);
 
   if (!topic) {
-    return {
-      title: "Topic Not Found",
-    };
+    return { title: "Topic Not Found" };
   }
 
   return {
@@ -44,17 +45,9 @@ export default async function FundamentalsArticlePage({
   return (
     <main className="min-h-screen bg-bg-paper">
       {slug === "computing-basics" && <ComputingBasics />}
-
-      {/* Fallback for future topics */}
-      {slug !== "computing-basics" && (
-        <div className="container mx-auto px-6 md:px-12 lg:px-16 max-w-6xl py-16">
-          <h1 className="text-4xl md:text-5xl font-serif text-text-charcoal mb-8">
-            {topic.title}
-          </h1>
-          <p className="text-lg text-text-taupe mb-8">{topic.description}</p>
-          <p className="mt-8 text-text-taupe italic">Content coming soon...</p>
-        </div>
-      )}
+      {slug === "networking-basics" && <NetworkingBasics />}
+      {slug === "linux-filesystem" && <LinuxFilesystem />}
+      {slug === "file-permissions" && <FilePermissions />}
     </main>
   );
 }

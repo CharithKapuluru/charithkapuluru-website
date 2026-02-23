@@ -131,29 +131,29 @@ export default function FundamentalsPage() {
               <div className="relative">
                 {[
                   {
-                    title: "Virtual Machines",
+                    title: "Computing Basics",
                     icon: "🖥️",
                     color: "from-accent-moss/20 to-accent-sage/20",
                     rotate: "-3deg",
                     z: 1,
                   },
                   {
-                    title: "Linux & Kernel",
-                    icon: "🐧",
-                    color: "from-accent-sage/25 to-bg-cream",
+                    title: "Networking Basics",
+                    icon: "📡",
+                    color: "from-accent-terracotta/15 to-accent-sand/15",
                     rotate: "1deg",
                     z: 2,
                   },
                   {
-                    title: "Servers & SSH",
-                    icon: "🔐",
-                    color: "from-accent-sand/20 to-accent-sage/15",
+                    title: "Linux Filesystem",
+                    icon: "🐧",
+                    color: "from-accent-sage/20 to-accent-moss/15",
                     rotate: "-1deg",
                     z: 3,
                   },
                   {
-                    title: "Terminal Commands",
-                    icon: "💻",
+                    title: "File Permissions",
+                    icon: "🔐",
                     color: "from-bg-cream to-accent-moss/15",
                     rotate: "2deg",
                     z: 4,
@@ -240,12 +240,25 @@ export default function FundamentalsPage() {
 
                     <div className="relative flex items-center gap-4">
                       <div className="p-4 rounded-xl bg-bg-paper/90 border border-text-charcoal/5 text-text-olive group-hover:text-accent-moss group-hover:scale-110 transition-all duration-300 shadow-sm">
-                        <svg
-                          className="w-8 h-8"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
+                        {topic.icon === "network" ? (
+                          <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.14 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0" />
+                          </svg>
+                        ) : topic.icon === "terminal" ? (
+                          <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                          </svg>
+                        ) : topic.icon === "lock" ? (
+                          <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                          </svg>
+                        ) : (
+                          <svg
+                            className="w-8 h-8"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
                           <path
                             strokeLinecap="round"
                             strokeLinejoin="round"
@@ -253,6 +266,7 @@ export default function FundamentalsPage() {
                             d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"
                           />
                         </svg>
+                        )}
                       </div>
                       <div>
                         <p className="text-xs uppercase tracking-[0.15em] font-serif text-accent-moss font-medium">
