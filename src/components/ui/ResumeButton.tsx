@@ -8,7 +8,7 @@ const ResumeButton = () => {
 
   return (
     <motion.a
-      href="/Charith_Kapuluru_Resume.pdf"
+      href="/ck.pdf"
       download="Charith_Kapuluru_Resume.pdf"
       className="group relative inline-flex items-center gap-3 px-6 py-3 bg-text-charcoal text-bg-paper rounded-full overflow-hidden transition-all duration-300 hover:shadow-lg hover:shadow-text-charcoal/20"
       onMouseEnter={() => setIsHovered(true)}
