@@ -5,6 +5,12 @@ import ComputingBasics from "@/components/fundamentals/ComputingBasics";
 import NetworkingBasics from "@/components/fundamentals/NetworkingBasics";
 import LinuxFilesystem from "@/components/fundamentals/LinuxFilesystem";
 import FilePermissions from "@/components/fundamentals/FilePermissions";
+import LinuxEnvironment from "@/components/fundamentals/LinuxEnvironment";
+import SystemdAndBoot from "@/components/fundamentals/SystemdAndBoot";
+import LinuxDirectories from "@/components/fundamentals/LinuxDirectories";
+import PortsFirewallsSecurity from "@/components/fundamentals/PortsFirewallsSecurity";
+import CronJobs from "@/components/fundamentals/CronJobs";
+import DockerAndNginx from "@/components/fundamentals/DockerAndNginx";
 
 export function generateStaticParams() {
   return topics.map((topic) => ({
@@ -48,6 +54,12 @@ export default async function FundamentalsArticlePage({
       {slug === "networking-basics" && <NetworkingBasics />}
       {slug === "linux-filesystem" && <LinuxFilesystem />}
       {slug === "file-permissions" && <FilePermissions />}
+      {slug === "linux-environment" && <LinuxEnvironment />}
+      {slug === "systemd-and-boot" && <SystemdAndBoot />}
+      {slug === "linux-directories" && <LinuxDirectories />}
+      {slug === "ports-firewalls-security" && <PortsFirewallsSecurity />}
+      {slug === "cron-jobs" && <CronJobs />}
+      {slug === "docker-and-nginx" && <DockerAndNginx />}
     </main>
   );
 }

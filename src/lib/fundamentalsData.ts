@@ -37,6 +37,12 @@ export const categories: FundamentalsCategory[] = [
     description:
       "SSH, protocols, networking basics, and security fundamentals.",
   },
+  {
+    id: "devops",
+    label: "DevOps Tools",
+    description:
+      "Docker, nginx, cron jobs, and the tools that run modern infrastructure.",
+  },
 ];
 
 export const topics: FundamentalsTopic[] = [
@@ -94,6 +100,90 @@ export const topics: FundamentalsTopic[] = [
     readingTime: "25 min",
     sectionCount: 7,
     tags: ["chmod", "Permissions", "ls -l", "SUID", "SGID", "SSH", "Security"],
+    gradient: "from-accent-moss/15 via-accent-terracotta/5 to-bg-cream",
+  },
+  {
+    id: "5",
+    slug: "linux-environment",
+    title: "Linux Environment & $PATH",
+    subtitle: "$PATH, nano & Command Lookup",
+    description:
+      "Why typing 'ls' works but your own script doesn't. How Linux finds commands using $PATH, three ways to run your scripts, how to safely modify $PATH, and nano — the terminal text editor.",
+    category: "linux",
+    icon: "terminal",
+    readingTime: "15 min",
+    sectionCount: 6,
+    tags: ["$PATH", "Environment", "nano", "export", "bashrc", "Scripts"],
+    gradient: "from-accent-moss/20 via-accent-sage/10 to-bg-cream",
+  },
+  {
+    id: "6",
+    slug: "systemd-and-boot",
+    title: "systemd & Boot Process",
+    subtitle: "PID 1, systemctl & Linux Boot",
+    description:
+      "What systemd is, how to control services with systemctl, what daemons are, reading logs with journalctl, and the full Linux boot sequence from power-on to login prompt.",
+    category: "linux",
+    icon: "server",
+    readingTime: "20 min",
+    sectionCount: 6,
+    tags: ["systemd", "systemctl", "Boot Process", "Daemons", "journalctl", "Services"],
+    gradient: "from-accent-terracotta/15 via-accent-sand/10 to-bg-cream",
+  },
+  {
+    id: "7",
+    slug: "linux-directories",
+    title: "Linux Directories, Inodes & LVM",
+    subtitle: "/bin, /etc, Inodes & Storage",
+    description:
+      "What lives in /bin, /sbin, and /etc. How inodes store file metadata. And LVM — the flexible storage system that lets you expand disk space on a live server in 10 seconds.",
+    category: "linux",
+    icon: "folder",
+    readingTime: "20 min",
+    sectionCount: 6,
+    tags: ["/bin", "/sbin", "/etc", "Inodes", "LVM", "Filesystem", "Config Files"],
+    gradient: "from-accent-sage/20 via-accent-moss/10 to-bg-cream",
+  },
+  {
+    id: "8",
+    slug: "ports-firewalls-security",
+    title: "Ports, Firewalls & DNS",
+    subtitle: "ufw, SSH Hardening & DNS",
+    description:
+      "What ports are, the well-known port numbers every engineer should know, how ufw firewall works, hardening SSH against brute-force attacks, Fail2ban, and how DNS translates google.com to an IP in 20ms.",
+    category: "networking",
+    icon: "shield",
+    readingTime: "25 min",
+    sectionCount: 6,
+    tags: ["Ports", "ufw", "Firewall", "SSH Hardening", "Fail2ban", "DNS", "Security"],
+    gradient: "from-accent-terracotta/15 via-accent-sand/8 to-bg-cream",
+  },
+  {
+    id: "9",
+    slug: "cron-jobs",
+    title: "Cron Jobs & Task Scheduling",
+    subtitle: "Automate Linux Like a Pro",
+    description:
+      "How Linux runs tasks automatically while you sleep. The cron schedule format explained, reading and writing crontab files, practical production examples, and how to log cron output.",
+    category: "linux",
+    icon: "clock",
+    readingTime: "15 min",
+    sectionCount: 5,
+    tags: ["Cron", "crontab", "Scheduling", "Automation", "Bash", "Scripts"],
+    gradient: "from-accent-sand/20 via-accent-moss/8 to-bg-cream",
+  },
+  {
+    id: "10",
+    slug: "docker-and-nginx",
+    title: "Docker & nginx",
+    subtitle: "Containers, Images & Web Servers",
+    description:
+      "Why 'it works on my machine' killed careers. How Docker containers solve environment differences. Container vs VM. Images, Dockerfiles, Docker Hub. And nginx — the web server powering a third of the internet.",
+    category: "devops",
+    icon: "container",
+    readingTime: "25 min",
+    sectionCount: 7,
+    tags: ["Docker", "Containers", "nginx", "Images", "Dockerfile", "DevOps", "Web Server"],
     gradient: "from-accent-moss/15 via-accent-terracotta/5 to-bg-cream",
   },
 ];
