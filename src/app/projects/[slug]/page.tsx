@@ -5,6 +5,9 @@ import { projects, getProjectBySlug } from "@/lib/projectsData";
 import DevSecOpsProject from "@/components/projects/DevSecOpsProject";
 import TerraformECSProject from "@/components/projects/TerraformECSProject";
 import LinuxSysAdminProject from "@/components/projects/LinuxSysAdminProject";
+import WorldNav from "@/components/world/WorldNav";
+import WorkshopHeader from "@/components/world/scenes/WorkshopHeader";
+import { avatarLines } from "@/lib/avatarLines";
 
 // Generate static params for all projects
 export function generateStaticParams() {
@@ -47,11 +50,18 @@ export default async function ProjectPage({
   }
 
   return (
-    <main className="min-h-screen bg-bg-paper">
-      {/* Project Content */}
-      {slug === "devsecops-pipeline" && <DevSecOpsProject />}
-      {slug === "terraform-ecs-deployment" && <TerraformECSProject />}
-      {slug === "linux-sysadmin-deep-dive" && <LinuxSysAdminProject />}
+    <main className="min-h-screen bg-bg-cream">
+      <WorldNav />
+      <WorkshopHeader
+        title={project.title}
+        subtitle={project.subtitle}
+        avatarLine={avatarLines[slug]}
+      />
+      <div className="bg-bg-paper">
+        {slug === "devsecops-pipeline" && <DevSecOpsProject />}
+        {slug === "terraform-ecs-deployment" && <TerraformECSProject />}
+        {slug === "linux-sysadmin-deep-dive" && <LinuxSysAdminProject />}
+      </div>
 
       {/* Fallback for future projects */}
       {slug !== "devsecops-pipeline" && slug !== "terraform-ecs-deployment" && slug !== "linux-sysadmin-deep-dive" && (

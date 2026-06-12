@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import { motion } from "framer-motion";
+import { useState, useRef } from "react";
+import { motion, useScroll } from "framer-motion";
+import { useActivePhase } from "@/hooks/useActivePhase";
 import ArticleNav from "@/components/ui/ArticleNav";
 import DropCap from "@/components/ui/DropCap";
 import KeyTakeaway from "@/components/ui/KeyTakeaway";
@@ -184,25 +185,13 @@ export default function FilePermissions() {
   const sectionRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [showConfetti, setShowConfetti] = useState(false);
   const [showCelebration, setShowCelebration] = useState(false);
-  const [scrollProgress, setScrollProgress] = useState(0);
+  const { scrollYProgress } = useScroll();
 
   const scrollToSection = (id: number) => {
     sectionRefs.current[id]?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
-  useEffect(() => {
-    const handle = () => {
-      const pos = window.scrollY + 200;
-      for (let i = sectionRefs.current.length - 1; i >= 0; i--) {
-        const r = sectionRefs.current[i];
-        if (r && r.offsetTop <= pos) { setCurrentSection(i); break; }
-      }
-      const h = document.documentElement.scrollHeight - window.innerHeight;
-      setScrollProgress(h > 0 ? window.scrollY / h : 0);
-    };
-    window.addEventListener("scroll", handle, { passive: true });
-    return () => window.removeEventListener("scroll", handle);
-  }, []);
+  useActivePhase(sectionRefs, setCurrentSection);
 
   return (
     <div className="bg-bg-paper">
@@ -210,7 +199,7 @@ export default function FilePermissions() {
       <CelebrationMessage isVisible={showCelebration} phaseName="File Permissions" onClose={() => setShowCelebration(false)} />
 
       <div className="fixed top-0 left-0 right-0 z-[60] h-0.5">
-        <motion.div className="h-full bg-accent-moss origin-left" style={{ scaleX: scrollProgress }} />
+        <motion.div className="h-full bg-accent-moss origin-left" style={{ scaleX: scrollYProgress }} />
       </div>
 
       <ArticleNav currentSection={currentSection} onSectionClick={scrollToSection} sections={navSections} />

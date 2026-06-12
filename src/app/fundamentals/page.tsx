@@ -3,205 +3,22 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { topics } from "@/lib/fundamentalsData";
+import WorldNav from "@/components/world/WorldNav";
+import LibraryHeader from "@/components/world/scenes/LibraryHeader";
 
 export default function FundamentalsPage() {
   return (
     <main className="min-h-screen bg-bg-paper">
-      {/* Navigation */}
-      <div className="sticky top-0 z-50 bg-bg-paper/95 backdrop-blur-sm border-b border-text-charcoal/10">
-        <div className="px-6 md:px-10 lg:px-16">
-          <div className="flex items-center h-12">
-            <Link
-              href="/#projects"
-              className="flex items-center gap-1.5 text-sm font-serif text-text-olive hover:text-accent-moss transition-colors"
-            >
-              <svg
-                className="w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15 19l-7-7 7-7"
-                />
-              </svg>
-              Home
-            </Link>
-          </div>
-        </div>
-      </div>
-
-      {/* Hero - Full Width */}
-      <section className="relative overflow-hidden">
-        {/* Background gradient that fills the entire width */}
-        <div className="absolute inset-0 bg-gradient-to-br from-accent-sage/15 via-bg-cream to-accent-moss/10" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--color-accent-moss)_0%,_transparent_50%)] opacity-[0.07]" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,_var(--color-accent-sand)_0%,_transparent_50%)] opacity-[0.08]" />
-
-        {/* Decorative grid pattern */}
-        <div
-          className="absolute inset-0 opacity-[0.03]"
-          style={{
-            backgroundImage:
-              "linear-gradient(var(--color-text-charcoal) 1px, transparent 1px), linear-gradient(90deg, var(--color-text-charcoal) 1px, transparent 1px)",
-            backgroundSize: "60px 60px",
-          }}
-        />
-
-        <div className="relative grid grid-cols-1 lg:grid-cols-2 min-h-[80vh]">
-          {/* Left side - Text */}
-          <div className="flex flex-col justify-center px-6 md:px-10 lg:px-16 xl:px-24 py-16 lg:py-24">
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="text-sm font-mono uppercase tracking-[0.2em] text-accent-moss mb-6"
-            >
-              Fundamentals
-            </motion.p>
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-serif text-text-charcoal mb-8 leading-[1.1]"
-            >
-              Everything starts with understanding{" "}
-              <em className="text-accent-moss not-italic font-serif">why</em>
-            </motion.h1>
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="text-lg md:text-xl text-text-taupe leading-relaxed mb-4"
-            >
-              AI is changing the world. But the engineers who understand the
-              fundamentals — how computers actually work, what Linux is, why
-              servers exist — will always have the edge.
-            </motion.p>
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-              className="text-base text-text-olive leading-relaxed"
-            >
-              Whether you&apos;re a complete beginner or a working professional
-              refreshing your basics, every concept is explained with real-world
-              analogies, interactive examples, and zero assumptions.
-            </motion.p>
-
-            {/* Stats row */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-              className="flex flex-wrap gap-8 mt-10 pt-10 border-t border-text-charcoal/10"
-            >
-              {[
-                { label: "Topics", value: "9 sections", icon: "📚" },
-                { label: "Reading Time", value: "~35 min", icon: "⏱️" },
-                { label: "Level", value: "Beginner Friendly", icon: "🌱" },
-              ].map((stat) => (
-                <div key={stat.label} className="flex items-center gap-3">
-                  <span className="text-2xl">{stat.icon}</span>
-                  <div>
-                    <p className="text-xs font-mono uppercase tracking-wider text-text-olive">
-                      {stat.label}
-                    </p>
-                    <p className="text-lg font-serif font-semibold text-text-charcoal">
-                      {stat.value}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </motion.div>
-          </div>
-
-          {/* Right side - Visual */}
-          <div className="hidden lg:flex items-center justify-center px-10 xl:px-16">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.8, delay: 0.3 }}
-              className="w-full max-w-lg"
-            >
-              {/* Visual card stack showing topics */}
-              <div className="relative">
-                {[
-                  {
-                    title: "Computing Basics",
-                    icon: "🖥️",
-                    color: "from-accent-moss/20 to-accent-sage/20",
-                    rotate: "-3deg",
-                    z: 1,
-                  },
-                  {
-                    title: "Networking Basics",
-                    icon: "📡",
-                    color: "from-accent-terracotta/15 to-accent-sand/15",
-                    rotate: "1deg",
-                    z: 2,
-                  },
-                  {
-                    title: "Linux Filesystem",
-                    icon: "🐧",
-                    color: "from-accent-sage/20 to-accent-moss/15",
-                    rotate: "-1deg",
-                    z: 3,
-                  },
-                  {
-                    title: "File Permissions",
-                    icon: "🔐",
-                    color: "from-bg-cream to-accent-moss/15",
-                    rotate: "2deg",
-                    z: 4,
-                  },
-                ].map((card, i) => (
-                  <motion.div
-                    key={card.title}
-                    initial={{ opacity: 0, y: 40, rotate: 0 }}
-                    animate={{
-                      opacity: 1,
-                      y: 0,
-                      rotate: card.rotate,
-                    }}
-                    transition={{ duration: 0.5, delay: 0.5 + i * 0.15 }}
-                    className={`relative bg-gradient-to-br ${card.color} rounded-2xl p-6 border border-text-charcoal/5 shadow-lg mb-4`}
-                    style={{ zIndex: card.z }}
-                  >
-                    <div className="flex items-center gap-4">
-                      <span className="text-3xl">{card.icon}</span>
-                      <div>
-                        <p className="font-serif text-lg text-text-charcoal font-medium">
-                          {card.title}
-                        </p>
-                        <div className="h-1.5 w-24 bg-accent-moss/20 rounded-full mt-2">
-                          <motion.div
-                            initial={{ width: 0 }}
-                            animate={{ width: "100%" }}
-                            transition={{
-                              duration: 1.5,
-                              delay: 1 + i * 0.2,
-                              ease: "easeOut",
-                            }}
-                            className="h-full bg-accent-moss/50 rounded-full"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
+      <WorldNav />
+      <LibraryHeader
+        title="The Library"
+        subtitle="Plain-language guides to how computers actually work. Pick a book."
+        avatarLine="I read all of these. wrote them too"
+      />
 
       {/* Topic Cards - Full Width with background */}
       <section className="bg-bg-cream/50">
-        <div className="px-6 md:px-10 lg:px-16 xl:px-24 py-20">
+        <div className="px-6 md:px-10 lg:px-16 xl:px-24 py-16">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -311,8 +128,8 @@ export default function FundamentalsPage() {
 
                     <div className="flex items-center justify-between pt-4 border-t border-text-charcoal/5">
                       <div className="flex items-center gap-4 text-xs font-mono text-text-olive">
-                        <span>⏱️ {topic.readingTime}</span>
-                        <span>🌱 Beginner Friendly</span>
+                        <span>{topic.readingTime}</span>
+                        <span>Beginner Friendly</span>
                       </div>
                       <span className="text-accent-moss font-serif text-sm group-hover:translate-x-1 transition-transform inline-flex items-center gap-1">
                         Start Reading

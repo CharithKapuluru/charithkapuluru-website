@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
+import { useActivePhase } from "@/hooks/useActivePhase";
 import { motion } from "framer-motion";
 import PhaseTimeline from "@/components/ui/PhaseTimeline";
 import ProgressSidebar from "@/components/ui/ProgressSidebar";
@@ -50,22 +51,7 @@ const LinuxSysAdminProject = () => {
     });
   };
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollPosition = window.scrollY + 200;
-
-      for (let i = phaseRefs.current.length - 1; i >= 0; i--) {
-        const ref = phaseRefs.current[i];
-        if (ref && ref.offsetTop <= scrollPosition) {
-          setCurrentPhase(i);
-          break;
-        }
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  useActivePhase(phaseRefs, setCurrentPhase);
 
   const triggerCelebration = (phaseId: number) => {
     if (celebratedPhase !== phaseId) {

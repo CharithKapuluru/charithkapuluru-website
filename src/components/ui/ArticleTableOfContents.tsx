@@ -1,6 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import {
+  motion,
+  useScroll,
+  useTransform,
+  useMotionValueEvent,
+} from "framer-motion";
 
 interface TocSection {
   id: string;
@@ -13,7 +19,15 @@ interface ArticleTableOfContentsProps {
 
 const ArticleTableOfContents = ({ sections }: ArticleTableOfContentsProps) => {
   const [activeId, setActiveId] = useState<string>("");
-  const [progress, setProgress] = useState(0);
+  const [percent, setPercent] = useState(0);
+  const { scrollYProgress } = useScroll();
+  const barWidth = useTransform(scrollYProgress, (v) => `${v * 100}%`);
+
+  // Text label only re-renders when the integer percent changes.
+  useMotionValueEvent(scrollYProgress, "change", (v) => {
+    const p = Math.round(v * 100);
+    setPercent((prev) => (prev === p ? prev : p));
+  });
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -42,18 +56,6 @@ const ArticleTableOfContents = ({ sections }: ArticleTableOfContentsProps) => {
     return () => observer.disconnect();
   }, [sections]);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollTop = window.scrollY;
-      const docHeight =
-        document.documentElement.scrollHeight - window.innerHeight;
-      setProgress(docHeight > 0 ? (scrollTop / docHeight) * 100 : 0);
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
   const scrollTo = (id: string) => {
     const el = document.getElementById(id);
     if (el) {
@@ -65,10 +67,7 @@ const ArticleTableOfContents = ({ sections }: ArticleTableOfContentsProps) => {
     <div className="hidden xl:block fixed right-8 top-1/2 -translate-y-1/2 w-56 z-30">
       {/* Progress bar */}
       <div className="h-1 bg-bg-stone rounded-full mb-4 overflow-hidden">
-        <div
-          className="h-full bg-accent-moss transition-all duration-150"
-          style={{ width: `${progress}%` }}
-        />
+        <motion.div className="h-full bg-accent-moss" style={{ width: barWidth }} />
       </div>
 
       <nav className="space-y-1">
@@ -96,7 +95,7 @@ const ArticleTableOfContents = ({ sections }: ArticleTableOfContentsProps) => {
       </nav>
 
       <p className="text-xs text-text-olive mt-4 font-mono">
-        {Math.round(progress)}% read
+        {percent}% read
       </p>
     </div>
   );

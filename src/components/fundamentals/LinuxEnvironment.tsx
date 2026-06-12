@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import { motion } from "framer-motion";
+import { useState, useRef } from "react";
+import { motion, useScroll } from "framer-motion";
+import { useActivePhase } from "@/hooks/useActivePhase";
 import ArticleNav from "@/components/ui/ArticleNav";
 import KeyTakeaway from "@/components/ui/KeyTakeaway";
 import AnalogyBox from "@/components/ui/AnalogyBox";
@@ -163,30 +164,18 @@ export default function LinuxEnvironment() {
   const [currentSection, setCurrentSection] = useState(0);
   const sectionRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [showConfetti, setShowConfetti] = useState(false);
-  const [scrollProgress, setScrollProgress] = useState(0);
+  const { scrollYProgress } = useScroll();
 
   const scrollToSection = (id: number) => {
     sectionRefs.current[id]?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
-  useEffect(() => {
-    const handle = () => {
-      const pos = window.scrollY + 200;
-      for (let i = sectionRefs.current.length - 1; i >= 0; i--) {
-        const r = sectionRefs.current[i];
-        if (r && r.offsetTop <= pos) { setCurrentSection(i); break; }
-      }
-      const docH = document.documentElement.scrollHeight - window.innerHeight;
-      setScrollProgress(docH > 0 ? window.scrollY / docH : 0);
-    };
-    window.addEventListener("scroll", handle, { passive: true });
-    return () => window.removeEventListener("scroll", handle);
-  }, []);
+  useActivePhase(sectionRefs, setCurrentSection);
 
   return (
     <div className="min-h-screen bg-bg-paper font-serif">
       {/* Scroll progress bar */}
-      <motion.div className="fixed top-0 left-0 right-0 h-0.5 bg-accent-moss z-50 origin-left" style={{ scaleX: scrollProgress }} />
+      <motion.div className="fixed top-0 left-0 right-0 h-0.5 bg-accent-moss z-50 origin-left" style={{ scaleX: scrollYProgress }} />
 
       <ArticleNav sections={navSections} currentSection={currentSection} onSectionClick={scrollToSection} />
 

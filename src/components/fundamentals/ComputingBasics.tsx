@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import { motion } from "framer-motion";
+import { useState, useRef } from "react";
+import { motion, useScroll } from "framer-motion";
+import { useActivePhase } from "@/hooks/useActivePhase";
 import ArticleNav from "@/components/ui/ArticleNav";
 import DropCap from "@/components/ui/DropCap";
 import KeyTakeaway from "@/components/ui/KeyTakeaway";
@@ -179,29 +180,13 @@ const ComputingBasics = () => {
   const sectionRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [showConfetti, setShowConfetti] = useState(false);
   const [showCelebration, setShowCelebration] = useState(false);
-  const [scrollProgress, setScrollProgress] = useState(0);
+  const { scrollYProgress } = useScroll();
 
   const scrollToSection = (sectionId: number) => {
     sectionRefs.current[sectionId]?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollPosition = window.scrollY + 200;
-      for (let i = sectionRefs.current.length - 1; i >= 0; i--) {
-        const ref = sectionRefs.current[i];
-        if (ref && ref.offsetTop <= scrollPosition) {
-          setCurrentSection(i);
-          break;
-        }
-      }
-      // scroll progress
-      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-      setScrollProgress(docHeight > 0 ? window.scrollY / docHeight : 0);
-    };
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  useActivePhase(sectionRefs, setCurrentSection);
 
   return (
     <div className="bg-bg-paper">
@@ -212,7 +197,7 @@ const ComputingBasics = () => {
       <div className="fixed top-0 left-0 right-0 z-[60] h-0.5">
         <motion.div
           className="h-full bg-accent-moss origin-left"
-          style={{ scaleX: scrollProgress }}
+          style={{ scaleX: scrollYProgress }}
         />
       </div>
 

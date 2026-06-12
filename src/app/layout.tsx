@@ -1,21 +1,22 @@
 import type { Metadata } from "next";
-import { Inter, Fraunces, JetBrains_Mono } from "next/font/google";
+import { Fredoka, Nunito, JetBrains_Mono } from "next/font/google";
 import SmoothScroll from "@/components/SmoothScroll";
 import { ThemeProvider } from "@/components/ui/ThemeProvider";
 import { AuthProvider } from "@/context/AuthContext";
+import { WorldProvider } from "@/components/world/WorldProvider";
+import EasterEggs from "@/components/world/EasterEggs";
 import "./globals.css";
 
-const inter = Inter({
-  variable: "--font-inter",
+const fredoka = Fredoka({
+  variable: "--font-fredoka",
   subsets: ["latin"],
   display: "swap",
 });
 
-const fraunces = Fraunces({
-  variable: "--font-fraunces",
+const nunito = Nunito({
+  variable: "--font-nunito",
   subsets: ["latin"],
   display: "swap",
-  axes: ["SOFT", "WONK", "opsz"],
 });
 
 const jetbrainsMono = JetBrains_Mono({
@@ -25,9 +26,10 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Charith Kapuluru | Digital Craftsman",
-  description: "Crafting digital experiences at the edge of AI. Software Engineer specializing in intelligent systems and cloud architecture.",
-  keywords: ["Software Engineer", "AI", "Cloud Computing", "Cybersecurity", "Creative Developer"],
+  title: "Charith Kapuluru | Cloud & DevOps Engineer",
+  description:
+    "Charith builds cloud infrastructure, DevSecOps pipelines, and friendly explanations of how computers actually work. Come say hi to the cartoon version of him.",
+  keywords: ["DevOps", "Cloud", "AWS", "Linux", "Software Engineer", "Portfolio"],
 };
 
 export default function RootLayout({
@@ -36,13 +38,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${fraunces.variable} ${jetbrainsMono.variable}`}>
+    <html lang="en" className={`${fredoka.variable} ${nunito.variable} ${jetbrainsMono.variable}`}>
       <body className="font-sans antialiased">
         <AuthProvider>
           <ThemeProvider>
-            <SmoothScroll />
-            <div className="noise-overlay" />
-            {children}
+            <WorldProvider>
+              <SmoothScroll />
+              {children}
+              <EasterEggs />
+            </WorldProvider>
           </ThemeProvider>
         </AuthProvider>
       </body>
