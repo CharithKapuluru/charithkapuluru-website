@@ -7,7 +7,7 @@ export interface Project {
   technologies: string[];
   phaseCount?: number;
   gradient: string;
-  icon: "pipeline" | "cloud" | "security" | "api";
+  icon: "pipeline" | "cloud" | "security" | "api" | "linux";
 }
 
 export const projects: Project[] = [
@@ -34,6 +34,27 @@ export const projects: Project[] = [
     phaseCount: 8,
     gradient: "from-amber-500/20 via-orange-400/10 to-bg-cream",
     icon: "cloud",
+  },
+  {
+    id: "3",
+    slug: "linux-sysadmin-deep-dive",
+    title: "Linux SysAdmin Deep Dive",
+    subtitle: "From Zero to Production Server",
+    description:
+      "A hands-on Linux system administration project — building real scripts, hardening a server, and automating everything from scratch on an Ubuntu VM.",
+    technologies: [
+      "Linux",
+      "Bash",
+      "systemd",
+      "Docker",
+      "ufw",
+      "fail2ban",
+      "cron",
+      "LVM",
+    ],
+    phaseCount: 7,
+    gradient: "from-emerald-600/20 via-green-400/10 to-bg-cream",
+    icon: "linux",
   },
 ];
 
