@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { List, X } from "@phosphor-icons/react/dist/ssr";
 import { NAV_LINKS, type NavKey } from "./nav-links";
@@ -13,6 +13,13 @@ export default function NavSheet({ active }: { active?: NavKey }) {
   const ref = useRef<HTMLDialogElement>(null);
   const open = () => ref.current?.showModal();
   const close = () => ref.current?.close();
+
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 768px)");
+    const onChange = () => ref.current?.close();
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
 
   return (
     <div className="md:hidden">
@@ -28,7 +35,6 @@ export default function NavSheet({ active }: { active?: NavKey }) {
         ref={ref}
         aria-label="Menu"
         className="m-0 h-dvh max-h-none w-full max-w-none bg-bg p-0 text-fg backdrop:bg-transparent"
-        onClick={(e) => e.target === ref.current && close()}
       >
         <div className="flex h-full flex-col px-4 py-3">
           <div className="flex h-10 items-center justify-between">
@@ -52,7 +58,7 @@ export default function NavSheet({ active }: { active?: NavKey }) {
             ))}
           </ul>
           <div className="mt-auto flex items-center justify-between border-t border-border pt-4">
-            <a href="/ck.pdf" download="Charith_Kapuluru_Resume.pdf" className={buttonClasses("primary", "md")}>
+            <a href="/ck.pdf" download="Charith_Kapuluru_Resume.pdf" onClick={close} className={buttonClasses("primary", "md")}>
               Resume
             </a>
             <ThemeToggle />

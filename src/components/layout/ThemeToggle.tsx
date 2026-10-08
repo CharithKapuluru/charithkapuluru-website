@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 import { useTheme } from "next-themes";
 import { Monitor, Moon, Sun } from "@phosphor-icons/react/dist/ssr";
 
@@ -9,8 +9,7 @@ type Mode = (typeof ORDER)[number];
 
 export default function ThemeToggle() {
   const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+  const mounted = useSyncExternalStore(() => () => {}, () => true, () => false);
 
   // Before hydration the server and client both render "system", so markup matches.
   const current: Mode = mounted && ORDER.includes(theme as Mode) ? (theme as Mode) : "system";
