@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { motion, useScroll } from "framer-motion";
-import { useActivePhase } from "@/hooks/useActivePhase";
-import ArticleNav from "@/components/ui/ArticleNav";
+import { motion } from "framer-motion";
+import { useReadingNav } from "@/hooks/useReadingNav";
+import ArticleSection from "@/components/reading/ArticleSection";
 import KeyTakeaway from "@/components/ui/KeyTakeaway";
 import AnalogyBox from "@/components/ui/AnalogyBox";
 import DidYouKnow from "@/components/ui/DidYouKnow";
@@ -20,22 +20,6 @@ const sectionNames = [
   "Real Examples",
 ];
 const navSections = sectionNames.map((label, i) => ({ id: i, label }));
-
-const sectionStyles = [
-  { bg: "bg-gradient-to-br from-accent-sand/[0.08] via-bg-paper to-accent-moss/[0.04]" },
-  { bg: "bg-bg-cream/40" },
-  { bg: "bg-gradient-to-br from-accent-moss/[0.04] via-bg-paper to-accent-sage/[0.05]" },
-  { bg: "bg-bg-paper" },
-  { bg: "bg-gradient-to-br from-accent-terracotta/[0.04] via-bg-paper to-accent-sand/[0.04]" },
-];
-
-const accentColors = ["sand", "moss", "sage", "terracotta", "moss"];
-const accentLineColors: Record<string, string> = {
-  moss: "bg-accent-moss",
-  terracotta: "bg-accent-terracotta",
-  sage: "bg-accent-sage",
-  sand: "bg-accent-sand",
-};
 
 const quizQuestions = [
   {
@@ -111,27 +95,19 @@ const fadeUp = {
   visible: (i: number) => ({ opacity: 1, y: 0, transition: { duration: 0.55, delay: i * 0.1, ease: "easeOut" as const } }),
 };
 
-const Section = ({ id, index, children, sectionRef }: { id: string; index: number; children: React.ReactNode; sectionRef: (el: HTMLDivElement | null) => void }) => (
-  <section id={id} ref={sectionRef} className={`relative scroll-mt-14 ${sectionStyles[index]?.bg || "bg-bg-paper"}`}>
-    <div className="absolute inset-y-0 left-0 w-1 bg-gradient-to-b from-transparent via-accent-sand/15 to-transparent" />
-    <div className="absolute inset-y-0 right-0 w-1 bg-gradient-to-b from-transparent via-accent-moss/10 to-transparent" />
-    <div className="px-6 md:px-12 lg:px-20 xl:px-32 py-20 md:py-28">{children}</div>
-  </section>
-);
-
-const SectionTitle = ({ title, accent = "sand" }: { title: string; accent?: string }) => (
+const SectionTitle = ({ title }: { title: string }) => (
   <motion.div className="mb-12" initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-80px" }} variants={stagger}>
-    <motion.div className={`w-20 h-1.5 ${accentLineColors[accent] || "bg-accent-sand"} mb-6 rounded-full`} variants={fadeUp} custom={0} />
-    <motion.h2 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-serif text-text-charcoal leading-tight" variants={fadeUp} custom={1}>{title}</motion.h2>
+    <motion.div className="w-20 h-1.5 bg-accent mb-6 rounded-full" variants={fadeUp} custom={0} />
+    <motion.h2 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-display text-fg leading-tight" variants={fadeUp} custom={1}>{title}</motion.h2>
   </motion.div>
 );
 
 const H3 = ({ children }: { children: React.ReactNode }) => (
-  <motion.h3 className="text-xl md:text-2xl font-serif text-text-charcoal mt-14 mb-5" initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, margin: "-40px" }} transition={{ duration: 0.5 }}>{children}</motion.h3>
+  <motion.h3 className="text-xl md:text-2xl font-display text-fg mt-14 mb-5" initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, margin: "-40px" }} transition={{ duration: 0.5 }}>{children}</motion.h3>
 );
 
 const P = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (
-  <motion.p className={`text-text-taupe leading-relaxed ${className}`} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-40px" }} transition={{ duration: 0.5 }}>{children}</motion.p>
+  <motion.p className={`text-fg-2 leading-relaxed ${className}`} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-40px" }} transition={{ duration: 0.5 }}>{children}</motion.p>
 );
 
 const Reveal = ({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) => (
@@ -139,29 +115,24 @@ const Reveal = ({ children, delay = 0 }: { children: React.ReactNode; delay?: nu
 );
 
 const Code = ({ children }: { children: React.ReactNode }) => (
-  <code className="font-mono text-accent-moss bg-accent-moss/8 px-1.5 py-0.5 rounded text-[0.9em]">{children}</code>
+  <code className="font-mono text-accent bg-accent/8 px-1.5 py-0.5 rounded text-[0.9em]">{children}</code>
 );
 
 const CronField = ({ value, label, desc, active }: { value: string; label: string; desc: string; active?: boolean }) => (
-  <div className={`flex flex-col items-center p-4 rounded-xl border-2 ${active ? "border-accent-moss/30 bg-accent-moss/8" : "border-text-charcoal/8 bg-bg-paper"}`}>
-    <span className={`font-mono text-2xl font-bold mb-2 ${active ? "text-accent-moss" : "text-text-charcoal/40"}`}>{value}</span>
-    <span className="text-xs font-semibold text-text-charcoal">{label}</span>
-    <span className="text-xs text-text-taupe mt-1 text-center">{desc}</span>
+  <div className={`flex flex-col items-center p-4 rounded-xl border-2 ${active ? "border-accent/30 bg-accent/8" : "border-fg/8 bg-surface"}`}>
+    <span className={`font-mono text-2xl font-bold mb-2 ${active ? "text-accent" : "text-fg/40"}`}>{value}</span>
+    <span className="text-xs font-semibold text-fg">{label}</span>
+    <span className="text-xs text-fg-2 mt-1 text-center">{desc}</span>
   </div>
 );
 
 export default function CronJobs() {
   const [currentSection, setCurrentSection] = useState(0);
-  const sectionRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const sectionRefs = useRef<(HTMLElement | null)[]>([]);
   const [showConfetti, setShowConfetti] = useState(false);
-  const { scrollYProgress } = useScroll();
   const [activeExample, setActiveExample] = useState(0);
 
-  const scrollToSection = (id: number) => {
-    sectionRefs.current[id]?.scrollIntoView({ behavior: "smooth", block: "start" });
-  };
-
-  useActivePhase(sectionRefs, setCurrentSection);
+  useReadingNav(navSections, sectionRefs, setCurrentSection);
 
   const cronExamples = [
     { schedule: "* * * * *", meaning: "Every single minute", fields: ["*", "*", "*", "*", "*"] },
@@ -177,56 +148,10 @@ export default function CronJobs() {
   const fieldDescs = ["0–59", "0–23", "1–31", "1–12", "0=Sun, 6=Sat"];
 
   return (
-    <div className="min-h-screen bg-bg-paper font-serif">
-      <motion.div className="fixed top-0 left-0 right-0 h-0.5 bg-accent-sand z-50 origin-left" style={{ scaleX: scrollYProgress }} />
-      <ArticleNav sections={navSections} currentSection={currentSection} onSectionClick={scrollToSection} />
-
-      {/* Hero */}
-      <section className="relative overflow-hidden min-h-[65vh] flex items-center">
-        <div className="absolute inset-0 bg-gradient-to-br from-accent-sand/12 via-bg-cream to-accent-moss/8" />
-        <div className="relative w-full grid grid-cols-1 lg:grid-cols-2 gap-0">
-          <div className="flex flex-col justify-center px-6 md:px-12 lg:px-20 xl:px-32 py-20">
-            <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="text-xs font-mono uppercase tracking-[0.25em] text-accent-moss mb-5">Linux Automation</motion.p>
-            <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }} className="text-4xl md:text-5xl lg:text-6xl font-serif text-text-charcoal mb-6 leading-[1.1]">
-              Cron Jobs &amp;<br /><em className="text-accent-moss not-italic">Task Scheduling</em>
-            </motion.h1>
-            <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }} className="text-lg text-text-taupe leading-relaxed max-w-xl">
-              How Linux runs backups at 2am without anyone touching a keyboard. The scheduler behind every production server&apos;s automation.
-            </motion.p>
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.35 }} className="flex gap-6 mt-8 pt-8 border-t border-text-charcoal/10">
-              {[{ label: "Sections", value: "5" }, { label: "Read time", value: "15 min" }, { label: "Level", value: "Beginner" }].map(s => (
-                <div key={s.label}>
-                  <p className="text-xs font-mono uppercase tracking-wider text-text-olive">{s.label}</p>
-                  <p className="text-lg font-serif font-semibold text-text-charcoal">{s.value}</p>
-                </div>
-              ))}
-            </motion.div>
-          </div>
-          <div className="hidden lg:flex items-center justify-center px-12">
-            <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.7, delay: 0.4 }} className="w-full max-w-sm">
-              <div className="bg-text-charcoal rounded-2xl p-5 font-mono text-sm shadow-2xl">
-                <p className="text-white/40 text-xs mb-4">Your server, running while you sleep:</p>
-                {[
-                  { time: "00:00", job: "clean-logs.sh", note: "Sunday midnight" },
-                  { time: "02:00", job: "backup.sh", note: "Every night" },
-                  { time: "09:00", job: "send-report.sh", note: "Weekdays" },
-                  { time: "*/5", job: "collect-metrics.sh", note: "Every 5 min" },
-                ].map((item, i) => (
-                  <motion.div key={i} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 + i * 0.25 }} className="flex items-center gap-3 py-2 border-b border-white/5 last:border-0">
-                    <span className="text-orange-300 w-12 text-xs">{item.time}</span>
-                    <span className="text-[#6ee7b7] flex-1">{item.job}</span>
-                    <span className="text-white/30 text-xs">{item.note}</span>
-                  </motion.div>
-                ))}
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
+    <article>
       {/* Section 0: What is a cron job */}
-      <Section id="s0" index={0} sectionRef={el => { sectionRefs.current[0] = el; }}>
-        <SectionTitle title="What is a Cron Job?" accent={accentColors[0]} />
+      <ArticleSection id="s0" ref={el => { sectionRefs.current[0] = el; }}>
+        <SectionTitle title="What is a Cron Job?" />
         <P className="text-lg md:text-xl mb-8">A <strong>cron job</strong> is a scheduled task — a command that runs automatically at a time you specify. No manual intervention. No staying up at 2am to run the backup.</P>
         <AnalogyBox>
           Alarm clock = runs at 7am every day → wakes you up<br />
@@ -244,36 +169,36 @@ export default function CronJobs() {
               { interval: "Every month 1st", task: "Generate billing reports, renew SSL certificates" },
             ].map((item, i) => (
               <Reveal key={item.interval} delay={i * 0.07}>
-                <div className="flex gap-3 p-3 rounded-lg border border-text-charcoal/8 bg-bg-paper hover:border-accent-moss/15 transition-all">
-                  <span className="text-xs font-mono font-semibold text-accent-moss bg-accent-moss/8 px-2 py-1 rounded flex-shrink-0 self-start">{item.interval}</span>
-                  <span className="text-sm text-text-taupe">{item.task}</span>
+                <div className="flex gap-3 p-3 rounded-lg border border-fg/8 bg-surface hover:border-accent/15 transition-all">
+                  <span className="text-xs font-mono font-semibold text-accent bg-accent/8 px-2 py-1 rounded flex-shrink-0 self-start">{item.interval}</span>
+                  <span className="text-sm text-fg-2">{item.task}</span>
                 </div>
               </Reveal>
             ))}
           </div>
         </Reveal>
         <KeyTakeaway>Every production Linux server has dozens of cron jobs running. It&apos;s how sysadmin work gets automated — the server does maintenance while you sleep.</KeyTakeaway>
-      </Section>
+      </ArticleSection>
 
       {/* Section 1: Schedule Format */}
-      <Section id="s1" index={1} sectionRef={el => { sectionRefs.current[1] = el; }}>
-        <SectionTitle title="The Schedule Format" accent={accentColors[1]} />
+      <ArticleSection id="s1" ref={el => { sectionRefs.current[1] = el; }}>
+        <SectionTitle title="The Schedule Format" />
         <P className="text-lg mb-8">Every cron job has a schedule written in this exact format. Five fields, then the command:</P>
         <Reveal>
-          <div className="bg-text-charcoal rounded-xl p-6 font-mono mb-8 overflow-x-auto">
-            <p className="text-white text-lg mb-4"><span className="text-orange-300">*</span> <span className="text-yellow-300">*</span> <span className="text-[#6ee7b7]">*</span> <span className="text-blue-300">*</span> <span className="text-purple-300">*</span> <span className="text-white/60">command-to-run</span></p>
+          <div className="bg-fg rounded-xl p-6 font-mono mb-8 overflow-x-auto">
+            <p className="text-white text-lg mb-4"><span className="text-terminal-accent">*</span> <span className="text-terminal-accent">*</span> <span className="text-[#6ee7b7]">*</span> <span className="text-terminal-info">*</span> <span className="text-terminal-accent">*</span> <span className="text-white/60">command-to-run</span></p>
             <div className="grid grid-cols-5 gap-2 text-xs text-center">
               {[
-                { val: "│", color: "text-orange-300" }, { val: "│", color: "text-yellow-300" },
-                { val: "│", color: "text-[#6ee7b7]" }, { val: "│", color: "text-blue-300" },
-                { val: "│", color: "text-purple-300" },
+                { val: "│", color: "text-terminal-accent" }, { val: "│", color: "text-terminal-accent" },
+                { val: "│", color: "text-[#6ee7b7]" }, { val: "│", color: "text-terminal-info" },
+                { val: "│", color: "text-terminal-accent" },
               ].map((c, i) => <p key={i} className={c.color}>{c.val}</p>)}
               {[
-                { label: "Minute", range: "0–59", color: "text-orange-300" },
-                { label: "Hour", range: "0–23", color: "text-yellow-300" },
+                { label: "Minute", range: "0–59", color: "text-terminal-accent" },
+                { label: "Hour", range: "0–23", color: "text-terminal-accent" },
                 { label: "Day", range: "1–31", color: "text-[#6ee7b7]" },
-                { label: "Month", range: "1–12", color: "text-blue-300" },
-                { label: "Weekday", range: "0=Sun..6=Sat", color: "text-purple-300" },
+                { label: "Month", range: "1–12", color: "text-terminal-info" },
+                { label: "Weekday", range: "0=Sun..6=Sat", color: "text-terminal-accent" },
               ].map(f => (
                 <div key={f.label} className="text-center">
                   <p className={`font-semibold ${f.color}`}>{f.label}</p>
@@ -286,28 +211,28 @@ export default function CronJobs() {
         </Reveal>
         <P className="mb-4">The <Code>*</Code> wildcard means &quot;every possible value.&quot; So <Code>* * * * *</Code> runs every single minute of every day.</P>
         <DidYouKnow>The name &ldquo;cron&rdquo; comes from the Greek word &ldquo;chronos&rdquo; meaning time. The program that reads and executes crontabs is the &ldquo;cron daemon&rdquo; (crond), which wakes up every minute to check if any jobs need to run.</DidYouKnow>
-      </Section>
+      </ArticleSection>
 
       {/* Section 2: Interactive examples */}
-      <Section id="s2" index={2} sectionRef={el => { sectionRefs.current[2] = el; }}>
-        <SectionTitle title="Reading the Format" accent={accentColors[2]} />
+      <ArticleSection id="s2" ref={el => { sectionRefs.current[2] = el; }}>
+        <SectionTitle title="Reading the Format" />
         <P className="text-lg mb-8">Click any example below to see how the format breaks down:</P>
         <Reveal>
           <div className="flex flex-wrap gap-2 mb-8">
             {cronExamples.map((ex, i) => (
               <button key={i} onClick={() => setActiveExample(i)}
-                className={`px-3 py-1.5 rounded-lg font-mono text-sm border transition-all ${activeExample === i ? "border-accent-moss/30 bg-accent-moss/10 text-accent-moss" : "border-text-charcoal/10 bg-bg-paper text-text-taupe hover:border-accent-moss/20"}`}>
+                className={`px-3 py-1.5 rounded-lg font-mono text-sm border transition-all ${activeExample === i ? "border-accent/30 bg-accent/10 text-accent" : "border-fg/10 bg-surface text-fg-2 hover:border-accent/20"}`}>
                 {ex.schedule}
               </button>
             ))}
           </div>
         </Reveal>
         <Reveal>
-          <div className="rounded-2xl border border-text-charcoal/10 bg-bg-paper p-6 mb-6">
+          <div className="rounded-2xl border border-fg/10 bg-surface p-6 mb-6">
             <div className="flex items-center gap-3 mb-6">
-              <code className="font-mono text-lg text-text-charcoal font-bold">{cronExamples[activeExample].schedule}</code>
-              <span className="text-text-taupe">→</span>
-              <span className="font-serif text-accent-moss font-semibold">{cronExamples[activeExample].meaning}</span>
+              <code className="font-mono text-lg text-fg font-bold">{cronExamples[activeExample].schedule}</code>
+              <span className="text-fg-2">→</span>
+              <span className="text-accent font-semibold">{cronExamples[activeExample].meaning}</span>
             </div>
             <div className="grid grid-cols-5 gap-3">
               {cronExamples[activeExample].fields.map((field, i) => (
@@ -326,19 +251,19 @@ export default function CronJobs() {
               { sym: "1,3,5", meaning: "specific values (Mon, Wed, Fri)" },
             ].map((s, i) => (
               <Reveal key={s.sym} delay={i * 0.07}>
-                <div className="p-3 rounded-lg border border-text-charcoal/8 bg-bg-paper">
-                  <code className="font-mono font-bold text-accent-moss text-sm block mb-1">{s.sym}</code>
-                  <p className="text-xs text-text-taupe">{s.meaning}</p>
+                <div className="p-3 rounded-lg border border-fg/8 bg-surface">
+                  <code className="font-mono font-bold text-accent text-sm block mb-1">{s.sym}</code>
+                  <p className="text-xs text-fg-2">{s.meaning}</p>
                 </div>
               </Reveal>
             ))}
           </div>
         </Reveal>
-      </Section>
+      </ArticleSection>
 
       {/* Section 3: Managing Crontabs */}
-      <Section id="s3" index={3} sectionRef={el => { sectionRefs.current[3] = el; }}>
-        <SectionTitle title="Managing Crontabs" accent={accentColors[3]} />
+      <ArticleSection id="s3" ref={el => { sectionRefs.current[3] = el; }}>
+        <SectionTitle title="Managing Crontabs" />
         <P className="text-lg mb-6">Each user has their own <strong>crontab</strong> — a file listing their scheduled jobs. You manage it with the <Code>crontab</Code> command:</P>
         <Reveal>
           <Terminal lines={[
@@ -355,14 +280,14 @@ export default function CronJobs() {
           ]} />
         </Reveal>
         <KeyTakeaway><Code>crontab -r</Code> removes ALL your cron jobs with no confirmation prompt. Unlike most destructive commands, there&apos;s no &quot;are you sure?&quot; Always double-check with <Code>crontab -l</Code> first.</KeyTakeaway>
-      </Section>
+      </ArticleSection>
 
       {/* Section 4: Real Examples */}
-      <Section id="s4" index={4} sectionRef={el => { sectionRefs.current[4] = el; }}>
-        <SectionTitle title="Real Crontab Examples" accent={accentColors[4]} />
+      <ArticleSection id="s4" ref={el => { sectionRefs.current[4] = el; }}>
+        <SectionTitle title="Real Crontab Examples" />
         <P className="text-lg mb-8">Here&apos;s what a typical sysadmin&apos;s crontab looks like:</P>
         <Reveal>
-          <div className="bg-text-charcoal rounded-xl p-5 font-mono text-sm overflow-x-auto mb-8">
+          <div className="bg-fg rounded-xl p-5 font-mono text-sm overflow-x-auto mb-8">
             <p className="text-white/40 mb-4"># crontab -l output</p>
             {[
               { schedule: "*/5 * * * *", cmd: "/home/charith/scripts/collect-metrics.sh", note: "every 5 min" },
@@ -372,7 +297,7 @@ export default function CronJobs() {
               { schedule: "0 9 * * 1-5", cmd: "/home/charith/scripts/send-report.sh", note: "9am weekdays" },
             ].map((job, i) => (
               <motion.div key={i} initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="py-1.5 border-b border-white/5 last:border-0">
-                <span className="text-orange-300">{job.schedule}</span>
+                <span className="text-terminal-accent">{job.schedule}</span>
                 <span className="text-[#6ee7b7] ml-3">{job.cmd}</span>
                 <span className="text-white/30 ml-3 text-xs">← {job.note}</span>
               </motion.div>
@@ -393,10 +318,10 @@ export default function CronJobs() {
             <Flashcards cards={flashcardsData} />
           </Reveal>
         </div>
-      </Section>
+      </ArticleSection>
 
       <Confetti isActive={showConfetti} />
 
-    </div>
+    </article>
   );
 }

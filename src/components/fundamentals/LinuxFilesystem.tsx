@@ -1,10 +1,9 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { motion, useScroll } from "framer-motion";
-import { useActivePhase } from "@/hooks/useActivePhase";
-import ArticleNav from "@/components/ui/ArticleNav";
-import DropCap from "@/components/ui/DropCap";
+import { motion } from "framer-motion";
+import { useReadingNav } from "@/hooks/useReadingNav";
+import ArticleSection from "@/components/reading/ArticleSection";
 import KeyTakeaway from "@/components/ui/KeyTakeaway";
 import AnalogyBox from "@/components/ui/AnalogyBox";
 import DidYouKnow from "@/components/ui/DidYouKnow";
@@ -15,6 +14,7 @@ import Collapsible from "@/components/ui/Collapsible";
 import Quiz from "@/components/ui/Quiz";
 import Flashcards from "@/components/ui/Flashcards";
 import Confetti, { CelebrationMessage } from "@/components/ui/Confetti";
+import { iconFor } from "@/components/ui/icons";
 
 const sectionNames = [
   "What is Bash?",
@@ -25,23 +25,6 @@ const sectionNames = [
   "ls Commands",
 ];
 const navSections = sectionNames.map((label, i) => ({ id: i, label }));
-
-const sectionStyles = [
-  { bg: "bg-gradient-to-br from-accent-sage/[0.07] via-bg-paper to-accent-moss/[0.05]" },
-  { bg: "bg-bg-cream/40" },
-  { bg: "bg-gradient-to-br from-accent-moss/[0.05] via-bg-paper to-accent-sage/[0.07]" },
-  { bg: "bg-bg-paper" },
-  { bg: "bg-gradient-to-br from-accent-terracotta/[0.04] via-bg-paper to-accent-sand/[0.05]" },
-  { bg: "bg-bg-cream/40" },
-];
-
-const accentColors = ["sage", "moss", "sage", "moss", "terracotta", "sage"];
-const accentLineColors: Record<string, string> = {
-  moss: "bg-accent-moss",
-  terracotta: "bg-accent-terracotta",
-  sage: "bg-accent-sage",
-  sand: "bg-accent-sand",
-};
 
 const quizQuestions = [
   {
@@ -122,27 +105,19 @@ const fadeUp = {
   visible: (i: number) => ({ opacity: 1, y: 0, transition: { duration: 0.55, delay: i * 0.1, ease: "easeOut" as const } }),
 };
 
-const Section = ({ id, index, children, sectionRef }: { id: string; index: number; children: React.ReactNode; sectionRef: (el: HTMLDivElement | null) => void }) => (
-  <section id={id} ref={sectionRef} className={`relative scroll-mt-14 ${sectionStyles[index]?.bg || "bg-bg-paper"}`}>
-    <div className="absolute inset-y-0 left-0 w-1 bg-gradient-to-b from-transparent via-accent-sage/10 to-transparent" />
-    <div className="absolute inset-y-0 right-0 w-1 bg-gradient-to-b from-transparent via-accent-moss/10 to-transparent" />
-    <div className="px-6 md:px-12 lg:px-20 xl:px-32 py-20 md:py-28">{children}</div>
-  </section>
-);
-
-const SectionTitle = ({ title, accent = "sage" }: { title: string; accent?: string }) => (
+const SectionTitle = ({ title }: { title: string }) => (
   <motion.div className="mb-12" initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-80px" }} variants={stagger}>
-    <motion.div className={`w-20 h-1.5 ${accentLineColors[accent] || "bg-accent-sage"} mb-6 rounded-full`} variants={fadeUp} custom={0} />
-    <motion.h2 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-serif text-text-charcoal leading-tight" variants={fadeUp} custom={1}>{title}</motion.h2>
+    <motion.div className="w-20 h-1.5 bg-accent mb-6 rounded-full" variants={fadeUp} custom={0} />
+    <motion.h2 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-display text-fg leading-tight" variants={fadeUp} custom={1}>{title}</motion.h2>
   </motion.div>
 );
 
 const H3 = ({ children }: { children: React.ReactNode }) => (
-  <motion.h3 className="text-xl md:text-2xl font-serif text-text-charcoal mt-14 mb-5" initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, margin: "-40px" }} transition={{ duration: 0.5 }}>{children}</motion.h3>
+  <motion.h3 className="text-xl md:text-2xl font-display text-fg mt-14 mb-5" initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, margin: "-40px" }} transition={{ duration: 0.5 }}>{children}</motion.h3>
 );
 
 const P = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (
-  <motion.p className={`text-text-taupe leading-relaxed ${className}`} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-40px" }} transition={{ duration: 0.5 }}>{children}</motion.p>
+  <motion.p className={`text-fg-2 leading-relaxed ${className}`} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-40px" }} transition={{ duration: 0.5 }}>{children}</motion.p>
 );
 
 const Reveal = ({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) => (
@@ -150,131 +125,53 @@ const Reveal = ({ children, delay = 0 }: { children: React.ReactNode; delay?: nu
 );
 
 const Code = ({ children }: { children: React.ReactNode }) => (
-  <code className="font-mono text-accent-moss bg-accent-moss/8 px-1.5 py-0.5 rounded text-[0.9em]">{children}</code>
+  <code className="font-mono text-accent bg-accent/8 px-1.5 py-0.5 rounded text-[0.9em]">{children}</code>
 );
 
 /* ── File tree component ── */
 const FileTree = ({ items, title }: { items: string[]; title?: string }) => (
   <motion.div
-    className="my-8 rounded-2xl border border-text-charcoal/8 bg-bg-paper overflow-hidden"
+    className="my-8 rounded-2xl border border-fg/8 bg-surface overflow-hidden"
     initial={{ opacity: 0, y: 20 }}
     whileInView={{ opacity: 1, y: 0 }}
     viewport={{ once: true }}
     transition={{ duration: 0.5 }}
   >
     {title && (
-      <div className="px-5 py-3 bg-text-charcoal/[0.03] border-b border-text-charcoal/8 flex items-center gap-2">
-        <div className="w-3 h-3 rounded-full bg-accent-terracotta/40" />
-        <div className="w-3 h-3 rounded-full bg-accent-sand/40" />
-        <div className="w-3 h-3 rounded-full bg-accent-moss/40" />
-        <span className="ml-2 text-xs font-mono text-text-olive">{title}</span>
+      <div className="px-5 py-3 bg-fg/[0.03] border-b border-fg/8 flex items-center gap-2">
+        <div className="w-3 h-3 rounded-full bg-danger/40" />
+        <div className="w-3 h-3 rounded-full bg-accent/40" />
+        <div className="w-3 h-3 rounded-full bg-accent/40" />
+        <span className="ml-2 text-xs font-mono text-fg-3">{title}</span>
       </div>
     )}
     <div className="p-5 md:p-8 overflow-x-auto">
-      <pre className="font-mono text-xs md:text-sm text-text-charcoal leading-relaxed whitespace-pre">{items.join("\n")}</pre>
+      <pre className="font-mono text-xs md:text-sm text-fg leading-relaxed whitespace-pre">{items.join("\n")}</pre>
     </div>
   </motion.div>
 );
 
 export default function LinuxFilesystem() {
   const [currentSection, setCurrentSection] = useState(0);
-  const sectionRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const sectionRefs = useRef<(HTMLElement | null)[]>([]);
   const [showConfetti, setShowConfetti] = useState(false);
   const [showCelebration, setShowCelebration] = useState(false);
-  const { scrollYProgress } = useScroll();
 
-  const scrollToSection = (id: number) => {
-    sectionRefs.current[id]?.scrollIntoView({ behavior: "smooth", block: "start" });
-  };
-
-  useActivePhase(sectionRefs, setCurrentSection);
+  useReadingNav(navSections, sectionRefs, setCurrentSection);
 
   return (
-    <div className="bg-bg-paper">
+    <article>
       <Confetti isActive={showConfetti} onComplete={() => setShowConfetti(false)} />
       <CelebrationMessage isVisible={showCelebration} phaseName="Linux Filesystem" onClose={() => setShowCelebration(false)} />
 
-      <div className="fixed top-0 left-0 right-0 z-[60] h-0.5">
-        <motion.div className="h-full bg-accent-sage origin-left" style={{ scaleX: scrollYProgress }} />
-      </div>
-
-      <ArticleNav currentSection={currentSection} onSectionClick={scrollToSection} sections={navSections} />
-
-      {/* ═══ HERO ═══ */}
-      <header className="relative overflow-hidden min-h-[65vh] flex items-center">
-        <div className="absolute inset-0 bg-gradient-to-br from-accent-sage/[0.08] via-bg-paper to-accent-moss/[0.06]" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--color-accent-sage)_0%,_transparent_60%)] opacity-[0.07]" />
-        <div className="absolute inset-0" style={{ backgroundImage: "radial-gradient(circle, var(--color-text-charcoal) 1px, transparent 1px)", backgroundSize: "44px 44px", opacity: 0.03 }} />
-
-        <div className="relative w-full grid grid-cols-1 lg:grid-cols-5 gap-8 px-6 md:px-12 lg:px-20 xl:px-32 py-20 md:py-28">
-          <div className="lg:col-span-3 flex flex-col justify-center">
-            <motion.p className="text-sm font-mono uppercase tracking-[0.25em] text-accent-sage mb-5" initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-              Fundamentals
-            </motion.p>
-            <motion.h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-text-charcoal leading-[1.05] mb-8" initial={{ opacity: 0, y: 25 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.1 }}>
-              Linux Filesystem{" "}
-              <span className="relative inline-block">
-                & Shell
-                <motion.span className="absolute -bottom-2 left-0 h-1 bg-accent-sage rounded-full" initial={{ width: 0 }} animate={{ width: "100%" }} transition={{ duration: 0.8, delay: 0.8 }} />
-              </span>
-            </motion.h1>
-            <motion.p className="text-lg md:text-xl text-text-taupe leading-relaxed mb-8 max-w-2xl" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.25 }}>
-              What Bash actually is, how files and directories work, the Linux filesystem structure, the root directory, the root user, switching users with su, and mastering the ls command family.
-            </motion.p>
-            <motion.div className="flex flex-wrap gap-6 pt-8 border-t border-text-charcoal/10" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.5 }}>
-              {[{ label: "6 sections", sub: "filesystem essentials" }, { label: "~25 min", sub: "estimated reading" }, { label: "Beginner", sub: "no prerequisites" }].map((s) => (
-                <div key={s.label}>
-                  <p className="text-lg font-serif font-semibold text-text-charcoal">{s.label}</p>
-                  <p className="text-xs font-mono text-text-olive">{s.sub}</p>
-                </div>
-              ))}
-            </motion.div>
-          </div>
-
-          {/* Right — animated terminal */}
-          <div className="hidden lg:flex lg:col-span-2 items-center justify-center">
-            <motion.div
-              className="w-full max-w-sm rounded-2xl overflow-hidden border border-text-charcoal/10 shadow-2xl shadow-accent-sage/10"
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.4 }}
-            >
-              <div className="px-4 py-3 bg-text-charcoal flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full bg-red-400" />
-                <div className="w-3 h-3 rounded-full bg-yellow-400" />
-                <div className="w-3 h-3 rounded-full bg-green-400" />
-                <span className="ml-2 text-xs font-mono text-white/60">charith@ubuntu: ~</span>
-              </div>
-              <div className="bg-[#1a1a2e] p-5 font-mono text-sm">
-                {[
-                  { delay: 0.6, color: "text-green-400", content: "charith@ubuntu:~$ ls -la" },
-                  { delay: 1.0, color: "text-gray-300", content: "drwxr-xr-x  5 charith charith 4096 Feb 18 projects/" },
-                  { delay: 1.2, color: "text-gray-300", content: "drwxr-xr-x  3 charith charith 4096 Feb 18 notes/" },
-                  { delay: 1.4, color: "text-gray-400", content: "-rw-r--r--  1 charith charith  220 Feb 18 .bashrc" },
-                  { delay: 1.6, color: "text-gray-400", content: "drwx------  2 charith charith 4096 Feb 18 .ssh/" },
-                  { delay: 2.0, color: "text-green-400", content: "charith@ubuntu:~$ pwd" },
-                  { delay: 2.4, color: "text-gray-300", content: "/home/charith" },
-                  { delay: 2.8, color: "text-green-400", content: "charith@ubuntu:~$ _" },
-                ].map((line, i) => (
-                  <motion.div key={i} className={`${line.color} leading-relaxed`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3, delay: line.delay }}>
-                    {line.content}
-                  </motion.div>
-                ))}
-              </div>
-            </motion.div>
-          </div>
-        </div>
-        <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-bg-paper to-transparent" />
-      </header>
-
       {/* ══════════ SECTION 0 — What is Bash? ══════════ */}
-      <Section id="section-0" index={0} sectionRef={(el) => { sectionRefs.current[0] = el; }}>
-        <SectionTitle title="What is Bash?" accent={accentColors[0]} />
+      <ArticleSection id="section-0" ref={(el) => { sectionRefs.current[0] = el; }}>
+        <SectionTitle title="What is Bash?" />
 
         <Reveal>
-          <DropCap accentColor="sage">
+          <p className="mb-6 text-lede leading-relaxed text-fg-2">
             Bash stands for <strong>Bourne Again Shell</strong>. It&apos;s the language your terminal speaks. When you type commands in the terminal, Bash is the program that reads, understands, and executes them.
-          </DropCap>
+          </p>
         </Reveal>
 
         <H3>Why is Bash Used in the Terminal?</H3>
@@ -301,16 +198,16 @@ export default function LinuxFilesystem() {
             ].map((item, i) => (
               <motion.div
                 key={item.num}
-                className="flex gap-5 p-6 rounded-2xl border border-text-charcoal/8 bg-bg-paper hover:border-accent-sage/20 hover:shadow-md transition-all"
+                className="flex gap-5 p-6 rounded-2xl border border-fg/8 bg-surface hover:border-success/20 hover:shadow-md transition-all"
                 initial={{ opacity: 0, x: -20 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1, duration: 0.5 }}
               >
-                <span className="flex-shrink-0 w-10 h-10 rounded-full bg-accent-sage/15 text-accent-moss font-serif font-bold text-lg flex items-center justify-center">{item.num}</span>
+                <span className="flex-shrink-0 w-10 h-10 rounded-full bg-success/15 text-accent font-bold text-lg flex items-center justify-center">{item.num}</span>
                 <div>
-                  <p className="font-serif font-medium text-text-charcoal mb-2">{item.title}</p>
-                  <p className="text-sm text-text-taupe leading-relaxed">{item.body}</p>
+                  <p className="font-medium text-fg mb-2">{item.title}</p>
+                  <p className="text-sm text-fg-2 leading-relaxed">{item.body}</p>
                 </div>
               </motion.div>
             ))}
@@ -334,7 +231,7 @@ export default function LinuxFilesystem() {
         </Reveal>
 
         <Reveal>
-          <AnalogyBox icon="🗣️">
+          <AnalogyBox>
             <p>Think of shells like different languages. English (Bash), Spanish (zsh), French (fish) — they all let you communicate with the operating system, but they have different accents and features. When you write a script, you choose which language (shell) to use at the top of the file with <Code>#!/usr/bin/env bash</Code>.</p>
           </AnalogyBox>
         </Reveal>
@@ -344,20 +241,20 @@ export default function LinuxFilesystem() {
             Bash is the language your Linux terminal speaks. It&apos;s been the default since 1989, works both interactively (type commands) and as a scripting language (run .sh files). Other shells like zsh and fish exist, but Bash is still the most universal.
           </KeyTakeaway>
         </Reveal>
-      </Section>
+      </ArticleSection>
 
       {/* ══════════ SECTION 1 — Files & Directories ══════════ */}
-      <Section id="section-1" index={1} sectionRef={(el) => { sectionRefs.current[1] = el; }}>
-        <SectionTitle title="Files, Directories & the Filesystem" accent={accentColors[1]} />
+      <ArticleSection id="section-1" ref={(el) => { sectionRefs.current[1] = el; }}>
+        <SectionTitle title="Files, Directories & the Filesystem" />
 
         <Reveal>
-          <DropCap accentColor="moss">
+          <p className="mb-6 text-lede leading-relaxed text-fg-2">
             Three terms that look similar but mean very different things: a file is a piece of data, a directory is a folder that organizes files, and a filesystem is the entire system that makes both possible.
-          </DropCap>
+          </p>
         </Reveal>
 
         <H3>The File</H3>
-        <P className="mb-4">A file is a <strong className="text-text-charcoal">single piece of data</strong> stored on disk. It could be anything:</P>
+        <P className="mb-4">A file is a <strong className="text-fg">single piece of data</strong> stored on disk. It could be anything:</P>
 
         <Reveal>
           <FileTree
@@ -372,10 +269,10 @@ export default function LinuxFilesystem() {
           />
         </Reveal>
 
-        <P className="mb-8">Every file has: a <strong className="text-text-charcoal">name</strong>, <strong className="text-text-charcoal">contents</strong> (the actual data inside), and <strong className="text-text-charcoal">metadata</strong> (owner, permissions, size, date modified). Think of it as a single document in a filing cabinet.</P>
+        <P className="mb-8">Every file has: a <strong className="text-fg">name</strong>, <strong className="text-fg">contents</strong> (the actual data inside), and <strong className="text-fg">metadata</strong> (owner, permissions, size, date modified). Think of it as a single document in a filing cabinet.</P>
 
         <H3>The Directory</H3>
-        <P className="mb-4">A directory is a <strong className="text-text-charcoal">folder</strong> that holds files (and other directories inside it). It doesn&apos;t contain data itself — it just organizes files.</P>
+        <P className="mb-4">A directory is a <strong className="text-fg">folder</strong> that holds files (and other directories inside it). It doesn&apos;t contain data itself — it just organizes files.</P>
 
         <FileTree
           title="Directory structure example"
@@ -390,13 +287,13 @@ export default function LinuxFilesystem() {
           ]}
         />
 
-        <P className="mb-8">Think of a directory as a <strong className="text-text-charcoal">folder in a filing cabinet</strong>. The folder itself isn&apos;t a document — it just groups documents together.</P>
+        <P className="mb-8">Think of a directory as a <strong className="text-fg">folder in a filing cabinet</strong>. The folder itself isn&apos;t a document — it just groups documents together.</P>
 
         <H3>The Filesystem</H3>
-        <P className="mb-4">A filesystem is the <strong className="text-text-charcoal">entire system</strong> that manages how files and directories are stored on a disk. It&apos;s the structure and rules that make files and directories possible.</P>
+        <P className="mb-4">A filesystem is the <strong className="text-fg">entire system</strong> that manages how files and directories are stored on a disk. It&apos;s the structure and rules that make files and directories possible.</P>
 
         <Reveal>
-          <AnalogyBox icon="🏙️">
+          <AnalogyBox>
             <p>If files are individual documents and directories are folders, the filesystem is the entire filing room — with its cabinets, the organization system, the rules for naming things, and the physical shelves everything sits on. Without the filesystem, your disk is just raw 1s and 0s with no meaning.</p>
           </AnalogyBox>
         </Reveal>
@@ -404,23 +301,23 @@ export default function LinuxFilesystem() {
         <Reveal>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8 mt-8">
             {[
-              { icon: "📄", title: "File", desc: "A single piece of data. Has a name, contents, and metadata (size, owner, date).", example: "notes.txt, photo.jpg, script.sh" },
-              { icon: "📁", title: "Directory", desc: "A folder that organizes files and other directories. Contains no data itself.", example: "/home/charith/, /projects/, .ssh/" },
-              { icon: "💽", title: "Filesystem", desc: "The entire system that manages storage. Rules for how 1s and 0s become files you can open.", example: "ext4 (Linux), APFS (macOS), NTFS (Windows)" },
+              { icon: "file-text", title: "File", desc: "A single piece of data. Has a name, contents, and metadata (size, owner, date).", example: "notes.txt, photo.jpg, script.sh" },
+              { icon: "folder", title: "Directory", desc: "A folder that organizes files and other directories. Contains no data itself.", example: "/home/charith/, /projects/, .ssh/" },
+              { icon: "hard-drives", title: "Filesystem", desc: "The entire system that manages storage. Rules for how 1s and 0s become files you can open.", example: "ext4 (Linux), APFS (macOS), NTFS (Windows)" },
             ].map((c, i) => (
               <motion.div
                 key={c.title}
-                className="p-6 rounded-2xl border border-text-charcoal/8 bg-bg-paper hover:border-accent-moss/20 hover:shadow-lg transition-all"
+                className="p-6 rounded-2xl border border-fg/8 bg-surface hover:border-accent/20 hover:shadow-lg transition-all"
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1, duration: 0.4 }}
                 whileHover={{ y: -4 }}
               >
-                <span className="text-3xl block mb-3">{c.icon}</span>
-                <p className="font-serif font-semibold text-text-charcoal mb-2">{c.title}</p>
-                <p className="text-sm text-text-taupe leading-relaxed mb-3">{c.desc}</p>
-                <code className="text-xs font-mono text-text-olive bg-bg-cream px-2 py-1 rounded">{c.example}</code>
+                <span className="text-3xl block mb-3">{iconFor(c.icon, { size: 22 })}</span>
+                <p className="font-semibold text-fg mb-2">{c.title}</p>
+                <p className="text-sm text-fg-2 leading-relaxed mb-3">{c.desc}</p>
+                <code className="text-xs font-mono text-fg-3 bg-bg px-2 py-1 rounded">{c.example}</code>
               </motion.div>
             ))}
           </div>
@@ -431,20 +328,20 @@ export default function LinuxFilesystem() {
             File = a piece of data. Directory = a folder that organizes files. Filesystem = the entire system of rules and structure that makes files and directories possible on disk. Without a filesystem, your storage is just meaningless 1s and 0s.
           </KeyTakeaway>
         </Reveal>
-      </Section>
+      </ArticleSection>
 
       {/* ══════════ SECTION 2 — The Filesystem ══════════ */}
-      <Section id="section-2" index={2} sectionRef={(el) => { sectionRefs.current[2] = el; }}>
-        <SectionTitle title="The Linux Filesystem Structure" accent={accentColors[2]} />
+      <ArticleSection id="section-2" ref={(el) => { sectionRefs.current[2] = el; }}>
+        <SectionTitle title="The Linux Filesystem Structure" />
 
         <Reveal>
-          <DropCap accentColor="sage">
+          <p className="mb-6 text-lede leading-relaxed text-fg-2">
             In Linux, every single file and folder lives under one starting point called the root directory, written as <Code>/</Code>. This is completely different from Windows, where you have separate drives like C:\ and D:\.
-          </DropCap>
+          </p>
         </Reveal>
 
         <H3>What Does <Code>/</Code> Mean?</H3>
-        <P className="mb-4">In Linux, <Code>/</Code> is the <strong className="text-text-charcoal">starting point of everything</strong>. Every single file and folder on your system lives under it:</P>
+        <P className="mb-4">In Linux, <Code>/</Code> is the <strong className="text-fg">starting point of everything</strong>. Every single file and folder on your system lives under it:</P>
 
         <FileTree
           title="Linux filesystem tree"
@@ -468,32 +365,32 @@ export default function LinuxFilesystem() {
         <Reveal>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
             {[
-              { path: "/home", desc: "Personal files for each user. Your stuff lives here.", icon: "🏠" },
-              { path: "/etc", desc: "System configuration files. Settings for every service.", icon: "⚙️" },
-              { path: "/var", desc: "Variable data — logs, databases, spool files.", icon: "📊" },
-              { path: "/usr", desc: "Programs and utilities installed on the system.", icon: "🔧" },
-              { path: "/tmp", desc: "Temporary files. Cleared on reboot.", icon: "🗑️" },
-              { path: "/bin", desc: "Essential commands: ls, cp, mv, bash etc.", icon: "⚡" },
+              { path: "/home", desc: "Personal files for each user. Your stuff lives here.", icon: "house" },
+              { path: "/etc", desc: "System configuration files. Settings for every service.", icon: "gear" },
+              { path: "/var", desc: "Variable data — logs, databases, spool files.", icon: "chart-bar" },
+              { path: "/usr", desc: "Programs and utilities installed on the system.", icon: "wrench" },
+              { path: "/tmp", desc: "Temporary files. Cleared on reboot.", icon: "trash" },
+              { path: "/bin", desc: "Essential commands: ls, cp, mv, bash etc.", icon: "lightning" },
             ].map((d, i) => (
               <motion.div
                 key={d.path}
-                className="p-4 rounded-xl border border-text-charcoal/8 bg-bg-paper hover:border-accent-sage/20 transition-all"
+                className="p-4 rounded-xl border border-fg/8 bg-surface hover:border-success/20 transition-all"
                 initial={{ opacity: 0, y: 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.08, duration: 0.4 }}
                 whileHover={{ y: -3 }}
               >
-                <span className="text-2xl block mb-2">{d.icon}</span>
-                <code className="font-mono text-sm text-accent-sage font-bold">{d.path}</code>
-                <p className="text-sm text-text-taupe mt-1 leading-relaxed">{d.desc}</p>
+                <span className="text-2xl block mb-2">{iconFor(d.icon, { size: 22 })}</span>
+                <code className="font-mono text-sm text-success font-bold">{d.path}</code>
+                <p className="text-sm text-fg-2 mt-1 leading-relaxed">{d.desc}</p>
               </motion.div>
             ))}
           </div>
         </Reveal>
 
         <Reveal>
-          <AnalogyBox icon="🌳">
+          <AnalogyBox>
             <p>Think of the Linux filesystem as an upside-down tree. The root <Code>/</Code> is the trunk at the very top. Branches grow downward — <Code>/home</Code>, <Code>/etc</Code>, <Code>/var</Code>. Each branch can have more branches (subdirectories). Files are the leaves at the ends. Everything connects back to the same trunk: <Code>/</Code>.</p>
           </AnalogyBox>
         </Reveal>
@@ -517,16 +414,16 @@ export default function LinuxFilesystem() {
             In Linux, everything lives under <Code>/</Code> — a single root that branches into <Code>/home</Code>, <Code>/etc</Code>, <Code>/var</Code>, etc. Unlike Windows with separate drives (C:\\, D:\\), Linux has one unified tree. Every path starts from <Code>/</Code>.
           </KeyTakeaway>
         </Reveal>
-      </Section>
+      </ArticleSection>
 
       {/* ══════════ SECTION 3 — Root Directory ══════════ */}
-      <Section id="section-3" index={3} sectionRef={(el) => { sectionRefs.current[3] = el; }}>
-        <SectionTitle title="The Root User" accent={accentColors[3]} />
+      <ArticleSection id="section-3" ref={(el) => { sectionRefs.current[3] = el; }}>
+        <SectionTitle title="The Root User" />
 
         <Reveal>
-          <DropCap accentColor="moss">
+          <p className="mb-6 text-lede leading-relaxed text-fg-2">
             Don&apos;t confuse the root directory (<Code>/</Code>) with the root user. They share a name but are completely different things. The root user is the most powerful user on a Linux system — it can do absolutely anything.
-          </DropCap>
+          </p>
         </Reveal>
 
         <Reveal>
@@ -541,9 +438,9 @@ export default function LinuxFilesystem() {
             caption="Regular User vs Root"
             headers={["Action", "Regular User", "Root User"]}
             rows={[
-              ["Install software", "❌ Needs sudo", "✅ Always"],
-              ["Delete system files", "❌ Permission denied", "✅ No restriction"],
-              ["View any file", "❌ Some files restricted", "✅ All files"],
+              ["Install software", "Needs sudo", "Always"],
+              ["Delete system files", "Permission denied", "No restriction"],
+              ["View any file", "Some files restricted", "All files"],
               ["Change passwords", "Only their own", "Anyone's"],
               ["Break the system", "Hard to do accidentally", "One wrong command can do it"],
               ["Prompt", "charith@ubuntu:~$", "root@ubuntu:~#"],
@@ -581,16 +478,16 @@ export default function LinuxFilesystem() {
             The root user (username: root) has absolute power on Linux — can do anything, including accidentally destroy the system. Never work as root for regular tasks. Use <Code>sudo</Code> for individual commands that need admin rights. When your prompt shows <Code>#</Code> instead of <Code>$</Code>, you are root — be careful.
           </KeyTakeaway>
         </Reveal>
-      </Section>
+      </ArticleSection>
 
       {/* ══════════ SECTION 4 — su ══════════ */}
-      <Section id="section-4" index={4} sectionRef={(el) => { sectionRefs.current[4] = el; }}>
-        <SectionTitle title="Switching Users with su" accent={accentColors[4]} />
+      <ArticleSection id="section-4" ref={(el) => { sectionRefs.current[4] = el; }}>
+        <SectionTitle title="Switching Users with su" />
 
         <Reveal>
-          <DropCap accentColor="terracotta">
+          <p className="mb-6 text-lede leading-relaxed text-fg-2">
             <Code>su</Code> stands for Switch User. It lets you change to a different user account in the terminal without logging out. The difference between <Code>su username</Code> and <Code>su - username</Code> is subtle but important.
-          </DropCap>
+          </p>
         </Reveal>
 
         <H3>The Command</H3>
@@ -616,21 +513,21 @@ export default function LinuxFilesystem() {
         <H3>With <Code>-</Code> vs Without <Code>-</Code></H3>
         <Reveal>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            <motion.div className="p-6 rounded-xl border border-accent-terracotta/15 bg-accent-terracotta/[0.03]" whileHover={{ y: -3 }} transition={{ duration: 0.2 }}>
-              <code className="font-mono text-accent-terracotta bg-bg-cream px-2 py-1 rounded text-sm">su testdev</code>
-              <p className="font-serif font-medium text-text-charcoal mt-3 mb-2">Without <Code>-</Code></p>
-              <p className="text-sm text-text-taupe">Switches to testdev but <strong className="text-text-charcoal">stays in your current folder</strong> with your settings. You&apos;re the person but in the wrong house.</p>
+            <motion.div className="p-6 rounded-xl border border-danger/15 bg-danger/[0.03]" whileHover={{ y: -3 }} transition={{ duration: 0.2 }}>
+              <code className="font-mono text-danger bg-bg px-2 py-1 rounded text-sm">su testdev</code>
+              <p className="font-medium text-fg mt-3 mb-2">Without <Code>-</Code></p>
+              <p className="text-sm text-fg-2">Switches to testdev but <strong className="text-fg">stays in your current folder</strong> with your settings. You&apos;re the person but in the wrong house.</p>
             </motion.div>
-            <motion.div className="p-6 rounded-xl border border-accent-moss/15 bg-accent-moss/[0.03]" whileHover={{ y: -3 }} transition={{ duration: 0.2 }}>
-              <code className="font-mono text-accent-moss bg-bg-cream px-2 py-1 rounded text-sm">su - testdev</code>
-              <p className="font-serif font-medium text-text-charcoal mt-3 mb-2">With <Code>-</Code> ✅ Recommended</p>
-              <p className="text-sm text-text-taupe">Switches to testdev AND <strong className="text-text-charcoal">takes you to their home folder</strong> with their settings loaded. Fully becomes that user.</p>
+            <motion.div className="p-6 rounded-xl border border-accent/15 bg-accent/[0.03]" whileHover={{ y: -3 }} transition={{ duration: 0.2 }}>
+              <code className="font-mono text-accent bg-bg px-2 py-1 rounded text-sm">su - testdev</code>
+              <p className="font-medium text-fg mt-3 mb-2">With <Code>-</Code> Recommended</p>
+              <p className="text-sm text-fg-2">Switches to testdev AND <strong className="text-fg">takes you to their home folder</strong> with their settings loaded. Fully becomes that user.</p>
             </motion.div>
           </div>
         </Reveal>
 
         <Reveal>
-          <AnalogyBox icon="🏠">
+          <AnalogyBox>
             <p>Imagine visiting someone else&apos;s apartment. <Code>su testdev</Code> = You walk into their apartment but bring your own furniture and stuff — kind of weird. <Code>su - testdev</Code> = You walk in and use everything as they set it up — their desk, their settings, their environment. Like actually becoming them. Always use <Code>-</Code> for a clean, proper switch.</p>
           </AnalogyBox>
         </Reveal>
@@ -638,10 +535,10 @@ export default function LinuxFilesystem() {
         <Reveal>
           <div className="space-y-4">
             <Collapsible title="When do you actually use su?" index={0}>
-              <p className="text-text-taupe leading-relaxed">Common scenarios: switching to the root user (<Code>su - root</Code>) to perform system administration, testing how an app behaves as a different user, or verifying that a new user account is set up correctly.</p>
+              <p className="text-fg-2 leading-relaxed">Common scenarios: switching to the root user (<Code>su - root</Code>) to perform system administration, testing how an app behaves as a different user, or verifying that a new user account is set up correctly.</p>
             </Collapsible>
             <Collapsible title="su vs sudo — what's the difference?" index={1}>
-              <p className="text-text-taupe leading-relaxed"><Code>sudo</Code> runs a single command as root without switching users. <Code>su</Code> actually switches your identity to a different user for multiple commands. For most tasks, <Code>sudo</Code> is safer and more auditable — it logs which user ran what command.</p>
+              <p className="text-fg-2 leading-relaxed"><Code>sudo</Code> runs a single command as root without switching users. <Code>su</Code> actually switches your identity to a different user for multiple commands. For most tasks, <Code>sudo</Code> is safer and more auditable — it logs which user ran what command.</p>
             </Collapsible>
           </div>
         </Reveal>
@@ -651,16 +548,16 @@ export default function LinuxFilesystem() {
             <Code>su</Code> switches your user identity in the terminal. Always use <Code>su -</Code> (with a dash) to get the full environment of the target user — their home folder, settings, and PATH. Without the dash, you switch identity but keep your current context, which causes confusing behavior.
           </KeyTakeaway>
         </Reveal>
-      </Section>
+      </ArticleSection>
 
       {/* ══════════ SECTION 5 — ls Commands ══════════ */}
-      <Section id="section-5" index={5} sectionRef={(el) => { sectionRefs.current[5] = el; }}>
-        <SectionTitle title="Mastering ls" accent={accentColors[5]} />
+      <ArticleSection id="section-5" ref={(el) => { sectionRefs.current[5] = el; }}>
+        <SectionTitle title="Mastering ls" />
 
         <Reveal>
-          <DropCap accentColor="sage">
+          <p className="mb-6 text-lede leading-relaxed text-fg-2">
             <Code>ls</Code> is the most used command in Linux. It lists the contents of a directory. But the real power comes from its flags — <Code>-l</Code>, <Code>-a</Code>, and combining them. And Ubuntu even gives you a shortcut: <Code>ll</Code>.
-          </DropCap>
+          </p>
         </Reveal>
 
         <H3>The Four Variations</H3>
@@ -692,8 +589,8 @@ export default function LinuxFilesystem() {
         <P className="mb-4">That long output from <Code>ls -l</Code> looks confusing at first. Let&apos;s decode it:</P>
 
         <Reveal>
-          <div className="p-5 rounded-2xl bg-text-charcoal/[0.03] border border-text-charcoal/8 mb-6 overflow-x-auto">
-            <code className="font-mono text-sm text-text-charcoal">-rwxr-xr--  1  charith  charith  1024  Feb 18 10:30  notes.txt</code>
+          <div className="p-5 rounded-2xl bg-fg/[0.03] border border-fg/8 mb-6 overflow-x-auto">
+            <code className="font-mono text-sm text-fg">-rwxr-xr--  1  charith  charith  1024  Feb 18 10:30  notes.txt</code>
           </div>
         </Reveal>
 
@@ -723,26 +620,26 @@ export default function LinuxFilesystem() {
               { file: ".ssh/", desc: "SSH keys and config — kept hidden for security" },
               { file: ".profile", desc: "Runs at login — sets environment variables" },
             ].map((f, i) => (
-              <motion.div key={f.file} className="p-4 rounded-xl border border-text-charcoal/8 bg-bg-paper" initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }}>
-                <code className="font-mono text-sm text-accent-sage font-bold">{f.file}</code>
-                <p className="text-sm text-text-taupe mt-2 leading-relaxed">{f.desc}</p>
+              <motion.div key={f.file} className="p-4 rounded-xl border border-fg/8 bg-surface" initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }}>
+                <code className="font-mono text-sm text-success font-bold">{f.file}</code>
+                <p className="text-sm text-fg-2 mt-2 leading-relaxed">{f.desc}</p>
               </motion.div>
             ))}
           </div>
         </Reveal>
 
         <H3>The <Code>ll</Code> Shortcut</H3>
-        <P className="mb-4">Ubuntu comes with a pre-made <strong className="text-text-charcoal">alias</strong> — a shortcut for a longer command. <Code>ll</Code> is just a shorter way to type <Code>ls -la</Code>:</P>
+        <P className="mb-4">Ubuntu comes with a pre-made <strong className="text-fg">alias</strong> — a shortcut for a longer command. <Code>ll</Code> is just a shorter way to type <Code>ls -la</Code>:</P>
 
         <Reveal>
-          <div className="p-6 rounded-2xl bg-accent-moss/[0.04] border border-accent-moss/15 mb-8">
+          <div className="p-6 rounded-2xl bg-accent/[0.04] border border-accent/15 mb-8">
             <div className="flex items-center gap-3 flex-wrap">
-              <code className="font-mono text-accent-moss font-bold text-lg">ll</code>
-              <span className="text-text-taupe font-serif text-lg">=</span>
-              <code className="font-mono text-accent-moss font-bold text-lg">ls -la</code>
-              <span className="text-text-taupe ml-2">They do the <strong className="text-text-charcoal">exact same thing</strong></span>
+              <code className="font-mono text-accent font-bold text-lg">ll</code>
+              <span className="text-fg-2 text-lg">=</span>
+              <code className="font-mono text-accent font-bold text-lg">ls -la</code>
+              <span className="text-fg-2 ml-2">They do the <strong className="text-fg">exact same thing</strong></span>
             </div>
-            <p className="text-sm text-text-taupe mt-3">Because typing <Code>ls -la</Code> many times a day gets tiring, Ubuntu includes this alias by default. It&apos;s defined in your <Code>~/.bashrc</Code> file.</p>
+            <p className="text-sm text-fg-2 mt-3">Because typing <Code>ls -la</Code> many times a day gets tiring, Ubuntu includes this alias by default. It&apos;s defined in your <Code>~/.bashrc</Code> file.</p>
           </div>
         </Reveal>
 
@@ -765,12 +662,12 @@ export default function LinuxFilesystem() {
             <Code>ls</Code> lists files. <Code>ls -l</Code> adds details. <Code>ls -a</Code> reveals hidden dot files. <Code>ls -la</Code> (or <Code>ll</Code>) does both — the most informative view. Use <Code>ll</Code> in Ubuntu for the full picture with minimal typing.
           </KeyTakeaway>
         </Reveal>
-      </Section>
+      </ArticleSection>
 
       {/* ══════════ QUIZ & FLASHCARDS ══════════ */}
-      <section className="relative bg-gradient-to-b from-bg-paper via-accent-sage/[0.03] to-bg-paper">
-        <div className="absolute inset-y-0 left-0 w-1 bg-gradient-to-b from-transparent via-accent-sage/10 to-transparent" />
-        <div className="absolute inset-y-0 right-0 w-1 bg-gradient-to-b from-transparent via-accent-moss/10 to-transparent" />
+      <section className="relative bg-gradient-to-b from-surface via-success/[0.03] to-surface">
+        <div className="absolute inset-y-0 left-0 w-1 bg-gradient-to-b from-transparent via-success/10 to-transparent" />
+        <div className="absolute inset-y-0 right-0 w-1 bg-gradient-to-b from-transparent via-accent/10 to-transparent" />
         <div className="px-6 md:px-12 lg:px-20 xl:px-32 py-20 md:py-28">
           <Reveal>
             <Quiz
@@ -788,7 +685,7 @@ export default function LinuxFilesystem() {
             <div className="mt-24 text-center">
               <motion.a
                 href="/fundamentals"
-                className="inline-flex items-center gap-2 px-8 py-4 bg-accent-moss text-white rounded-xl hover:bg-accent-moss/90 transition-colors font-serif text-lg shadow-lg shadow-accent-moss/20"
+                className="inline-flex items-center gap-2 px-8 py-4 bg-accent text-white rounded-xl hover:bg-accent/90 transition-colors text-lg shadow-lg shadow-accent/20"
                 whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -800,6 +697,6 @@ export default function LinuxFilesystem() {
           </Reveal>
         </div>
       </section>
-    </div>
+    </article>
   );
 }

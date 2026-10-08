@@ -1,10 +1,8 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { useActivePhase } from "@/hooks/useActivePhase";
+import { useReadingNav } from "@/hooks/useReadingNav";
 import { motion } from "framer-motion";
-import PhaseTimeline from "@/components/ui/PhaseTimeline";
-import ProgressSidebar from "@/components/ui/ProgressSidebar";
 import Terminal from "@/components/ui/Terminal";
 import KeyTakeaway from "@/components/ui/KeyTakeaway";
 import AnalogyBox from "@/components/ui/AnalogyBox";
@@ -15,7 +13,7 @@ import BeforeAfterComparison from "@/components/ui/BeforeAfterComparison";
 import Quiz from "@/components/ui/Quiz";
 import Flashcards from "@/components/ui/Flashcards";
 import Confetti, { CelebrationMessage } from "@/components/ui/Confetti";
-import SearchBar from "@/components/ui/SearchBar";
+import { iconFor } from "@/components/ui/icons";
 
 const phases = [
   { id: 0, label: "Overview" },
@@ -39,19 +37,12 @@ const phaseNames = [
 
 const LinuxSysAdminProject = () => {
   const [currentPhase, setCurrentPhase] = useState(0);
-  const phaseRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const phaseRefs = useRef<(HTMLElement | null)[]>([]);
   const [showConfetti, setShowConfetti] = useState(false);
   const [showCelebration, setShowCelebration] = useState(false);
   const [celebratedPhase, setCelebratedPhase] = useState<number | null>(null);
 
-  const scrollToPhase = (phaseId: number) => {
-    phaseRefs.current[phaseId]?.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    });
-  };
-
-  useActivePhase(phaseRefs, setCurrentPhase);
+  useReadingNav(phases, phaseRefs, setCurrentPhase);
 
   const triggerCelebration = (phaseId: number) => {
     if (celebratedPhase !== phaseId) {
@@ -62,9 +53,8 @@ const LinuxSysAdminProject = () => {
   };
 
   return (
-    <div className="bg-bg-paper">
+    <article>
       {/* Global Components */}
-      <SearchBar />
       <Confetti
         isActive={showConfetti}
         onComplete={() => setShowConfetti(false)}
@@ -79,25 +69,7 @@ const LinuxSysAdminProject = () => {
         onClose={() => setShowCelebration(false)}
       />
 
-      {/* Phase Timeline - Sticky at top */}
-      <PhaseTimeline
-        currentPhase={currentPhase}
-        onPhaseClick={scrollToPhase}
-        phases={phases}
-      />
-
-      {/* Progress Sidebar - Desktop only */}
-      <ProgressSidebar
-        currentPhase={currentPhase}
-        onPhaseClick={scrollToPhase}
-        phases={phases.map((p) => ({
-          ...p,
-          title: phaseNames[p.id],
-        }))}
-        projectSlug="linux-sysadmin"
-      />
-
-      <div className="container mx-auto px-6 md:px-12 lg:px-16 max-w-6xl py-16 lg:mr-64">
+      <div className="min-w-0">
         {/* ============================================================ */}
         {/* PHASE 0: Project Overview & Setup                            */}
         {/* ============================================================ */}
@@ -105,8 +77,8 @@ const LinuxSysAdminProject = () => {
           ref={(el) => {
             phaseRefs.current[0] = el;
           }}
-          data-phase="0"
-          className="mb-16 scroll-mt-32"
+          data-phase="0" id="phase-0"
+          className="scroll-mt-24 border-t border-border py-12 first:border-t-0 first:pt-0"
         >
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -115,15 +87,7 @@ const LinuxSysAdminProject = () => {
             viewport={{ once: true }}
           >
             {/* Hero Section */}
-            <h1 className="text-4xl md:text-5xl font-serif text-text-charcoal mb-4">
-              Linux SysAdmin Deep Dive: Building a Production-Ready Server from
-              Scratch
-            </h1>
-            <p className="text-xl text-text-taupe mb-2 font-serif italic">
-              From blank Ubuntu VM to fully monitored, hardened, Dockerized
-              server
-            </p>
-            <p className="text-lg text-text-taupe leading-relaxed mb-8">
+            <p className="text-lg text-fg-2 leading-relaxed mb-8">
               This project documents my journey of setting up an Ubuntu Server
               24.04 ARM64 virtual machine on UTM (MacBook Air), then
               systematically learning and applying every fundamental Linux
@@ -174,7 +138,7 @@ const LinuxSysAdminProject = () => {
 
             {/* Tech Stack Grid */}
             <div className="my-12">
-              <h2 className="text-2xl font-serif text-text-charcoal mb-6">
+              <h2 className="text-2xl font-display text-fg mb-6">
                 Technologies Used
               </h2>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -182,64 +146,64 @@ const LinuxSysAdminProject = () => {
                   {
                     name: "Ubuntu Server",
                     desc: "24.04 LTS ARM64",
-                    icon: "🐧",
+                    icon: "linux",
                   },
                   {
                     name: "Bash",
                     desc: "Shell scripting",
-                    icon: "📜",
+                    icon: "scroll",
                   },
                   {
                     name: "SSH",
                     desc: "Secure remote access",
-                    icon: "🔐",
+                    icon: "lock",
                   },
                   {
                     name: "UFW",
                     desc: "Firewall management",
-                    icon: "🛡",
+                    icon: "shield-check",
                   },
                   {
                     name: "systemd",
                     desc: "Service management",
-                    icon: "⚙️",
+                    icon: "gear",
                   },
                   {
                     name: "Docker",
                     desc: "Containerization",
-                    icon: "🐳",
+                    icon: "package",
                   },
                   {
                     name: "cron",
                     desc: "Task scheduling",
-                    icon: "⏰",
+                    icon: "clock",
                   },
                   {
                     name: "LVM",
                     desc: "Logical Volume Manager",
-                    icon: "💾",
+                    icon: "floppy-disk",
                   },
                 ].map((tech) => (
                   <div
                     key={tech.name}
-                    className="p-4 bg-bg-cream/60 border border-text-charcoal/10 rounded-lg text-center hover:shadow-md transition-shadow"
+                    className="p-4 bg-bg/60 border border-fg/10 rounded-lg text-center hover:shadow-md transition-shadow"
                   >
-                    <div className="text-3xl mb-2">{tech.icon}</div>
-                    <h3 className="font-serif text-text-charcoal font-semibold">
+                    <div className="text-3xl mb-2">{iconFor(tech.icon, { size: 22 })}</div>
+                    <h3 className="font-display text-fg font-semibold">
                       {tech.name}
                     </h3>
-                    <p className="text-sm text-text-taupe">{tech.desc}</p>
+                    <p className="text-sm text-fg-2">{tech.desc}</p>
                   </div>
                 ))}
               </div>
             </div>
 
             {/* Environment Info */}
-            <div className="my-8 p-6 bg-gradient-to-r from-accent-sage/[0.07] via-bg-paper to-accent-moss/[0.05] border border-text-charcoal/10 rounded-lg">
-              <h3 className="text-xl font-serif text-text-charcoal mb-3">
+            <div className="my-8 p-6 bg-gradient-to-r from-success/[0.07] via-surface to-accent/[0.05] border border-fg/10 rounded-lg">
+              <h3 className="text-xl font-display text-fg mb-3">
                 Lab Environment
               </h3>
-              <ul className="text-text-taupe space-y-2">
+              <ul className="text-fg-2 space-y-2">
                 <li>
                   <strong>OS:</strong> Ubuntu Server 24.04 LTS (ARM64)
                 </li>
@@ -320,20 +284,20 @@ const LinuxSysAdminProject = () => {
           ref={(el) => {
             phaseRefs.current[1] = el;
           }}
-          data-phase="1"
-          className="mb-16 scroll-mt-32"
+          data-phase="1" id="phase-1"
+          className="scroll-mt-24 border-t border-border py-12 first:border-t-0 first:pt-0"
         >
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
-            className="bg-gradient-to-br from-accent-sage/[0.07] via-bg-paper to-accent-moss/[0.05] p-8 rounded-xl"
+            className="bg-gradient-to-br from-success/[0.07] via-surface to-accent/[0.05] p-8 rounded-xl"
           >
-            <h2 className="text-3xl font-serif text-text-charcoal mb-4">
+            <h2 className="text-3xl font-display text-fg mb-4">
               Phase 1: Linux Foundations
             </h2>
-            <p className="text-lg text-text-taupe leading-relaxed mb-6">
+            <p className="text-lg text-fg-2 leading-relaxed mb-6">
               Before you can manage a Linux server, you need to understand its
               foundations: the filesystem hierarchy, user and group management,
               file permissions, and the package management system. This phase
@@ -387,7 +351,7 @@ const LinuxSysAdminProject = () => {
               ]}
             />
 
-            <AnalogyBox icon="🏙️">
+            <AnalogyBox>
               Think of the Linux filesystem like a city — <code>/etc</code> is
               the city hall (all the configuration), <code>/var/log</code> is
               the security cameras (all the logs), <code>/home</code> is the
@@ -400,13 +364,13 @@ const LinuxSysAdminProject = () => {
               title="filesystem-report.sh — Map the Entire Filesystem"
               index={0}
             >
-              <p className="text-text-taupe mb-4">
+              <p className="text-fg-2 mb-4">
                 This script generates a comprehensive report of the filesystem:
                 disk usage per directory, largest files, recently modified config
                 files, and open file descriptors. It is the first script I wrote
                 to get a feel for what lives where on a Linux system.
               </p>
-              <pre className="bg-gray-900 text-green-400 p-4 rounded-lg overflow-x-auto font-mono text-sm mb-4">
+              <pre className="bg-terminal text-terminal-ok p-4 rounded-lg overflow-x-auto font-mono text-sm mb-4">
                 {`#!/bin/bash
 # filesystem-report.sh — Generate a filesystem overview report
 set -euo pipefail
@@ -473,14 +437,14 @@ echo "Report generated at: $(date)"
               title="create-dev-user.sh — User & Group Management"
               index={1}
             >
-              <p className="text-text-taupe mb-4">
+              <p className="text-fg-2 mb-4">
                 This script demonstrates creating users, assigning groups,
                 setting up home directories, and configuring sudo access. On a
                 real server, user management is one of the most critical tasks —
                 every person who accesses the server needs their own account with
                 appropriate permissions.
               </p>
-              <pre className="bg-gray-900 text-green-400 p-4 rounded-lg overflow-x-auto font-mono text-sm mb-4">
+              <pre className="bg-terminal text-terminal-ok p-4 rounded-lg overflow-x-auto font-mono text-sm mb-4">
                 {`#!/bin/bash
 # create-dev-user.sh — Create a new developer user with proper setup
 set -euo pipefail
@@ -555,14 +519,14 @@ echo "User $USERNAME created successfully!"
               title="permission-audit.sh — File Permission Auditing"
               index={2}
             >
-              <p className="text-text-taupe mb-4">
+              <p className="text-fg-2 mb-4">
                 Permissions are the backbone of Linux security. This script
                 audits the system for common permission mistakes: world-writable
                 files, SUID/SGID binaries, files without owners, and insecure
                 home directories. Running this on a production server can reveal
                 serious security holes.
               </p>
-              <pre className="bg-gray-900 text-green-400 p-4 rounded-lg overflow-x-auto font-mono text-sm mb-4">
+              <pre className="bg-terminal text-terminal-ok p-4 rounded-lg overflow-x-auto font-mono text-sm mb-4">
                 {`#!/bin/bash
 # permission-audit.sh — Audit file permissions for security issues
 set -euo pipefail
@@ -637,13 +601,13 @@ done
               title="system-update.sh — Safe Package Updates"
               index={3}
             >
-              <p className="text-text-taupe mb-4">
+              <p className="text-fg-2 mb-4">
                 Keeping packages updated is one of the most important sysadmin
                 tasks. This script automates updates safely: it creates a
                 snapshot list of installed packages before updating, runs the
                 update, logs everything, and reports what changed.
               </p>
-              <pre className="bg-gray-900 text-green-400 p-4 rounded-lg overflow-x-auto font-mono text-sm mb-4">
+              <pre className="bg-terminal text-terminal-ok p-4 rounded-lg overflow-x-auto font-mono text-sm mb-4">
                 {`#!/bin/bash
 # system-update.sh — Safe, logged system update
 set -euo pipefail
@@ -753,20 +717,20 @@ echo "Log saved to: $LOG"
           ref={(el) => {
             phaseRefs.current[2] = el;
           }}
-          data-phase="2"
-          className="mb-16 scroll-mt-32"
+          data-phase="2" id="phase-2"
+          className="scroll-mt-24 border-t border-border py-12 first:border-t-0 first:pt-0"
         >
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
-            className="bg-gradient-to-br from-bg-cream via-bg-paper to-accent-sand/[0.05] p-8 rounded-xl"
+            className="bg-gradient-to-br from-bg via-surface to-accent/[0.05] p-8 rounded-xl"
           >
-            <h2 className="text-3xl font-serif text-text-charcoal mb-4">
+            <h2 className="text-3xl font-display text-fg mb-4">
               Phase 2: Bash Scripting
             </h2>
-            <p className="text-lg text-text-taupe leading-relaxed mb-6">
+            <p className="text-lg text-fg-2 leading-relaxed mb-6">
               Bash scripting is the duct tape of system administration. It lets
               you automate repetitive tasks, build monitoring tools, and chain
               commands together into powerful workflows. In this phase, I moved
@@ -820,7 +784,7 @@ echo "Log saved to: $LOG"
               ]}
             />
 
-            <AnalogyBox icon="📖">
+            <AnalogyBox>
               A bash script is like a recipe — you write the steps once, and the
               chef (Linux) follows them exactly every time. Variables are your
               ingredients, functions are cooking techniques, and pipes are like
@@ -833,14 +797,14 @@ echo "Log saved to: $LOG"
               title="log-analyzer.sh — Parse and Analyze System Logs"
               index={4}
             >
-              <p className="text-text-taupe mb-4">
+              <p className="text-fg-2 mb-4">
                 This script analyzes <code>/var/log/auth.log</code> and{" "}
                 <code>/var/log/syslog</code> to find failed login attempts, top
                 IP addresses hitting the server, error patterns, and SSH session
                 durations. It uses the classic Unix pipeline:{" "}
                 <code>grep | sort | uniq -c | sort -rn | head</code>.
               </p>
-              <pre className="bg-gray-900 text-green-400 p-4 rounded-lg overflow-x-auto font-mono text-sm mb-4">
+              <pre className="bg-terminal text-terminal-ok p-4 rounded-lg overflow-x-auto font-mono text-sm mb-4">
                 {`#!/bin/bash
 # log-analyzer.sh — Analyze system logs for security and errors
 set -euo pipefail
@@ -910,7 +874,7 @@ echo "active sessions found"
               title="backup-tool.sh — Incremental Backups with rsync"
               index={5}
             >
-              <p className="text-text-taupe mb-4">
+              <p className="text-fg-2 mb-4">
                 This script uses <code>rsync</code> with{" "}
                 <code>--link-dest</code> to create space-efficient incremental
                 backups. Unchanged files are hard-linked to the previous backup
@@ -919,7 +883,7 @@ echo "active sessions found"
                 changed. It also implements automatic rotation to keep only the
                 last 7 backups.
               </p>
-              <pre className="bg-gray-900 text-green-400 p-4 rounded-lg overflow-x-auto font-mono text-sm mb-4">
+              <pre className="bg-terminal text-terminal-ok p-4 rounded-lg overflow-x-auto font-mono text-sm mb-4">
                 {`#!/bin/bash
 # backup-tool.sh — Incremental backups with rsync and rotation
 set -euo pipefail
@@ -1002,7 +966,7 @@ du -sh "$CURRENT"
               title="system-monitor.sh — Live Dashboard with Color-Coded Thresholds"
               index={6}
             >
-              <p className="text-text-taupe mb-4">
+              <p className="text-fg-2 mb-4">
                 This script creates a live terminal dashboard that refreshes
                 every 5 seconds, showing CPU usage, memory, disk, top processes,
                 and network connections. Values are color-coded: green means
@@ -1010,7 +974,7 @@ du -sh "$CURRENT"
                 ANSI escape codes for colors and <code>tput</code> for cursor
                 control.
               </p>
-              <pre className="bg-gray-900 text-green-400 p-4 rounded-lg overflow-x-auto font-mono text-sm mb-4">
+              <pre className="bg-terminal text-terminal-ok p-4 rounded-lg overflow-x-auto font-mono text-sm mb-4">
                 {`#!/bin/bash
 # system-monitor.sh — Live color-coded system dashboard
 set -euo pipefail
@@ -1118,20 +1082,20 @@ done
           ref={(el) => {
             phaseRefs.current[3] = el;
           }}
-          data-phase="3"
-          className="mb-16 scroll-mt-32"
+          data-phase="3" id="phase-3"
+          className="scroll-mt-24 border-t border-border py-12 first:border-t-0 first:pt-0"
         >
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
-            className="bg-gradient-to-br from-accent-sage/[0.07] via-bg-paper to-accent-moss/[0.05] p-8 rounded-xl"
+            className="bg-gradient-to-br from-success/[0.07] via-surface to-accent/[0.05] p-8 rounded-xl"
           >
-            <h2 className="text-3xl font-serif text-text-charcoal mb-4">
+            <h2 className="text-3xl font-display text-fg mb-4">
               Phase 3: Process & Service Management
             </h2>
-            <p className="text-lg text-text-taupe leading-relaxed mb-6">
+            <p className="text-lg text-fg-2 leading-relaxed mb-6">
               Everything running on a Linux system is a process. Understanding
               how processes work, how to inspect them, how to manage them with
               systemd, and how to troubleshoot stuck or zombie processes is
@@ -1139,7 +1103,7 @@ done
               from PID 1 (systemd) to creating your own custom services.
             </p>
 
-            <AnalogyBox icon="👨‍🍳">
+            <AnalogyBox>
               A process is like a chef cooking — the program is the recipe book
               on the shelf, but a process is a chef actively cooking from that
               recipe. PID is the chef&apos;s employee badge number. You can have
@@ -1237,7 +1201,7 @@ done
               title="process-investigator.sh — Deep Dive into Any Process"
               index={7}
             >
-              <p className="text-text-taupe mb-4">
+              <p className="text-fg-2 mb-4">
                 This script takes a PID as input and provides a complete
                 investigation: the command that started it, its parent process,
                 open file descriptors, network connections, environment
@@ -1245,7 +1209,7 @@ done
                 from the <code>/proc</code> filesystem, which is the kernel&apos;s
                 window into every running process.
               </p>
-              <pre className="bg-gray-900 text-green-400 p-4 rounded-lg overflow-x-auto font-mono text-sm mb-4">
+              <pre className="bg-terminal text-terminal-ok p-4 rounded-lg overflow-x-auto font-mono text-sm mb-4">
                 {`#!/bin/bash
 # process-investigator.sh — Deep dive into a running process
 set -euo pipefail
@@ -1338,7 +1302,7 @@ awk '/VmRSS|VmSize/ {print $0}' /proc/$PID/status
               title="service-manager.sh — Create a Custom systemd Service"
               index={8}
             >
-              <p className="text-text-taupe mb-4">
+              <p className="text-fg-2 mb-4">
                 This script demonstrates creating a real systemd service from
                 scratch: it writes a unit file, registers it with systemd,
                 starts it, enables it on boot, and verifies it is running. This
@@ -1346,7 +1310,7 @@ awk '/VmRSS|VmSize/ {print $0}' /proc/$PID/status
                 production server. Understanding the systemd unit file format is
                 a core sysadmin skill.
               </p>
-              <pre className="bg-gray-900 text-green-400 p-4 rounded-lg overflow-x-auto font-mono text-sm mb-4">
+              <pre className="bg-terminal text-terminal-ok p-4 rounded-lg overflow-x-auto font-mono text-sm mb-4">
                 {`#!/bin/bash
 # service-manager.sh — Create and manage a custom systemd service
 set -euo pipefail
@@ -1459,7 +1423,7 @@ systemctl status $SERVICE_NAME --no-pager
               parent process.
             </DidYouKnow>
 
-            <AnalogyBox icon="🏷️">
+            <AnalogyBox>
               Think of PID 1 (systemd) as the general manager of a hotel.
               Every other process is a guest or staff member. When systemd
               starts, it reads its checklist (unit files) and launches all the
@@ -1478,20 +1442,20 @@ systemctl status $SERVICE_NAME --no-pager
           ref={(el) => {
             phaseRefs.current[4] = el;
           }}
-          data-phase="4"
-          className="mb-16 scroll-mt-32"
+          data-phase="4" id="phase-4"
+          className="scroll-mt-24 border-t border-border py-12 first:border-t-0 first:pt-0"
         >
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
-            className="bg-gradient-to-br from-bg-cream via-bg-paper to-accent-sand/[0.05] p-8 rounded-xl"
+            className="bg-gradient-to-br from-bg via-surface to-accent/[0.05] p-8 rounded-xl"
           >
-            <h2 className="text-3xl font-serif text-text-charcoal mb-4">
+            <h2 className="text-3xl font-display text-fg mb-4">
               Phase 4: Networking & Security
             </h2>
-            <p className="text-lg text-text-taupe leading-relaxed mb-6">
+            <p className="text-lg text-fg-2 leading-relaxed mb-6">
               A server connected to a network is a target. This phase covers
               hardening the server against attacks: configuring the UFW firewall,
               locking down SSH, running a comprehensive security audit, and
@@ -1651,7 +1615,7 @@ systemctl status $SERVICE_NAME --no-pager
               title="security-audit.sh — 10-Point Security Audit with Scoring"
               index={9}
             >
-              <p className="text-text-taupe mb-4">
+              <p className="text-fg-2 mb-4">
                 This script runs 10 security checks against the server and
                 calculates a score out of 10. Each check is a real security best
                 practice: SSH root login disabled, firewall active, no
@@ -1659,7 +1623,7 @@ systemctl status $SERVICE_NAME --no-pager
                 configured, and more. Running this regularly on a production
                 server helps catch configuration drift.
               </p>
-              <pre className="bg-gray-900 text-green-400 p-4 rounded-lg overflow-x-auto font-mono text-sm mb-4">
+              <pre className="bg-terminal text-terminal-ok p-4 rounded-lg overflow-x-auto font-mono text-sm mb-4">
                 {`#!/bin/bash
 # security-audit.sh — 10-check server security audit
 set -euo pipefail
@@ -1788,7 +1752,7 @@ echo "=== SCORE: $SCORE / $TOTAL ==="
               should install on any public server.
             </DidYouKnow>
 
-            <AnalogyBox icon="🏰">
+            <AnalogyBox>
               Think of server security like a medieval castle. The firewall (UFW)
               is the outer wall — it controls who can even approach. SSH
               hardening is the gatehouse — checking credentials before letting
@@ -1806,20 +1770,20 @@ echo "=== SCORE: $SCORE / $TOTAL ==="
           ref={(el) => {
             phaseRefs.current[5] = el;
           }}
-          data-phase="5"
-          className="mb-16 scroll-mt-32"
+          data-phase="5" id="phase-5"
+          className="scroll-mt-24 border-t border-border py-12 first:border-t-0 first:pt-0"
         >
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
-            className="bg-gradient-to-br from-accent-sage/[0.07] via-bg-paper to-accent-moss/[0.05] p-8 rounded-xl"
+            className="bg-gradient-to-br from-success/[0.07] via-surface to-accent/[0.05] p-8 rounded-xl"
           >
-            <h2 className="text-3xl font-serif text-text-charcoal mb-4">
+            <h2 className="text-3xl font-display text-fg mb-4">
               Phase 5: Storage & Disk Management
             </h2>
-            <p className="text-lg text-text-taupe leading-relaxed mb-6">
+            <p className="text-lg text-fg-2 leading-relaxed mb-6">
               Running out of disk space at 3 AM is every sysadmin&apos;s
               nightmare. This phase covers LVM (Logical Volume Manager) for
               flexible disk management, inode monitoring, swap configuration,
@@ -1827,7 +1791,7 @@ echo "=== SCORE: $SCORE / $TOTAL ==="
               problems before they become outages.
             </p>
 
-            <AnalogyBox icon="🏠">
+            <AnalogyBox>
               LVM is like having adjustable rooms in your house — instead of
               fixed walls (partitions), you can move walls and make rooms bigger
               without rebuilding the entire house. With traditional partitions,
@@ -1922,7 +1886,7 @@ echo "=== SCORE: $SCORE / $TOTAL ==="
               title="disk-monitor.sh — Comprehensive Disk Health Monitor"
               index={10}
             >
-              <p className="text-text-taupe mb-4">
+              <p className="text-fg-2 mb-4">
                 This script checks six aspects of disk health: filesystem usage,
                 inode usage, LVM free space, swap usage, the 10 largest files,
                 and log directory sizes. Each check has configurable thresholds
@@ -1930,7 +1894,7 @@ echo "=== SCORE: $SCORE / $TOTAL ==="
                 of script that runs via cron and sends alerts before a disk fills
                 up.
               </p>
-              <pre className="bg-gray-900 text-green-400 p-4 rounded-lg overflow-x-auto font-mono text-sm mb-4">
+              <pre className="bg-terminal text-terminal-ok p-4 rounded-lg overflow-x-auto font-mono text-sm mb-4">
                 {`#!/bin/bash
 # disk-monitor.sh — Comprehensive disk health check
 set -euo pipefail
@@ -2068,7 +2032,7 @@ du -sh /var/log/* 2>/dev/null | sort -rh | head -5
               <code>lsof +L1</code> to find deleted files still held open.
             </DidYouKnow>
 
-            <AnalogyBox icon="📋">
+            <AnalogyBox>
               Think of inodes like entries in a library catalog. Each book (file)
               needs a catalog entry that records its title, location, and
               checkout status. You can have empty shelves (free disk space) but
@@ -2086,20 +2050,20 @@ du -sh /var/log/* 2>/dev/null | sort -rh | head -5
           ref={(el) => {
             phaseRefs.current[6] = el;
           }}
-          data-phase="6"
-          className="mb-16 scroll-mt-32"
+          data-phase="6" id="phase-6"
+          className="scroll-mt-24 border-t border-border py-12 first:border-t-0 first:pt-0"
         >
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
-            className="bg-gradient-to-br from-bg-cream via-bg-paper to-accent-sand/[0.05] p-8 rounded-xl"
+            className="bg-gradient-to-br from-bg via-surface to-accent/[0.05] p-8 rounded-xl"
           >
-            <h2 className="text-3xl font-serif text-text-charcoal mb-4">
+            <h2 className="text-3xl font-display text-fg mb-4">
               Phase 6: Monitoring, Alerting & Docker
             </h2>
-            <p className="text-lg text-text-taupe leading-relaxed mb-6">
+            <p className="text-lg text-fg-2 leading-relaxed mb-6">
               The final phase ties everything together. First, we build an
               automated monitoring and alerting system that collects metrics via
               cron and triggers alerts when thresholds are breached. Then, we
@@ -2110,7 +2074,7 @@ du -sh /var/log/* 2>/dev/null | sort -rh | head -5
 
             {/* MONITORING SECTION */}
             <div className="mb-12">
-              <h3 className="text-2xl font-serif text-text-charcoal mb-4">
+              <h3 className="text-2xl font-display text-fg mb-4">
                 Monitoring & Alerting
               </h3>
 
@@ -2119,7 +2083,7 @@ du -sh /var/log/* 2>/dev/null | sort -rh | head -5
                 title="metrics-collector.sh — Automated Metrics via Cron"
                 index={11}
               >
-                <p className="text-text-taupe mb-4">
+                <p className="text-fg-2 mb-4">
                   This script collects system metrics (CPU, memory, disk, load
                   average, network connections, top processes) and appends them
                   to a CSV file. It is designed to run every 5 minutes via cron,
@@ -2127,7 +2091,7 @@ du -sh /var/log/* 2>/dev/null | sort -rh | head -5
                   analyze for trends, capacity planning, and post-incident
                   investigation.
                 </p>
-                <pre className="bg-gray-900 text-green-400 p-4 rounded-lg overflow-x-auto font-mono text-sm mb-4">
+                <pre className="bg-terminal text-terminal-ok p-4 rounded-lg overflow-x-auto font-mono text-sm mb-4">
                   {`#!/bin/bash
 # metrics-collector.sh — Collect system metrics to CSV
 set -euo pipefail
@@ -2214,7 +2178,7 @@ find /var/log/metrics -name "*.csv" -mtime +7 -delete 2>/dev/null
                 title="alert-monitor.sh — Threshold-Based Alerting"
                 index={12}
               >
-                <p className="text-text-taupe mb-4">
+                <p className="text-fg-2 mb-4">
                   This script reads the latest metrics and compares them against
                   configurable thresholds. When a metric exceeds its warning or
                   critical threshold, it logs an alert with the current values
@@ -2222,7 +2186,7 @@ find /var/log/metrics -name "*.csv" -mtime +7 -delete 2>/dev/null
                   or PagerDuty. It is the second half of the monitoring stack:
                   metrics-collector gathers data, alert-monitor acts on it.
                 </p>
-                <pre className="bg-gray-900 text-green-400 p-4 rounded-lg overflow-x-auto font-mono text-sm mb-4">
+                <pre className="bg-terminal text-terminal-ok p-4 rounded-lg overflow-x-auto font-mono text-sm mb-4">
                   {`#!/bin/bash
 # alert-monitor.sh — Check metrics against thresholds and alert
 set -euo pipefail
@@ -2300,11 +2264,11 @@ echo "Alert check complete. Log: $ALERT_LOG"
 
             {/* DOCKER SECTION */}
             <div className="mb-12">
-              <h3 className="text-2xl font-serif text-text-charcoal mb-4">
+              <h3 className="text-2xl font-display text-fg mb-4">
                 Docker Containerization
               </h3>
 
-              <AnalogyBox icon="📦">
+              <AnalogyBox>
                 A Docker container is like a shipping container — it packages
                 everything your app needs (code, libraries, config) into a
                 standardized box that runs the same way on any machine. Just
@@ -2446,18 +2410,18 @@ echo "Alert check complete. Log: $ALERT_LOG"
             </div>
 
             {/* What I Learned The Hard Way */}
-            <div className="my-12 p-8 bg-bg-cream/60 border border-text-charcoal/10 rounded-xl">
-              <h3 className="text-2xl font-serif text-text-charcoal mb-6">
+            <div className="my-12 p-8 bg-bg/60 border border-fg/10 rounded-xl">
+              <h3 className="text-2xl font-display text-fg mb-6">
                 What I Learned The Hard Way
               </h3>
               <div className="space-y-6">
                 <div className="flex gap-4">
                   <span className="text-2xl flex-shrink-0">1.</span>
                   <div>
-                    <p className="text-text-charcoal font-semibold mb-1">
+                    <p className="text-fg font-semibold mb-1">
                       Always test firewall rules before enabling UFW
                     </p>
-                    <p className="text-text-taupe">
+                    <p className="text-fg-2">
                       I locked myself out of my own VM once by enabling UFW
                       without allowing SSH first. Had to access the VM console
                       through UTM to fix it. On a remote cloud server, this
@@ -2468,10 +2432,10 @@ echo "Alert check complete. Log: $ALERT_LOG"
                 <div className="flex gap-4">
                   <span className="text-2xl flex-shrink-0">2.</span>
                   <div>
-                    <p className="text-text-charcoal font-semibold mb-1">
+                    <p className="text-fg font-semibold mb-1">
                       <code>rm -rf /</code> protection exists for a reason
                     </p>
-                    <p className="text-text-taupe">
+                    <p className="text-fg-2">
                       Modern Linux distributions have safeguards against{" "}
                       <code>rm -rf /</code>, but <code>rm -rf /*</code> (with
                       the asterisk) bypasses them. I learned to always
@@ -2484,10 +2448,10 @@ echo "Alert check complete. Log: $ALERT_LOG"
                 <div className="flex gap-4">
                   <span className="text-2xl flex-shrink-0">3.</span>
                   <div>
-                    <p className="text-text-charcoal font-semibold mb-1">
+                    <p className="text-fg font-semibold mb-1">
                       Bash scripts fail silently without <code>set -euo pipefail</code>
                     </p>
-                    <p className="text-text-taupe">
+                    <p className="text-fg-2">
                       I had a backup script that was silently failing for weeks
                       because a directory did not exist. Without{" "}
                       <code>set -e</code>, the script continued past the error
@@ -2499,10 +2463,10 @@ echo "Alert check complete. Log: $ALERT_LOG"
                 <div className="flex gap-4">
                   <span className="text-2xl flex-shrink-0">4.</span>
                   <div>
-                    <p className="text-text-charcoal font-semibold mb-1">
+                    <p className="text-fg font-semibold mb-1">
                       Log files can fill up a disk faster than you think
                     </p>
-                    <p className="text-text-taupe">
+                    <p className="text-fg-2">
                       A misconfigured service was logging every request at DEBUG
                       level, generating 2 GB of logs per hour. The disk filled
                       up overnight. I learned to always configure log rotation
@@ -2513,10 +2477,10 @@ echo "Alert check complete. Log: $ALERT_LOG"
                 <div className="flex gap-4">
                   <span className="text-2xl flex-shrink-0">5.</span>
                   <div>
-                    <p className="text-text-charcoal font-semibold mb-1">
+                    <p className="text-fg font-semibold mb-1">
                       Docker containers are ephemeral by default
                     </p>
-                    <p className="text-text-taupe">
+                    <p className="text-fg-2">
                       I stored important data inside a container, then ran{" "}
                       <code>docker rm</code> and lost everything. Containers
                       are disposable — any data that needs to persist must be
@@ -2540,10 +2504,10 @@ echo "Alert check complete. Log: $ALERT_LOG"
           viewport={{ once: true }}
           className="mb-16"
         >
-          <h2 className="text-3xl font-serif text-text-charcoal mb-6">
+          <h2 className="text-3xl font-display text-fg mb-6">
             Final Quiz: Test Your Knowledge
           </h2>
-          <p className="text-lg text-text-taupe mb-6">
+          <p className="text-lg text-fg-2 mb-6">
             10 questions covering every phase of the project. Score 80% or
             higher to celebrate!
           </p>
@@ -2683,10 +2647,10 @@ echo "Alert check complete. Log: $ALERT_LOG"
           viewport={{ once: true }}
           className="mb-16"
         >
-          <h2 className="text-3xl font-serif text-text-charcoal mb-6">
+          <h2 className="text-3xl font-display text-fg mb-6">
             Review Flashcards
           </h2>
-          <p className="text-lg text-text-taupe mb-6">
+          <p className="text-lg text-fg-2 mb-6">
             15 flashcards to help you memorize key Linux sysadmin concepts.
             Click a card to flip it.
           </p>
@@ -2766,20 +2730,20 @@ echo "Alert check complete. Log: $ALERT_LOG"
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
         >
-          <div className="my-16 p-8 bg-bg-cream/50 border border-text-charcoal/10 rounded-lg">
+          <div className="my-16 p-8 bg-bg/50 border border-fg/10 rounded-lg">
             <div className="flex items-center gap-4 mb-4">
               <svg
-                className="w-8 h-8 text-text-charcoal"
+                className="w-8 h-8 text-fg"
                 fill="currentColor"
                 viewBox="0 0 24 24"
               >
                 <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
               </svg>
-              <h3 className="text-2xl font-serif text-text-charcoal">
+              <h3 className="text-2xl font-display text-fg">
                 View Source Code
               </h3>
             </div>
-            <p className="text-text-taupe mb-4">
+            <p className="text-fg-2 mb-4">
               All scripts, configuration files, and documentation from this
               project are available on GitHub. Explore the complete source code,
               try the scripts on your own VM, and follow along with each phase.
@@ -2788,7 +2752,7 @@ echo "Alert check complete. Log: $ALERT_LOG"
               href="https://github.com/CharithKapuluru/linux-sysadmin-deep-dive"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-text-charcoal text-bg-paper rounded-lg hover:bg-accent-moss transition-colors font-mono text-sm"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-fg text-surface rounded-lg hover:bg-accent transition-colors font-mono text-sm"
             >
               <svg
                 className="w-5 h-5"
@@ -2815,7 +2779,7 @@ echo "Alert check complete. Log: $ALERT_LOG"
           </div>
         </motion.div>
       </div>
-    </div>
+    </article>
   );
 };
 

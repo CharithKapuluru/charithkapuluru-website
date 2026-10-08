@@ -1,10 +1,9 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { motion, useScroll } from "framer-motion";
-import { useActivePhase } from "@/hooks/useActivePhase";
-import ArticleNav from "@/components/ui/ArticleNav";
-import DropCap from "@/components/ui/DropCap";
+import { motion } from "framer-motion";
+import { useReadingNav } from "@/hooks/useReadingNav";
+import ArticleSection from "@/components/reading/ArticleSection";
 import KeyTakeaway from "@/components/ui/KeyTakeaway";
 import AnalogyBox from "@/components/ui/AnalogyBox";
 import DidYouKnow from "@/components/ui/DidYouKnow";
@@ -14,6 +13,7 @@ import Terminal from "@/components/ui/Terminal";
 import Quiz from "@/components/ui/Quiz";
 import Flashcards from "@/components/ui/Flashcards";
 import Confetti, { CelebrationMessage } from "@/components/ui/Confetti";
+import { iconFor } from "@/components/ui/icons";
 
 const sectionNames = [
   "What is chmod?",
@@ -25,24 +25,6 @@ const sectionNames = [
   "Special Bits",
 ];
 const navSections = sectionNames.map((label, i) => ({ id: i, label }));
-
-const sectionStyles = [
-  { bg: "bg-gradient-to-br from-accent-moss/[0.06] via-bg-paper to-accent-terracotta/[0.04]" },
-  { bg: "bg-bg-cream/40" },
-  { bg: "bg-gradient-to-br from-accent-terracotta/[0.04] via-bg-paper to-accent-sand/[0.05]" },
-  { bg: "bg-bg-paper" },
-  { bg: "bg-gradient-to-br from-accent-sage/[0.05] via-bg-paper to-accent-moss/[0.05]" },
-  { bg: "bg-bg-cream/40" },
-  { bg: "bg-gradient-to-br from-accent-terracotta/[0.04] via-bg-paper to-accent-sand/[0.05]" },
-];
-
-const accentColors = ["moss", "terracotta", "moss", "sage", "terracotta", "moss", "terracotta"];
-const accentLineColors: Record<string, string> = {
-  moss: "bg-accent-moss",
-  terracotta: "bg-accent-terracotta",
-  sage: "bg-accent-sage",
-  sand: "bg-accent-sand",
-};
 
 const quizQuestions = [
   {
@@ -118,27 +100,19 @@ const fadeUp = {
   visible: (i: number) => ({ opacity: 1, y: 0, transition: { duration: 0.55, delay: i * 0.1, ease: "easeOut" as const } }),
 };
 
-const Section = ({ id, index, children, sectionRef }: { id: string; index: number; children: React.ReactNode; sectionRef: (el: HTMLDivElement | null) => void }) => (
-  <section id={id} ref={sectionRef} className={`relative scroll-mt-14 ${sectionStyles[index]?.bg || "bg-bg-paper"}`}>
-    <div className="absolute inset-y-0 left-0 w-1 bg-gradient-to-b from-transparent via-accent-moss/10 to-transparent" />
-    <div className="absolute inset-y-0 right-0 w-1 bg-gradient-to-b from-transparent via-accent-terracotta/10 to-transparent" />
-    <div className="px-6 md:px-12 lg:px-20 xl:px-32 py-20 md:py-28">{children}</div>
-  </section>
-);
-
-const SectionTitle = ({ title, accent = "moss" }: { title: string; accent?: string }) => (
+const SectionTitle = ({ title }: { title: string }) => (
   <motion.div className="mb-12" initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-80px" }} variants={stagger}>
-    <motion.div className={`w-20 h-1.5 ${accentLineColors[accent] || "bg-accent-moss"} mb-6 rounded-full`} variants={fadeUp} custom={0} />
-    <motion.h2 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-serif text-text-charcoal leading-tight" variants={fadeUp} custom={1}>{title}</motion.h2>
+    <motion.div className="w-20 h-1.5 bg-accent mb-6 rounded-full" variants={fadeUp} custom={0} />
+    <motion.h2 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-display text-fg leading-tight" variants={fadeUp} custom={1}>{title}</motion.h2>
   </motion.div>
 );
 
 const H3 = ({ children }: { children: React.ReactNode }) => (
-  <motion.h3 className="text-xl md:text-2xl font-serif text-text-charcoal mt-14 mb-5" initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, margin: "-40px" }} transition={{ duration: 0.5 }}>{children}</motion.h3>
+  <motion.h3 className="text-xl md:text-2xl font-display text-fg mt-14 mb-5" initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, margin: "-40px" }} transition={{ duration: 0.5 }}>{children}</motion.h3>
 );
 
 const P = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (
-  <motion.p className={`text-text-taupe leading-relaxed ${className}`} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-40px" }} transition={{ duration: 0.5 }}>{children}</motion.p>
+  <motion.p className={`text-fg-2 leading-relaxed ${className}`} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-40px" }} transition={{ duration: 0.5 }}>{children}</motion.p>
 );
 
 const Reveal = ({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) => (
@@ -146,21 +120,21 @@ const Reveal = ({ children, delay = 0 }: { children: React.ReactNode; delay?: nu
 );
 
 const Code = ({ children }: { children: React.ReactNode }) => (
-  <code className="font-mono text-accent-moss bg-accent-moss/8 px-1.5 py-0.5 rounded text-[0.9em]">{children}</code>
+  <code className="font-mono text-accent bg-accent/8 px-1.5 py-0.5 rounded text-[0.9em]">{children}</code>
 );
 
 /* ── Permission number display ── */
 const PermNumber = ({ num, label, perms, color }: { num: string; label: string; perms: string; color: string }) => {
   const colors: Record<string, string> = {
-    owner: "border-accent-moss/20 bg-accent-moss/10",
-    group: "border-accent-terracotta/20 bg-accent-terracotta/10",
-    others: "border-accent-sand/30 bg-accent-sand/15",
+    owner: "border-accent/20 bg-accent/10",
+    group: "border-danger/20 bg-danger/10",
+    others: "border-accent/30 bg-accent/15",
   };
   return (
     <div className={`flex-1 text-center p-5 rounded-2xl border-2 ${colors[color] || colors.owner}`}>
-      <div className="text-5xl font-serif font-bold text-text-charcoal mb-2">{num}</div>
-      <div className="text-sm font-mono font-bold text-text-charcoal mb-1">{perms}</div>
-      <div className="text-xs text-text-olive font-serif">{label}</div>
+      <div className="text-5xl font-bold text-fg mb-2">{num}</div>
+      <div className="text-sm font-mono font-bold text-fg mb-1">{perms}</div>
+      <div className="text-xs text-fg-3">{label}</div>
     </div>
   );
 };
@@ -171,7 +145,7 @@ const PermBar = ({ r, w, x }: { r: boolean; w: boolean; x: boolean }) => (
     {[{ label: "r", on: r, desc: "read" }, { label: "w", on: w, desc: "write" }, { label: "x", on: x, desc: "execute" }].map((p) => (
       <motion.div
         key={p.label}
-        className={`px-3 py-1.5 rounded-lg font-mono text-sm font-bold ${p.on ? "bg-accent-moss/15 text-accent-moss border border-accent-moss/25" : "bg-text-charcoal/5 text-text-charcoal/30 border border-text-charcoal/10"}`}
+        className={`px-3 py-1.5 rounded-lg font-mono text-sm font-bold ${p.on ? "bg-accent/15 text-accent border border-accent/25" : "bg-fg/5 text-fg/30 border border-fg/10"}`}
         whileHover={{ scale: 1.05 }}
       >
         {p.on ? p.label : "-"}
@@ -182,103 +156,25 @@ const PermBar = ({ r, w, x }: { r: boolean; w: boolean; x: boolean }) => (
 
 export default function FilePermissions() {
   const [currentSection, setCurrentSection] = useState(0);
-  const sectionRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const sectionRefs = useRef<(HTMLElement | null)[]>([]);
   const [showConfetti, setShowConfetti] = useState(false);
   const [showCelebration, setShowCelebration] = useState(false);
-  const { scrollYProgress } = useScroll();
 
-  const scrollToSection = (id: number) => {
-    sectionRefs.current[id]?.scrollIntoView({ behavior: "smooth", block: "start" });
-  };
-
-  useActivePhase(sectionRefs, setCurrentSection);
+  useReadingNav(navSections, sectionRefs, setCurrentSection);
 
   return (
-    <div className="bg-bg-paper">
+    <article>
       <Confetti isActive={showConfetti} onComplete={() => setShowConfetti(false)} />
       <CelebrationMessage isVisible={showCelebration} phaseName="File Permissions" onClose={() => setShowCelebration(false)} />
 
-      <div className="fixed top-0 left-0 right-0 z-[60] h-0.5">
-        <motion.div className="h-full bg-accent-moss origin-left" style={{ scaleX: scrollYProgress }} />
-      </div>
-
-      <ArticleNav currentSection={currentSection} onSectionClick={scrollToSection} sections={navSections} />
-
-      {/* ═══ HERO ═══ */}
-      <header className="relative overflow-hidden min-h-[65vh] flex items-center">
-        <div className="absolute inset-0 bg-gradient-to-br from-accent-moss/[0.07] via-bg-paper to-accent-terracotta/[0.04]" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--color-accent-moss)_0%,_transparent_60%)] opacity-[0.06]" />
-        <div className="absolute inset-0" style={{ backgroundImage: "radial-gradient(circle, var(--color-text-charcoal) 1px, transparent 1px)", backgroundSize: "44px 44px", opacity: 0.03 }} />
-
-        <div className="relative w-full grid grid-cols-1 lg:grid-cols-5 gap-8 px-6 md:px-12 lg:px-20 xl:px-32 py-20 md:py-28">
-          <div className="lg:col-span-3 flex flex-col justify-center">
-            <motion.p className="text-sm font-mono uppercase tracking-[0.25em] text-accent-moss mb-5" initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-              Fundamentals
-            </motion.p>
-            <motion.h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-text-charcoal leading-[1.05] mb-8" initial={{ opacity: 0, y: 25 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.1 }}>
-              File{" "}
-              <span className="relative inline-block">
-                Permissions
-                <motion.span className="absolute -bottom-2 left-0 h-1 bg-accent-moss rounded-full" initial={{ width: 0 }} animate={{ width: "100%" }} transition={{ duration: 0.8, delay: 0.8 }} />
-              </span>
-            </motion.h1>
-            <motion.p className="text-lg md:text-xl text-text-taupe leading-relaxed mb-8 max-w-2xl" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.25 }}>
-              chmod demystified — who can read, write, and execute files, how permission numbers work, reading ls -l output, SSH key requirements, and advanced SUID/SGID/Sticky bits.
-            </motion.p>
-            <motion.div className="flex flex-wrap gap-6 pt-8 border-t border-text-charcoal/10" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.5 }}>
-              {[{ label: "7 sections", sub: "permissions mastery" }, { label: "~25 min", sub: "estimated reading" }, { label: "Beginner", sub: "no prerequisites" }].map((s) => (
-                <div key={s.label}>
-                  <p className="text-lg font-serif font-semibold text-text-charcoal">{s.label}</p>
-                  <p className="text-xs font-mono text-text-olive">{s.sub}</p>
-                </div>
-              ))}
-            </motion.div>
-          </div>
-
-          {/* Right — animated chmod visual */}
-          <div className="hidden lg:flex lg:col-span-2 items-center justify-center">
-            <motion.div className="w-full max-w-sm" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8, delay: 0.4 }}>
-              {/* chmod 755 visual */}
-              <div className="p-6 rounded-2xl bg-text-charcoal border border-text-charcoal/20 shadow-2xl mb-4">
-                <div className="font-mono text-green-400 mb-4 text-sm">$ chmod 755 myfile.sh</div>
-                <div className="flex gap-3 justify-center mb-4">
-                  {[
-                    { digit: "7", label: "Owner", perms: "rwx", color: "#3A5A40" },
-                    { digit: "5", label: "Group", perms: "r-x", color: "#BC4749" },
-                    { digit: "5", label: "Others", perms: "r-x", color: "#D4A373" },
-                  ].map((d, i) => (
-                    <motion.div
-                      key={d.label}
-                      className="flex-1 text-center p-3 rounded-xl border border-white/10"
-                      style={{ backgroundColor: `${d.color}22` }}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.7 + i * 0.15, duration: 0.4 }}
-                    >
-                      <div className="text-3xl font-bold mb-1" style={{ color: d.color }}>{d.digit}</div>
-                      <div className="text-xs font-mono text-gray-300">{d.perms}</div>
-                      <div className="text-xs text-gray-500 mt-1">{d.label}</div>
-                    </motion.div>
-                  ))}
-                </div>
-                <motion.div className="font-mono text-sm text-gray-300 text-center" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.3 }}>
-                  -rwxr-xr-x  myfile.sh
-                </motion.div>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-        <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-bg-paper to-transparent" />
-      </header>
-
       {/* ══════════ SECTION 0 — What is chmod? ══════════ */}
-      <Section id="section-0" index={0} sectionRef={(el) => { sectionRefs.current[0] = el; }}>
-        <SectionTitle title="What is chmod?" accent={accentColors[0]} />
+      <ArticleSection id="section-0" ref={(el) => { sectionRefs.current[0] = el; }}>
+        <SectionTitle title="What is chmod?" />
 
         <Reveal>
-          <DropCap accentColor="moss">
+          <p className="mb-6 text-lede leading-relaxed text-fg-2">
             chmod stands for <strong>Change Mode</strong>. It controls who can do what with a file or folder on Linux. Every file has permissions that determine whether the owner, the group, or everyone else can read it, write to it, or execute it.
-          </DropCap>
+          </p>
         </Reveal>
 
         <H3>The Three Types of People</H3>
@@ -287,9 +183,9 @@ export default function FilePermissions() {
         <Reveal>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-10">
             {[
-              { icon: "👤", title: "Owner", desc: "The person who created the file. Has the most control over it. Usually you.", color: "border-accent-moss/20 bg-accent-moss/[0.05]" },
-              { icon: "👥", title: "Group", desc: "A collection of users who share access. Files can belong to a group like 'developers' or 'admins'.", color: "border-accent-terracotta/20 bg-accent-terracotta/[0.04]" },
-              { icon: "🌍", title: "Others", desc: "Everyone else on the system — people who are neither the owner nor in the group.", color: "border-accent-sand/25 bg-accent-sand/[0.05]" },
+              { icon: "user", title: "Owner", desc: "The person who created the file. Has the most control over it. Usually you.", color: "border-accent/20 bg-accent/[0.05]" },
+              { icon: "users", title: "Group", desc: "A collection of users who share access. Files can belong to a group like 'developers' or 'admins'.", color: "border-danger/20 bg-danger/[0.04]" },
+              { icon: "globe", title: "Others", desc: "Everyone else on the system — people who are neither the owner nor in the group.", color: "border-accent/25 bg-accent/[0.05]" },
             ].map((c, i) => (
               <motion.div
                 key={c.title}
@@ -300,16 +196,16 @@ export default function FilePermissions() {
                 transition={{ delay: i * 0.1, duration: 0.4 }}
                 whileHover={{ y: -4, transition: { duration: 0.2 } }}
               >
-                <span className="text-4xl block mb-3">{c.icon}</span>
-                <p className="font-serif font-semibold text-text-charcoal text-lg mb-2">{c.title}</p>
-                <p className="text-sm text-text-taupe leading-relaxed">{c.desc}</p>
+                <span className="text-4xl block mb-3">{iconFor(c.icon, { size: 22 })}</span>
+                <p className="font-semibold text-fg text-lg mb-2">{c.title}</p>
+                <p className="text-sm text-fg-2 leading-relaxed">{c.desc}</p>
               </motion.div>
             ))}
           </div>
         </Reveal>
 
         <Reveal>
-          <AnalogyBox icon="🏢">
+          <AnalogyBox>
             <p>Think of a document at work. The <strong>Owner</strong> is the person who wrote it — they can edit, share, or delete it. The <strong>Group</strong> is the team (like &ldquo;Marketing&rdquo;) who can read it but not edit it. <strong>Others</strong> are everyone else in the company — maybe they can&apos;t see it at all.</p>
           </AnalogyBox>
         </Reveal>
@@ -319,38 +215,38 @@ export default function FilePermissions() {
             chmod controls file permissions for three categories: Owner (the creator), Group (a shared team), and Others (everyone else). Each gets their own set of permissions independently. A file can be wide open for the owner but locked for everyone else.
           </KeyTakeaway>
         </Reveal>
-      </Section>
+      </ArticleSection>
 
       {/* ══════════ SECTION 1 — The Three Permissions ══════════ */}
-      <Section id="section-1" index={1} sectionRef={(el) => { sectionRefs.current[1] = el; }}>
-        <SectionTitle title="The Three Permissions" accent={accentColors[1]} />
+      <ArticleSection id="section-1" ref={(el) => { sectionRefs.current[1] = el; }}>
+        <SectionTitle title="The Three Permissions" />
 
         <Reveal>
-          <DropCap accentColor="terracotta">
+          <p className="mb-6 text-lede leading-relaxed text-fg-2">
             For each of the three types of people (owner, group, others), there are exactly three possible permissions: read, write, and execute. Each can be independently turned on or off.
-          </DropCap>
+          </p>
         </Reveal>
 
         <Reveal>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-10">
             {[
               {
-                letter: "r", name: "Read", value: "4", icon: "👁️",
+                letter: "r", name: "Read", value: "4", icon: "eye",
                 forFile: "Open and view the file contents",
                 forDir: "List what's inside the directory (ls)",
-                color: "border-accent-moss/20 bg-accent-moss/[0.05]",
+                color: "border-accent/20 bg-accent/[0.05]",
               },
               {
-                letter: "w", name: "Write", value: "2", icon: "✏️",
+                letter: "w", name: "Write", value: "2", icon: "pencil",
                 forFile: "Modify, edit, or delete the file",
                 forDir: "Create, delete, or rename files inside",
-                color: "border-accent-terracotta/20 bg-accent-terracotta/[0.04]",
+                color: "border-danger/20 bg-danger/[0.04]",
               },
               {
-                letter: "x", name: "Execute", value: "1", icon: "▶️",
+                letter: "x", name: "Execute", value: "1", icon: "play",
                 forFile: "Run it as a program or script",
                 forDir: "Enter the directory (cd)",
-                color: "border-accent-sand/25 bg-accent-sand/[0.05]",
+                color: "border-accent/25 bg-accent/[0.05]",
               },
             ].map((p, i) => (
               <motion.div
@@ -363,21 +259,21 @@ export default function FilePermissions() {
                 whileHover={{ y: -4 }}
               >
                 <div className="flex items-center justify-between mb-4">
-                  <code className="font-mono text-4xl font-bold text-text-charcoal">{p.letter}</code>
+                  <code className="font-mono text-4xl font-bold text-fg">{p.letter}</code>
                   <div className="text-right">
-                    <span className="text-3xl">{p.icon}</span>
-                    <p className="text-xs font-mono text-text-olive mt-1">value = {p.value}</p>
+                    <span className="text-3xl">{iconFor(p.icon, { size: 22 })}</span>
+                    <p className="text-xs font-mono text-fg-3 mt-1">value = {p.value}</p>
                   </div>
                 </div>
-                <p className="font-serif font-semibold text-text-charcoal mb-4">{p.name}</p>
+                <p className="font-semibold text-fg mb-4">{p.name}</p>
                 <div className="space-y-2">
                   <div>
-                    <p className="text-xs font-mono uppercase tracking-wider text-text-olive mb-1">For a File</p>
-                    <p className="text-sm text-text-taupe">{p.forFile}</p>
+                    <p className="text-xs font-mono uppercase tracking-wider text-fg-3 mb-1">For a File</p>
+                    <p className="text-sm text-fg-2">{p.forFile}</p>
                   </div>
                   <div>
-                    <p className="text-xs font-mono uppercase tracking-wider text-text-olive mb-1">For a Directory</p>
-                    <p className="text-sm text-text-taupe">{p.forDir}</p>
+                    <p className="text-xs font-mono uppercase tracking-wider text-fg-3 mb-1">For a Directory</p>
+                    <p className="text-sm text-fg-2">{p.forDir}</p>
                   </div>
                 </div>
               </motion.div>
@@ -389,16 +285,16 @@ export default function FilePermissions() {
         <P className="mb-6">Each permission has a numeric value. You add them together to get the permission number for each person:</P>
 
         <Reveal>
-          <div className="p-6 rounded-2xl bg-bg-cream/60 border border-text-charcoal/8 mb-8 overflow-x-auto">
+          <div className="p-6 rounded-2xl bg-bg/60 border border-fg/8 mb-8 overflow-x-auto">
             <table className="w-full font-mono text-sm">
               <thead>
-                <tr className="border-b border-text-charcoal/10">
-                  <th className="text-left py-2 pr-4 text-text-olive font-normal">Permission</th>
-                  <th className="text-left py-2 pr-4 text-text-olive font-normal">Value</th>
-                  <th className="text-left py-2 text-text-olive font-normal">Means</th>
+                <tr className="border-b border-fg/10">
+                  <th className="text-left py-2 pr-4 text-fg-3 font-normal">Permission</th>
+                  <th className="text-left py-2 pr-4 text-fg-3 font-normal">Value</th>
+                  <th className="text-left py-2 text-fg-3 font-normal">Means</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-text-charcoal/5">
+              <tbody className="divide-y divide-fg/5">
                 {[
                   { p: "r", v: "4", m: "Can read the file" },
                   { p: "w", v: "2", m: "Can write/modify the file" },
@@ -409,9 +305,9 @@ export default function FilePermissions() {
                   { p: "-", v: "0", m: "No access at all" },
                 ].map((row) => (
                   <tr key={row.p}>
-                    <td className="py-2 pr-4"><span className="text-accent-moss font-bold">{row.p}</span></td>
-                    <td className="py-2 pr-4 text-accent-terracotta">{row.v}</td>
-                    <td className="py-2 text-text-taupe font-sans">{row.m}</td>
+                    <td className="py-2 pr-4"><span className="text-accent font-bold">{row.p}</span></td>
+                    <td className="py-2 pr-4 text-danger">{row.v}</td>
+                    <td className="py-2 text-fg-2 font-sans">{row.m}</td>
                   </tr>
                 ))}
               </tbody>
@@ -424,16 +320,16 @@ export default function FilePermissions() {
             r=4, w=2, x=1. Add them to get permission numbers. 7 = full access (4+2+1). 6 = read+write. 5 = read+execute. 4 = read only. 0 = no access. These three digits (one per person type) make up every chmod command.
           </KeyTakeaway>
         </Reveal>
-      </Section>
+      </ArticleSection>
 
       {/* ══════════ SECTION 2 — Reading chmod Numbers ══════════ */}
-      <Section id="section-2" index={2} sectionRef={(el) => { sectionRefs.current[2] = el; }}>
-        <SectionTitle title="Reading chmod Numbers" accent={accentColors[2]} />
+      <ArticleSection id="section-2" ref={(el) => { sectionRefs.current[2] = el; }}>
+        <SectionTitle title="Reading chmod Numbers" />
 
         <Reveal>
-          <DropCap accentColor="moss">
+          <p className="mb-6 text-lede leading-relaxed text-fg-2">
             Now that you know the permission values, reading any chmod command becomes straightforward. Every chmod command has 3 digits — one for owner, one for group, one for others.
-          </DropCap>
+          </p>
         </Reveal>
 
         <H3>chmod 754 — A Full Example</H3>
@@ -458,37 +354,37 @@ export default function FilePermissions() {
             ].map((row, i) => (
               <motion.div
                 key={row.chmod}
-                className={`p-5 rounded-2xl border ${row.danger ? "border-accent-terracotta/20 bg-accent-terracotta/[0.03]" : "border-text-charcoal/8 bg-bg-paper"} hover:shadow-md transition-all`}
+                className={`p-5 rounded-2xl border ${row.danger ? "border-danger/20 bg-danger/[0.03]" : "border-fg/8 bg-surface"} hover:shadow-md transition-all`}
                 initial={{ opacity: 0, x: -20 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.08, duration: 0.4 }}
               >
                 <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-                  <code className={`font-mono font-bold text-lg flex-shrink-0 ${row.danger ? "text-accent-terracotta" : "text-accent-moss"}`}>{row.chmod}</code>
+                  <code className={`font-mono font-bold text-lg flex-shrink-0 ${row.danger ? "text-danger" : "text-accent"}`}>{row.chmod}</code>
                   <div className="flex gap-6 flex-wrap">
                     <div>
-                      <p className="text-xs font-mono text-text-olive mb-1">Owner</p>
+                      <p className="text-xs font-mono text-fg-3 mb-1">Owner</p>
                       <PermBar r={row.owner[0]} w={row.owner[1]} x={row.owner[2]} />
                     </div>
                     <div>
-                      <p className="text-xs font-mono text-text-olive mb-1">Group</p>
+                      <p className="text-xs font-mono text-fg-3 mb-1">Group</p>
                       <PermBar r={row.group[0]} w={row.group[1]} x={row.group[2]} />
                     </div>
                     <div>
-                      <p className="text-xs font-mono text-text-olive mb-1">Others</p>
+                      <p className="text-xs font-mono text-fg-3 mb-1">Others</p>
                       <PermBar r={row.others[0]} w={row.others[1]} x={row.others[2]} />
                     </div>
                   </div>
                 </div>
-                <p className={`text-sm mt-3 ${row.danger ? "text-accent-terracotta" : "text-text-taupe"}`}>{row.desc}</p>
+                <p className={`text-sm mt-3 ${row.danger ? "text-danger" : "text-fg-2"}`}>{row.desc}</p>
               </motion.div>
             ))}
           </div>
         </Reveal>
 
         <Reveal>
-          <AnalogyBox icon="🏢">
+          <AnalogyBox>
             <p><strong>chmod 700</strong> = Locked in YOUR personal drawer. Only you can see it. <br />
             <strong>chmod 755</strong> = Pinned on the notice board. Everyone can READ it, but only you can EDIT it. <br />
             <strong>chmod 777</strong> = Anybody can read it, edit it, and do whatever they want. (Not safe!) <br />
@@ -520,45 +416,45 @@ export default function FilePermissions() {
             chmod 3-digit format: digit 1 = owner, digit 2 = group, digit 3 = others. Each digit is the sum of r(4) + w(2) + x(1). 7 = full, 5 = read+execute, 4 = read only, 0 = no access. Most files are 644 (owner rw, others r). Most scripts are 755 (owner rwx, others rx). Private keys are 600.
           </KeyTakeaway>
         </Reveal>
-      </Section>
+      </ArticleSection>
 
       {/* ══════════ SECTION 3 — Permission Strings ══════════ */}
-      <Section id="section-3" index={3} sectionRef={(el) => { sectionRefs.current[3] = el; }}>
-        <SectionTitle title="Reading Permission Strings" accent={accentColors[3]} />
+      <ArticleSection id="section-3" ref={(el) => { sectionRefs.current[3] = el; }}>
+        <SectionTitle title="Reading Permission Strings" />
 
         <Reveal>
-          <DropCap accentColor="sage">
+          <p className="mb-6 text-lede leading-relaxed text-fg-2">
             When you run ls -l, you see permission strings like <Code>-rwxr-xr--</Code>. At first they look cryptic, but they follow a simple pattern you can decode in seconds once you know the structure.
-          </DropCap>
+          </p>
         </Reveal>
 
         <H3>The Permission String Structure</H3>
         <Reveal>
-          <div className="p-5 rounded-2xl bg-text-charcoal/[0.03] border border-text-charcoal/8 mb-6 overflow-x-auto">
-            <code className="font-mono text-base text-text-charcoal">-rwxr-xr--  1  charith  charith  1024  Feb 18 10:30  notes.txt</code>
+          <div className="p-5 rounded-2xl bg-fg/[0.03] border border-fg/8 mb-6 overflow-x-auto">
+            <code className="font-mono text-base text-fg">-rwxr-xr--  1  charith  charith  1024  Feb 18 10:30  notes.txt</code>
           </div>
         </Reveal>
 
         <Reveal>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
             {[
-              { chars: "-", label: "Type", desc: "'-' = regular file\n'd' = directory", color: "bg-accent-sand/15" },
-              { chars: "rwx", label: "Owner", desc: "r=read, w=write, x=execute\n7 = full access", color: "bg-accent-moss/10" },
-              { chars: "r-x", label: "Group", desc: "r=read, -=no write, x=execute\n5 = read+execute", color: "bg-accent-terracotta/8" },
-              { chars: "r--", label: "Others", desc: "r=read, -=no write, -=no execute\n4 = read only", color: "bg-accent-sage/10" },
+              { chars: "-", label: "Type", desc: "'-' = regular file\n'd' = directory", color: "bg-accent/15" },
+              { chars: "rwx", label: "Owner", desc: "r=read, w=write, x=execute\n7 = full access", color: "bg-accent/10" },
+              { chars: "r-x", label: "Group", desc: "r=read, -=no write, x=execute\n5 = read+execute", color: "bg-danger/8" },
+              { chars: "r--", label: "Others", desc: "r=read, -=no write, -=no execute\n4 = read only", color: "bg-success/10" },
             ].map((s, i) => (
               <motion.div
                 key={s.label}
-                className={`p-5 rounded-2xl border border-text-charcoal/8 ${s.color} text-center`}
+                className={`p-5 rounded-2xl border border-fg/8 ${s.color} text-center`}
                 initial={{ opacity: 0, y: 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
                 whileHover={{ y: -3 }}
               >
-                <code className="font-mono text-2xl font-bold text-text-charcoal block mb-2">{s.chars}</code>
-                <p className="font-serif font-semibold text-text-charcoal mb-2">{s.label}</p>
-                <p className="text-xs text-text-taupe whitespace-pre-line leading-relaxed">{s.desc}</p>
+                <code className="font-mono text-2xl font-bold text-fg block mb-2">{s.chars}</code>
+                <p className="font-semibold text-fg mb-2">{s.label}</p>
+                <p className="text-xs text-fg-2 whitespace-pre-line leading-relaxed">{s.desc}</p>
               </motion.div>
             ))}
           </div>
@@ -605,16 +501,16 @@ export default function FilePermissions() {
             Permission strings have 10 characters: 1 type character + 3 owner + 3 group + 3 others. <Code>d</Code> = directory, <Code>-</Code> = regular file. Each group of 3 shows r (read), w (write), x (execute), or <Code>-</Code> (no permission). Read them left to right: type, owner, group, others.
           </KeyTakeaway>
         </Reveal>
-      </Section>
+      </ArticleSection>
 
       {/* ══════════ SECTION 4 — Common Examples ══════════ */}
-      <Section id="section-4" index={4} sectionRef={(el) => { sectionRefs.current[4] = el; }}>
-        <SectionTitle title="Common Examples & Real-World Use" accent={accentColors[4]} />
+      <ArticleSection id="section-4" ref={(el) => { sectionRefs.current[4] = el; }}>
+        <SectionTitle title="Common Examples & Real-World Use" />
 
         <Reveal>
-          <DropCap accentColor="terracotta">
+          <p className="mb-6 text-lede leading-relaxed text-fg-2">
             Let&apos;s connect everything to real situations you&apos;ll encounter. These are the most common permission patterns and exactly when and why you&apos;d use each one.
-          </DropCap>
+          </p>
         </Reveal>
 
         <Reveal>
@@ -625,54 +521,54 @@ export default function FilePermissions() {
                 chmod: "600",
                 str: "-rw-------",
                 why: "ONLY you can read and write. No group, no others. If anyone else can read your private key, SSH refuses to use it — it's compromised.",
-                icon: "🔑",
+                icon: "key",
               },
               {
                 scenario: "A shell script you want to run",
                 chmod: "755",
                 str: "-rwxr-xr-x",
                 why: "You have full control (edit + run). Others can run it but not modify it. Standard for publicly available programs.",
-                icon: "📜",
+                icon: "scroll",
               },
               {
                 scenario: "A website config file",
                 chmod: "644",
                 str: "-rw-r--r--",
                 why: "You can edit it. Web server process (different user) can read it. Nobody else can write to it. Standard for non-executable files.",
-                icon: "⚙️",
+                icon: "gear",
               },
               {
                 scenario: "Your ~/.ssh/ directory",
                 chmod: "700",
                 str: "drwx------",
                 why: "Only you can see what's inside. No group, no others. SSH requires this — it won't work if others can list your .ssh folder.",
-                icon: "📁",
+                icon: "folder",
               },
               {
                 scenario: "A shared team folder",
                 chmod: "775",
                 str: "drwxrwxr-x",
                 why: "You and your group can do everything (create, delete, edit). Others can only read. Good for collaborative team directories.",
-                icon: "👥",
+                icon: "users",
               },
             ].map((item, i) => (
               <motion.div
                 key={item.chmod}
-                className="p-6 rounded-2xl border border-text-charcoal/8 bg-bg-paper hover:border-accent-moss/15 hover:shadow-md transition-all"
+                className="p-6 rounded-2xl border border-fg/8 bg-surface hover:border-accent/15 hover:shadow-md transition-all"
                 initial={{ opacity: 0, y: 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.08 }}
               >
                 <div className="flex items-start gap-4">
-                  <span className="text-3xl flex-shrink-0">{item.icon}</span>
+                  <span className="text-3xl flex-shrink-0">{iconFor(item.icon, { size: 22 })}</span>
                   <div className="flex-1">
                     <div className="flex flex-wrap items-center gap-3 mb-2">
-                      <p className="font-serif font-semibold text-text-charcoal">{item.scenario}</p>
-                      <code className="font-mono text-sm text-accent-moss bg-accent-moss/8 px-2 py-0.5 rounded">chmod {item.chmod}</code>
-                      <code className="font-mono text-xs text-text-olive bg-bg-cream px-2 py-0.5 rounded">{item.str}</code>
+                      <p className="font-semibold text-fg">{item.scenario}</p>
+                      <code className="font-mono text-sm text-accent bg-accent/8 px-2 py-0.5 rounded">chmod {item.chmod}</code>
+                      <code className="font-mono text-xs text-fg-3 bg-bg px-2 py-0.5 rounded">{item.str}</code>
                     </div>
-                    <p className="text-sm text-text-taupe leading-relaxed">{item.why}</p>
+                    <p className="text-sm text-fg-2 leading-relaxed">{item.why}</p>
                   </div>
                 </div>
               </motion.div>
@@ -685,16 +581,16 @@ export default function FilePermissions() {
             The most important chmod values to memorize: <Code>600</Code> for private files (SSH keys), <Code>700</Code> for private directories (.ssh/), <Code>644</Code> for config files, <Code>755</Code> for scripts and programs. These cover 90% of real-world situations.
           </KeyTakeaway>
         </Reveal>
-      </Section>
+      </ArticleSection>
 
       {/* ══════════ SECTION 5 — SSH Permissions ══════════ */}
-      <Section id="section-5" index={5} sectionRef={(el) => { sectionRefs.current[5] = el; }}>
-        <SectionTitle title="SSH & Permissions" accent={accentColors[5]} />
+      <ArticleSection id="section-5" ref={(el) => { sectionRefs.current[5] = el; }}>
+        <SectionTitle title="SSH & Permissions" />
 
         <Reveal>
-          <DropCap accentColor="moss">
+          <p className="mb-6 text-lede leading-relaxed text-fg-2">
             SSH has the strictest permission requirements of any common tool. It will flat-out refuse to work if your key files have incorrect permissions — this is intentional, and it makes you safer.
-          </DropCap>
+          </p>
         </Reveal>
 
         <Reveal>
@@ -744,16 +640,16 @@ export default function FilePermissions() {
             SSH requires: <Code>~/.ssh/</Code> = 700, private key = 600, public key = 644, authorized_keys = 600. If you get SSH permission errors, these are the first thing to check and fix. SSH refuses loose permissions as a security feature — it&apos;s protecting your access.
           </KeyTakeaway>
         </Reveal>
-      </Section>
+      </ArticleSection>
 
       {/* ══════════ SECTION 6 — Special Bits ══════════ */}
-      <Section id="section-6" index={6} sectionRef={(el) => { sectionRefs.current[6] = el; }}>
-        <SectionTitle title="Special Permission Bits" accent={accentColors[6]} />
+      <ArticleSection id="section-6" ref={(el) => { sectionRefs.current[6] = el; }}>
+        <SectionTitle title="Special Permission Bits" />
 
         <Reveal>
-          <DropCap accentColor="terracotta">
+          <p className="mb-6 text-lede leading-relaxed text-fg-2">
             Beyond the standard 3 digits, chmod can take a 4th digit at the front for three special permission bits: SUID, SGID, and the Sticky Bit. These are advanced but important — you&apos;ll see them on real systems.
-          </DropCap>
+          </p>
         </Reveal>
 
         <Reveal>
@@ -763,31 +659,31 @@ export default function FilePermissions() {
                 digit: "4",
                 name: "SUID — Set User ID",
                 code: "chmod 4755",
-                icon: "🎫",
+                icon: "ticket",
                 what: "When you run this file, it runs as the file's OWNER — not as you.",
                 example: "The passwd command lets regular users change their own password. But passwords are stored in /etc/shadow, which only root can edit. passwd has SUID set — so when you run it, it temporarily runs as root to edit the shadow file.",
                 analogy: "You're an employee, but you have a special key card that temporarily gives you manager-level access for one specific task only.",
-                color: "border-accent-moss/20 bg-accent-moss/[0.04]",
+                color: "border-accent/20 bg-accent/[0.04]",
               },
               {
                 digit: "2",
                 name: "SGID — Set Group ID",
                 code: "chmod 2775",
-                icon: "🏷️",
+                icon: "tag",
                 what: "New files created inside this folder automatically inherit the folder's group instead of the creator's group.",
                 example: "A shared team project folder with SGID set: when any developer creates a file inside it, it gets tagged with the 'developers' group automatically — even if that developer normally belongs to a different group.",
                 analogy: "A shared team folder — anything you put inside automatically gets tagged with the team name, not your personal name.",
-                color: "border-accent-terracotta/15 bg-accent-terracotta/[0.03]",
+                color: "border-danger/15 bg-danger/[0.03]",
               },
               {
                 digit: "1",
                 name: "Sticky Bit",
                 code: "chmod 1777",
-                icon: "📌",
+                icon: "pin",
                 what: "In a shared folder, you can only delete YOUR OWN files — not other people's.",
                 example: "/tmp is a folder where ALL users can create temporary files. Without sticky bit, anyone could delete anyone else's files. With chmod 1777 (sticky), you can only delete files you own.",
                 analogy: "A community fridge at work. Everyone can put their lunch in it, but you can only throw away your own food — not someone else's.",
-                color: "border-accent-sand/25 bg-accent-sand/[0.04]",
+                color: "border-accent/25 bg-accent/[0.04]",
               },
             ].map((bit, i) => (
               <motion.div
@@ -800,18 +696,18 @@ export default function FilePermissions() {
               >
                 <div className="p-6">
                   <div className="flex items-start gap-4 mb-4">
-                    <span className="text-4xl flex-shrink-0">{bit.icon}</span>
+                    <span className="text-4xl flex-shrink-0">{iconFor(bit.icon, { size: 22 })}</span>
                     <div>
                       <div className="flex flex-wrap items-center gap-3 mb-1">
-                        <span className="font-serif font-bold text-xl text-text-charcoal">4th digit = {bit.digit}</span>
-                        <code className="font-mono text-sm text-accent-moss bg-accent-moss/8 px-2 py-0.5 rounded">{bit.code}</code>
+                        <span className="font-bold text-xl text-fg">4th digit = {bit.digit}</span>
+                        <code className="font-mono text-sm text-accent bg-accent/8 px-2 py-0.5 rounded">{bit.code}</code>
                       </div>
-                      <p className="font-serif text-lg text-text-charcoal">{bit.name}</p>
+                      <p className="text-lg text-fg">{bit.name}</p>
                     </div>
                   </div>
-                  <p className="text-text-taupe leading-relaxed mb-3"><strong className="text-text-charcoal">What it does:</strong> {bit.what}</p>
-                  <p className="text-text-taupe leading-relaxed mb-3"><strong className="text-text-charcoal">Real example:</strong> {bit.example}</p>
-                  <p className="text-sm text-text-olive italic"><strong className="text-text-charcoal not-italic">Analogy:</strong> {bit.analogy}</p>
+                  <p className="text-fg-2 leading-relaxed mb-3"><strong className="text-fg">What it does:</strong> {bit.what}</p>
+                  <p className="text-fg-2 leading-relaxed mb-3"><strong className="text-fg">Real example:</strong> {bit.example}</p>
+                  <p className="text-sm text-fg-3 italic"><strong className="text-fg not-italic">Analogy:</strong> {bit.analogy}</p>
                 </div>
               </motion.div>
             ))}
@@ -836,12 +732,12 @@ export default function FilePermissions() {
             Special bits (4th digit): SUID(4) makes files run as their owner — used for commands like passwd that need temporary root access. SGID(2) auto-tags new files with the folder&apos;s group — great for team projects. Sticky Bit(1) protects shared folders so users can only delete their own files — used on /tmp.
           </KeyTakeaway>
         </Reveal>
-      </Section>
+      </ArticleSection>
 
       {/* ══════════ QUIZ & FLASHCARDS ══════════ */}
-      <section className="relative bg-gradient-to-b from-bg-paper via-accent-moss/[0.03] to-bg-paper">
-        <div className="absolute inset-y-0 left-0 w-1 bg-gradient-to-b from-transparent via-accent-moss/10 to-transparent" />
-        <div className="absolute inset-y-0 right-0 w-1 bg-gradient-to-b from-transparent via-accent-terracotta/10 to-transparent" />
+      <section className="relative bg-gradient-to-b from-surface via-accent/[0.03] to-surface">
+        <div className="absolute inset-y-0 left-0 w-1 bg-gradient-to-b from-transparent via-accent/10 to-transparent" />
+        <div className="absolute inset-y-0 right-0 w-1 bg-gradient-to-b from-transparent via-danger/10 to-transparent" />
         <div className="px-6 md:px-12 lg:px-20 xl:px-32 py-20 md:py-28">
           <Reveal>
             <Quiz
@@ -859,7 +755,7 @@ export default function FilePermissions() {
             <div className="mt-24 text-center">
               <motion.a
                 href="/fundamentals"
-                className="inline-flex items-center gap-2 px-8 py-4 bg-accent-moss text-white rounded-xl hover:bg-accent-moss/90 transition-colors font-serif text-lg shadow-lg shadow-accent-moss/20"
+                className="inline-flex items-center gap-2 px-8 py-4 bg-accent text-white rounded-xl hover:bg-accent/90 transition-colors text-lg shadow-lg shadow-accent/20"
                 whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -871,6 +767,6 @@ export default function FilePermissions() {
           </Reveal>
         </div>
       </section>
-    </div>
+    </article>
   );
 }

@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { motion, useScroll } from "framer-motion";
-import { useActivePhase } from "@/hooks/useActivePhase";
-import ArticleNav from "@/components/ui/ArticleNav";
+import { motion } from "framer-motion";
+import { useReadingNav } from "@/hooks/useReadingNav";
+import ArticleSection from "@/components/reading/ArticleSection";
 import KeyTakeaway from "@/components/ui/KeyTakeaway";
 import AnalogyBox from "@/components/ui/AnalogyBox";
 import DidYouKnow from "@/components/ui/DidYouKnow";
@@ -11,6 +11,7 @@ import Terminal from "@/components/ui/Terminal";
 import Quiz from "@/components/ui/Quiz";
 import Flashcards from "@/components/ui/Flashcards";
 import Confetti from "@/components/ui/Confetti";
+import { iconFor } from "@/components/ui/icons";
 
 const sectionNames = [
   "/bin & /sbin",
@@ -21,23 +22,6 @@ const sectionNames = [
   "LVM Commands",
 ];
 const navSections = sectionNames.map((label, i) => ({ id: i, label }));
-
-const sectionStyles = [
-  { bg: "bg-gradient-to-br from-accent-sage/[0.07] via-bg-paper to-accent-moss/[0.04]" },
-  { bg: "bg-bg-cream/40" },
-  { bg: "bg-gradient-to-br from-accent-terracotta/[0.04] via-bg-paper to-accent-sand/[0.05]" },
-  { bg: "bg-bg-paper" },
-  { bg: "bg-gradient-to-br from-accent-moss/[0.06] via-bg-paper to-accent-sage/[0.04]" },
-  { bg: "bg-bg-cream/40" },
-];
-
-const accentColors = ["sage", "moss", "terracotta", "sage", "moss", "terracotta"];
-const accentLineColors: Record<string, string> = {
-  moss: "bg-accent-moss",
-  terracotta: "bg-accent-terracotta",
-  sage: "bg-accent-sage",
-  sand: "bg-accent-sand",
-};
 
 const quizQuestions = [
   {
@@ -113,27 +97,19 @@ const fadeUp = {
   visible: (i: number) => ({ opacity: 1, y: 0, transition: { duration: 0.55, delay: i * 0.1, ease: "easeOut" as const } }),
 };
 
-const Section = ({ id, index, children, sectionRef }: { id: string; index: number; children: React.ReactNode; sectionRef: (el: HTMLDivElement | null) => void }) => (
-  <section id={id} ref={sectionRef} className={`relative scroll-mt-14 ${sectionStyles[index]?.bg || "bg-bg-paper"}`}>
-    <div className="absolute inset-y-0 left-0 w-1 bg-gradient-to-b from-transparent via-accent-sage/10 to-transparent" />
-    <div className="absolute inset-y-0 right-0 w-1 bg-gradient-to-b from-transparent via-accent-moss/10 to-transparent" />
-    <div className="px-6 md:px-12 lg:px-20 xl:px-32 py-20 md:py-28">{children}</div>
-  </section>
-);
-
-const SectionTitle = ({ title, accent = "sage" }: { title: string; accent?: string }) => (
+const SectionTitle = ({ title }: { title: string }) => (
   <motion.div className="mb-12" initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-80px" }} variants={stagger}>
-    <motion.div className={`w-20 h-1.5 ${accentLineColors[accent] || "bg-accent-sage"} mb-6 rounded-full`} variants={fadeUp} custom={0} />
-    <motion.h2 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-serif text-text-charcoal leading-tight" variants={fadeUp} custom={1}>{title}</motion.h2>
+    <motion.div className="w-20 h-1.5 bg-accent mb-6 rounded-full" variants={fadeUp} custom={0} />
+    <motion.h2 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-display text-fg leading-tight" variants={fadeUp} custom={1}>{title}</motion.h2>
   </motion.div>
 );
 
 const H3 = ({ children }: { children: React.ReactNode }) => (
-  <motion.h3 className="text-xl md:text-2xl font-serif text-text-charcoal mt-14 mb-5" initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, margin: "-40px" }} transition={{ duration: 0.5 }}>{children}</motion.h3>
+  <motion.h3 className="text-xl md:text-2xl font-display text-fg mt-14 mb-5" initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, margin: "-40px" }} transition={{ duration: 0.5 }}>{children}</motion.h3>
 );
 
 const P = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (
-  <motion.p className={`text-text-taupe leading-relaxed ${className}`} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-40px" }} transition={{ duration: 0.5 }}>{children}</motion.p>
+  <motion.p className={`text-fg-2 leading-relaxed ${className}`} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-40px" }} transition={{ duration: 0.5 }}>{children}</motion.p>
 );
 
 const Reveal = ({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) => (
@@ -141,106 +117,50 @@ const Reveal = ({ children, delay = 0 }: { children: React.ReactNode; delay?: nu
 );
 
 const Code = ({ children }: { children: React.ReactNode }) => (
-  <code className="font-mono text-accent-moss bg-accent-moss/8 px-1.5 py-0.5 rounded text-[0.9em]">{children}</code>
+  <code className="font-mono text-accent bg-accent/8 px-1.5 py-0.5 rounded text-[0.9em]">{children}</code>
 );
 
 export default function LinuxDirectories() {
   const [currentSection, setCurrentSection] = useState(0);
-  const sectionRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const sectionRefs = useRef<(HTMLElement | null)[]>([]);
   const [showConfetti, setShowConfetti] = useState(false);
-  const { scrollYProgress } = useScroll();
 
-  const scrollToSection = (id: number) => {
-    sectionRefs.current[id]?.scrollIntoView({ behavior: "smooth", block: "start" });
-  };
-
-  useActivePhase(sectionRefs, setCurrentSection);
+  useReadingNav(navSections, sectionRefs, setCurrentSection);
 
   return (
-    <div className="min-h-screen bg-bg-paper font-serif">
-      <motion.div className="fixed top-0 left-0 right-0 h-0.5 bg-accent-sage z-50 origin-left" style={{ scaleX: scrollYProgress }} />
-      <ArticleNav sections={navSections} currentSection={currentSection} onSectionClick={scrollToSection} />
-
-      {/* Hero */}
-      <section className="relative overflow-hidden min-h-[65vh] flex items-center">
-        <div className="absolute inset-0 bg-gradient-to-br from-accent-sage/10 via-bg-cream to-accent-moss/8" />
-        <div className="relative w-full grid grid-cols-1 lg:grid-cols-2 gap-0">
-          <div className="flex flex-col justify-center px-6 md:px-12 lg:px-20 xl:px-32 py-20">
-            <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="text-xs font-mono uppercase tracking-[0.25em] text-accent-moss mb-5">Linux Internals</motion.p>
-            <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }} className="text-4xl md:text-5xl lg:text-6xl font-serif text-text-charcoal mb-6 leading-[1.1]">
-              Linux Directories,<br /><em className="text-accent-moss not-italic">Inodes &amp; LVM</em>
-            </motion.h1>
-            <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }} className="text-lg text-text-taupe leading-relaxed max-w-xl">
-              What&apos;s in /bin vs /sbin? What is /etc? What&apos;s an inode? And how does Linux expand disk space without shutting down? All explained.
-            </motion.p>
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.35 }} className="flex gap-6 mt-8 pt-8 border-t border-text-charcoal/10">
-              {[{ label: "Sections", value: "6" }, { label: "Read time", value: "20 min" }, { label: "Level", value: "Beginner" }].map(s => (
-                <div key={s.label}>
-                  <p className="text-xs font-mono uppercase tracking-wider text-text-olive">{s.label}</p>
-                  <p className="text-lg font-serif font-semibold text-text-charcoal">{s.value}</p>
-                </div>
-              ))}
-            </motion.div>
-          </div>
-          <div className="hidden lg:flex items-center justify-center px-12">
-            <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.7, delay: 0.4 }} className="w-full max-w-sm font-mono text-sm">
-              <div className="bg-text-charcoal rounded-2xl p-5 shadow-2xl">
-                <p className="text-white/40 text-xs mb-3">Linux filesystem</p>
-                {[
-                  { dir: "/", desc: "root", indent: 0 },
-                  { dir: "├── bin/", desc: "user commands", indent: 1 },
-                  { dir: "├── sbin/", desc: "admin tools", indent: 1 },
-                  { dir: "├── etc/", desc: "config files", indent: 1 },
-                  { dir: "│   ├── passwd", desc: "users", indent: 2 },
-                  { dir: "│   ├── ssh/", desc: "SSH config", indent: 2 },
-                  { dir: "│   └── resolv.conf", desc: "DNS", indent: 2 },
-                  { dir: "├── home/", desc: "user folders", indent: 1 },
-                  { dir: "└── var/", desc: "logs & data", indent: 1 },
-                ].map((item, i) => (
-                  <motion.div key={i} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 + i * 0.12 }}
-                    className="flex items-center gap-3 py-0.5">
-                    <span className="text-[#6ee7b7]">{item.dir}</span>
-                    <span className="text-white/30 text-xs">{item.desc}</span>
-                  </motion.div>
-                ))}
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
+    <article>
       {/* Section 0: /bin and /sbin */}
-      <Section id="s0" index={0} sectionRef={el => { sectionRefs.current[0] = el; }}>
-        <SectionTitle title="/bin and /sbin" accent={accentColors[0]} />
+      <ArticleSection id="s0" ref={el => { sectionRefs.current[0] = el; }}>
+        <SectionTitle title="/bin and /sbin" />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
           <Reveal>
-            <div className="p-6 rounded-2xl border-2 border-accent-moss/15 bg-accent-moss/5 h-full">
+            <div className="p-6 rounded-2xl border-2 border-accent/15 bg-accent/5 h-full">
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-xl bg-accent-moss/15 flex items-center justify-center font-mono font-bold text-accent-moss">/bin</div>
+                <div className="w-10 h-10 rounded-xl bg-accent/15 flex items-center justify-center font-mono font-bold text-accent">/bin</div>
                 <div>
-                  <p className="font-serif font-semibold text-text-charcoal">User Binaries</p>
-                  <p className="text-xs text-text-taupe">Everyone can use these</p>
+                  <p className="font-semibold text-fg">User Binaries</p>
+                  <p className="text-xs text-fg-2">Everyone can use these</p>
                 </div>
               </div>
-              <ul className="space-y-1.5 text-sm text-text-taupe">
+              <ul className="space-y-1.5 text-sm text-fg-2">
                 {["/bin/ls → list files", "/bin/cp → copy files", "/bin/mv → move files", "/bin/cat → read files", "/bin/rm → delete files"].map(cmd => (
-                  <li key={cmd} className="font-mono text-xs bg-bg-paper rounded px-2 py-1">{cmd}</li>
+                  <li key={cmd} className="font-mono text-xs bg-surface rounded px-2 py-1">{cmd}</li>
                 ))}
               </ul>
             </div>
           </Reveal>
           <Reveal delay={0.1}>
-            <div className="p-6 rounded-2xl border-2 border-accent-terracotta/15 bg-accent-terracotta/5 h-full">
+            <div className="p-6 rounded-2xl border-2 border-danger/15 bg-danger/5 h-full">
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-xl bg-accent-terracotta/15 flex items-center justify-center font-mono font-bold text-accent-terracotta">/sbin</div>
+                <div className="w-10 h-10 rounded-xl bg-danger/15 flex items-center justify-center font-mono font-bold text-danger">/sbin</div>
                 <div>
-                  <p className="font-serif font-semibold text-text-charcoal">System Binaries</p>
-                  <p className="text-xs text-text-taupe">Admin / root only</p>
+                  <p className="font-semibold text-fg">System Binaries</p>
+                  <p className="text-xs text-fg-2">Admin / root only</p>
                 </div>
               </div>
-              <ul className="space-y-1.5 text-sm text-text-taupe">
+              <ul className="space-y-1.5 text-sm text-fg-2">
                 {["/sbin/reboot → restart system", "/sbin/fsck → check filesystem", "/sbin/ip → network config", "/sbin/useradd → create users", "/sbin/iptables → firewall rules"].map(cmd => (
-                  <li key={cmd} className="font-mono text-xs bg-bg-paper rounded px-2 py-1">{cmd}</li>
+                  <li key={cmd} className="font-mono text-xs bg-surface rounded px-2 py-1">{cmd}</li>
                 ))}
               </ul>
             </div>
@@ -253,11 +173,11 @@ export default function LinuxDirectories() {
           <strong>/var</strong> = dashboard logs and usage data
         </AnalogyBox>
         <KeyTakeaway>When you type <Code>ls</Code>, Linux actually runs <Code>/bin/ls</Code>. When you <Code>sudo reboot</Code>, it runs <Code>/sbin/reboot</Code>. $PATH connects the short command name to the full path.</KeyTakeaway>
-      </Section>
+      </ArticleSection>
 
       {/* Section 1: /etc */}
-      <Section id="s1" index={1} sectionRef={el => { sectionRefs.current[1] = el; }}>
-        <SectionTitle title="/etc — The Settings Folder" accent={accentColors[1]} />
+      <ArticleSection id="s1" ref={el => { sectionRefs.current[1] = el; }}>
+        <SectionTitle title="/etc — The Settings Folder" />
         <P className="text-lg md:text-xl mb-8">
           <Code>/etc</Code> stores <strong>configuration files for the entire system</strong> and installed programs. Think of it as the &quot;settings folder&quot; of Linux.
         </P>
@@ -265,33 +185,33 @@ export default function LinuxDirectories() {
         <Reveal>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {[
-              { file: "/etc/passwd", desc: "All user accounts on the system", icon: "👤" },
-              { file: "/etc/ssh/sshd_config", desc: "SSH server settings — ports, auth methods", icon: "🔑" },
-              { file: "/etc/resolv.conf", desc: "Which DNS servers to use", icon: "🌐" },
-              { file: "/etc/hosts", desc: "Local DNS overrides — map hostnames to IPs", icon: "📋" },
-              { file: "/etc/crontab", desc: "System-wide scheduled tasks", icon: "⏰" },
-              { file: "/etc/fstab", desc: "Which disks to mount at boot and where", icon: "💾" },
+              { file: "/etc/passwd", desc: "All user accounts on the system", icon: "user" },
+              { file: "/etc/ssh/sshd_config", desc: "SSH server settings — ports, auth methods", icon: "key" },
+              { file: "/etc/resolv.conf", desc: "Which DNS servers to use", icon: "globe" },
+              { file: "/etc/hosts", desc: "Local DNS overrides — map hostnames to IPs", icon: "clipboard-text" },
+              { file: "/etc/crontab", desc: "System-wide scheduled tasks", icon: "clock" },
+              { file: "/etc/fstab", desc: "Which disks to mount at boot and where", icon: "floppy-disk" },
             ].map((item, i) => (
               <Reveal key={item.file} delay={i * 0.07}>
-                <div className="p-4 rounded-xl border border-text-charcoal/8 bg-bg-paper hover:border-accent-moss/20 hover:shadow-md transition-all group">
-                  <div className="text-xl mb-2">{item.icon}</div>
-                  <code className="font-mono text-xs text-accent-moss block mb-1.5 break-all">{item.file}</code>
-                  <p className="text-xs text-text-taupe">{item.desc}</p>
+                <div className="p-4 rounded-xl border border-fg/8 bg-surface hover:border-accent/20 hover:shadow-md transition-all group">
+                  <div className="text-xl mb-2">{iconFor(item.icon, { size: 22 })}</div>
+                  <code className="font-mono text-xs text-accent block mb-1.5 break-all">{item.file}</code>
+                  <p className="text-xs text-fg-2">{item.desc}</p>
                 </div>
               </Reveal>
             ))}
           </div>
         </Reveal>
         <DidYouKnow>The name &ldquo;etc&rdquo; originally stood for &ldquo;etcetera&rdquo; — it was the catch-all folder for everything that didn&apos;t fit elsewhere. Now it&apos;s specifically for configuration files by convention.</DidYouKnow>
-      </Section>
+      </ArticleSection>
 
       {/* Section 2: /etc examples */}
-      <Section id="s2" index={2} sectionRef={el => { sectionRefs.current[2] = el; }}>
-        <SectionTitle title="/etc in Practice" accent={accentColors[2]} />
+      <ArticleSection id="s2" ref={el => { sectionRefs.current[2] = el; }}>
+        <SectionTitle title="/etc in Practice" />
         <H3>/etc/passwd — User Accounts</H3>
         <P className="mb-4">Every user on the system has an entry in this file. Run <Code>cat /etc/passwd</Code> to see it:</P>
         <Reveal>
-          <div className="bg-text-charcoal rounded-xl p-5 font-mono text-sm overflow-x-auto mb-6">
+          <div className="bg-fg rounded-xl p-5 font-mono text-sm overflow-x-auto mb-6">
             <p className="text-[#6ee7b7]">charith:x:1000:1000:Charith:/home/charith:/bin/bash</p>
             <div className="mt-4 grid grid-cols-2 gap-2 text-xs">
               {[
@@ -304,7 +224,7 @@ export default function LinuxDirectories() {
                 { part: "/bin/bash", desc: "default shell" },
               ].map(f => (
                 <div key={f.part} className="flex gap-2">
-                  <span className="text-orange-300">{f.part}</span>
+                  <span className="text-terminal-accent">{f.part}</span>
                   <span className="text-white/40">→ {f.desc}</span>
                 </div>
               ))}
@@ -330,29 +250,29 @@ export default function LinuxDirectories() {
           ]} />
         </Reveal>
         <KeyTakeaway>Almost every program you install on Linux has its config in <Code>/etc</Code>. Learning to read and edit these files is a core sysadmin skill.</KeyTakeaway>
-      </Section>
+      </ArticleSection>
 
       {/* Section 3: Inodes */}
-      <Section id="s3" index={3} sectionRef={el => { sectionRefs.current[3] = el; }}>
-        <SectionTitle title="Inodes — A File's Identity Card" accent={accentColors[3]} />
+      <ArticleSection id="s3" ref={el => { sectionRefs.current[3] = el; }}>
+        <SectionTitle title="Inodes — A File's Identity Card" />
         <P className="text-lg md:text-xl mb-8">Every file on Linux has two things stored on disk: the <strong>actual data</strong> (the content) and an <strong>inode</strong> (the identity card).</P>
         <Reveal>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            <div className="p-6 rounded-2xl border-2 border-accent-moss/15 bg-accent-moss/5">
-              <p className="text-sm font-mono font-bold text-accent-moss mb-3">INODE — Metadata (identity card)</p>
-              <ul className="space-y-1.5 text-sm text-text-taupe">
-                {["✅ File size", "✅ Owner (charith)", "✅ Permissions (rw-r--r--)", "✅ Created / Modified / Accessed timestamps", "✅ WHERE on disk the data is stored", "❌ The filename (NOT here!)"].map(item => (
+            <div className="p-6 rounded-2xl border-2 border-accent/15 bg-accent/5">
+              <p className="text-sm font-mono font-bold text-accent mb-3">INODE — Metadata (identity card)</p>
+              <ul className="space-y-1.5 text-sm text-fg-2">
+                {["File size", "Owner (charith)", "Permissions (rw-r--r--)", "Created / Modified / Accessed timestamps", "WHERE on disk the data is stored", "The filename (NOT here!)"].map(item => (
                   <li key={item} className="text-sm">{item}</li>
                 ))}
               </ul>
             </div>
-            <div className="p-6 rounded-2xl border-2 border-accent-terracotta/15 bg-accent-terracotta/5">
-              <p className="text-sm font-mono font-bold text-accent-terracotta mb-3">DIRECTORY — Name lookup</p>
-              <div className="font-mono text-sm space-y-2 text-text-taupe">
-                <p><span className="text-text-charcoal">&quot;notes.txt&quot;</span> → inode #4521</p>
-                <p><span className="text-text-charcoal">&quot;backup.sh&quot;</span> → inode #4522</p>
-                <p><span className="text-text-charcoal">&quot;config.yml&quot;</span> → inode #4523</p>
-                <p className="text-xs mt-3 text-text-olive italic">The directory maps name → inode number. The inode holds everything else.</p>
+            <div className="p-6 rounded-2xl border-2 border-danger/15 bg-danger/5">
+              <p className="text-sm font-mono font-bold text-danger mb-3">DIRECTORY — Name lookup</p>
+              <div className="font-mono text-sm space-y-2 text-fg-2">
+                <p><span className="text-fg">&quot;notes.txt&quot;</span> → inode #4521</p>
+                <p><span className="text-fg">&quot;backup.sh&quot;</span> → inode #4522</p>
+                <p><span className="text-fg">&quot;config.yml&quot;</span> → inode #4523</p>
+                <p className="text-xs mt-3 text-fg-3 italic">The directory maps name → inode number. The inode holds everything else.</p>
               </div>
             </div>
           </div>
@@ -373,25 +293,25 @@ export default function LinuxDirectories() {
           ]} />
         </Reveal>
         <DidYouKnow>This is why <strong>hard links</strong> work — two filenames in different directories can point to the same inode number. Both &quot;names&quot; are the same file. Delete one name, the inode (and data) still exists until all names are removed.</DidYouKnow>
-      </Section>
+      </ArticleSection>
 
       {/* Section 4: LVM */}
-      <Section id="s4" index={4} sectionRef={el => { sectionRefs.current[4] = el; }}>
-        <SectionTitle title="LVM — Flexible Storage" accent={accentColors[4]} />
+      <ArticleSection id="s4" ref={el => { sectionRefs.current[4] = el; }}>
+        <SectionTitle title="LVM — Flexible Storage" />
         <P className="text-lg mb-6"><strong>LVM (Logical Volume Manager)</strong> solves one of the most painful problems in Linux administration: running out of disk space on a live server.</P>
         <H3>The Problem with Normal Partitions</H3>
         <Reveal>
-          <div className="bg-text-charcoal rounded-xl p-5 font-mono text-sm mb-6 overflow-x-auto">
+          <div className="bg-fg rounded-xl p-5 font-mono text-sm mb-6 overflow-x-auto">
             <p className="text-white/40 mb-2">YOUR HARD DISK (60GB) — fixed partitions:</p>
-            <p className="text-orange-300">┌─────────────┬────────────────┬────────┐</p>
-            <p className="text-orange-300">│  /boot (2GB)│  / Linux (30GB)│  ???  │</p>
-            <p className="text-orange-300">└─────────────┴────────────────┴────────┘</p>
-            <p className="text-red-400 mt-3">If / fills up → shut down → hours of work → data risk 😱</p>
+            <p className="text-terminal-accent">┌─────────────┬────────────────┬────────┐</p>
+            <p className="text-terminal-accent">│  /boot (2GB)│  / Linux (30GB)│  ???  │</p>
+            <p className="text-terminal-accent">└─────────────┴────────────────┴────────┘</p>
+            <p className="text-terminal-danger mt-3">If / fills up → shut down → hours of work → data risk</p>
           </div>
         </Reveal>
         <H3>What LVM Does — The Pool System</H3>
         <Reveal>
-          <div className="bg-text-charcoal rounded-xl p-5 font-mono text-sm mb-6 overflow-x-auto">
+          <div className="bg-fg rounded-xl p-5 font-mono text-sm mb-6 overflow-x-auto">
             <p className="text-white/40 mb-2">WITH LVM — flexible pool:</p>
             <p className="text-[#6ee7b7]">┌─────────────────────────────────────┐</p>
             <p className="text-[#6ee7b7]">│      POOL OF STORAGE (60GB)         │</p>
@@ -409,26 +329,26 @@ export default function LinuxDirectories() {
         <Reveal>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {[
-              { term: "PV", full: "Physical Volume", desc: "Your actual hard disk. The water source.", color: "border-accent-terracotta/20 bg-accent-terracotta/5" },
-              { term: "VG", full: "Volume Group", desc: "The combined pool of storage. All disks merged together.", color: "border-accent-moss/20 bg-accent-moss/5" },
-              { term: "LV", full: "Logical Volume", desc: "A bucket carved from the pool. What Linux mounts and uses.", color: "border-accent-sage/20 bg-accent-sage/5" },
+              { term: "PV", full: "Physical Volume", desc: "Your actual hard disk. The water source.", color: "border-danger/20 bg-danger/5" },
+              { term: "VG", full: "Volume Group", desc: "The combined pool of storage. All disks merged together.", color: "border-accent/20 bg-accent/5" },
+              { term: "LV", full: "Logical Volume", desc: "A bucket carved from the pool. What Linux mounts and uses.", color: "border-success/20 bg-success/5" },
             ].map((item, i) => (
               <Reveal key={item.term} delay={i * 0.1}>
                 <div className={`p-5 rounded-xl border-2 ${item.color} text-center`}>
-                  <p className="text-2xl font-mono font-bold text-text-charcoal mb-1">{item.term}</p>
-                  <p className="text-sm font-serif font-semibold text-text-charcoal mb-2">{item.full}</p>
-                  <p className="text-xs text-text-taupe">{item.desc}</p>
+                  <p className="text-2xl font-mono font-bold text-fg mb-1">{item.term}</p>
+                  <p className="text-sm font-semibold text-fg mb-2">{item.full}</p>
+                  <p className="text-xs text-fg-2">{item.desc}</p>
                 </div>
               </Reveal>
             ))}
           </div>
         </Reveal>
-        <p className="text-center text-text-taupe mt-4 font-mono text-sm">Hard Disk (PV) → Pool (VG) → Buckets (LV)</p>
-      </Section>
+        <p className="text-center text-fg-2 mt-4 font-mono text-sm">Hard Disk (PV) → Pool (VG) → Buckets (LV)</p>
+      </ArticleSection>
 
       {/* Section 5: LVM Commands */}
-      <Section id="s5" index={5} sectionRef={el => { sectionRefs.current[5] = el; }}>
-        <SectionTitle title="LVM Commands" accent={accentColors[5]} />
+      <ArticleSection id="s5" ref={el => { sectionRefs.current[5] = el; }}>
+        <SectionTitle title="LVM Commands" />
         <P className="text-lg mb-8">On your Ubuntu VM, half the disk is sitting unused in the LVM pool — ready whenever you need more space. Here&apos;s how to check and use it:</P>
         <Reveal>
           <Terminal lines={[
@@ -466,10 +386,10 @@ export default function LinuxDirectories() {
             <Flashcards cards={flashcardsData} />
           </Reveal>
         </div>
-      </Section>
+      </ArticleSection>
 
       <Confetti isActive={showConfetti} />
 
-    </div>
+    </article>
   );
 }
