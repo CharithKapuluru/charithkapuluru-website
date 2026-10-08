@@ -120,14 +120,14 @@ One cool-neutral ramp, no pure `#000`/`#fff`. Theme switched by `next-themes` wi
 | `--color-border-strong` | `#d4d4d8` | `#35353b` |
 | `--color-fg` | `#18181b` | `#f2f2f4` |
 | `--color-fg-2` | `#52525b` | `#a7a7b0` |
-| `--color-fg-3` | `#71717a` | `#7c7c86` |
-| `--color-accent` | `#b4541c` | `#eb9b63` |
-| `--color-accent-strong` (hover) | `#9a4516` | `#f4b07f` |
+| `--color-fg-3` | `#6b6b74` | `#86868f` |
+| `--color-accent` | `#a84d18` | `#eb9b63` |
+| `--color-accent-strong` (hover) | `#8f3f12` | `#f4b07f` |
 | `--color-accent-soft` (tint) | `#f9e8dc` | `rgb(235 155 99 / 0.12)` |
 | `--color-primary` (solid button bg) | `#18181b` | `#f2f2f4` |
 | `--color-primary-fg` | `#fafafa` | `#0b0b0d` |
 
-Contrast floor: `fg-3` on `bg` is at least 4.5:1 in both themes; `accent` on `bg` is 4.65:1 light and above 9:1 dark. A script checks every text/background token pair (Section 10).
+Contrast floor: `fg-3` on `bg` is at least 4.5:1 in both themes; `accent` on `bg` is 5.2:1 light and above 9:1 dark. A script checks every text/background token pair (Section 10).
 
 Semantic tints exist only inside tutorial callouts and status UI:
 
