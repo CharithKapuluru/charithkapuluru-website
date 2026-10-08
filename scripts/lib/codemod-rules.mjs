@@ -55,20 +55,29 @@ export function paletteReplacement(util, family, shade) {
     case "via":
     case "to":
       return shade <= 200 ? `${tone}-soft` : tone;
+    case "border":
+    case "ring":
+    case "divide":
+    case "outline":
+      return shade <= 200 ? `${tone}/30` : tone;
     default:
       return tone;
   }
 }
 
 const FAMILIES = [...Object.keys(FAMILY_TONE), ...GRAYS].join("|");
+const SOFT_SUFFIX = "/30";
+const SOFT_UTIL = /^(?:border|ring|divide|outline)/;
 
 export function mapPaletteClasses(src) {
   const re = new RegExp(`\\b${VARIANT}${UTIL}-(${FAMILIES})-(\\d{2,3})(/\\d+)?(?![\\w-])`, "g");
   return src.replace(re, (whole, variant, util, family, shade, opacity) => {
     const replacement = paletteReplacement(util, family, Number(shade));
     if (!replacement) return whole;
-    const hasOwnOpacity = replacement.includes("/");
-    return `${variant}${util}-${replacement}${hasOwnOpacity ? "" : opacity ?? ""}`;
+    if (!replacement.includes("/")) return `${variant}${util}-${replacement}${opacity ?? ""}`;
+    // The 30% default on pale borders and rings yields to an opacity written in the source; a computed one (terminal-fg/70) wins.
+    if (opacity && SOFT_UTIL.test(util) && replacement.endsWith(SOFT_SUFFIX)) return `${variant}${util}-${replacement.slice(0, -SOFT_SUFFIX.length)}${opacity}`;
+    return `${variant}${util}-${replacement}`;
   });
 }
 
@@ -97,7 +106,7 @@ const EMOJI_SEQ = "(?:[\\u{1F100}-\\u{1F2FF}]|[\\u{1F300}-\\u{1FAFF}]|[\\u{23E9}
 export function stripEmoji(src) {
   const iconProp = new RegExp(`icon:\\s*"(${EMOJI_SEQ})"`, "gu");
   const withIcons = src.replace(iconProp, (_, emoji) => `icon: "${EMOJI_ICON[emoji] ?? EMOJI_ICON[emoji.replace(/\uFE0F/g, "")] ?? "info"}"`);
-  return withIcons.replace(new RegExp(`\\s?${EMOJI_SEQ}\\s?`, "gu"), (m) => (m.startsWith(" ") && m.endsWith(" ") ? " " : ""));
+  return withIcons.replace(new RegExp(`[ \\t]?${EMOJI_SEQ}[ \\t]?`, "gu"), (m) => (m.startsWith(" ") && m.endsWith(" ") ? " " : ""));
 }
 
 export function transformFontSerif(src) {

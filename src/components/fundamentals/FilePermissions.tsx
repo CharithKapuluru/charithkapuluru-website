@@ -155,18 +155,14 @@ const PermBar = ({ r, w, x }: { r: boolean; w: boolean; x: boolean }) => (
 );
 
 export default function FilePermissions() {
-  const [currentSection, setCurrentSection] = useState(0);
   const sectionRefs = useRef<(HTMLElement | null)[]>([]);
   const [showConfetti, setShowConfetti] = useState(false);
   const [showCelebration, setShowCelebration] = useState(false);
 
-  useReadingNav(navSections, sectionRefs, setCurrentSection);
+  useReadingNav(navSections, sectionRefs);
 
   return (
     <article>
-      <Confetti isActive={showConfetti} onComplete={() => setShowConfetti(false)} />
-      <CelebrationMessage isVisible={showCelebration} phaseName="File Permissions" onClose={() => setShowCelebration(false)} />
-
       {/* ══════════ SECTION 0 — What is chmod? ══════════ */}
       <ArticleSection id="section-0" ref={(el) => { sectionRefs.current[0] = el; }}>
         <SectionTitle title="What is chmod?" />
@@ -285,7 +281,7 @@ export default function FilePermissions() {
         <P className="mb-6">Each permission has a numeric value. You add them together to get the permission number for each person:</P>
 
         <Reveal>
-          <div className="p-6 rounded-2xl bg-bg/60 border border-fg/8 mb-8 overflow-x-auto">
+          <div className="p-6 rounded-2xl bg-surface-2/60 border border-fg/8 mb-8 overflow-x-auto">
             <table className="w-full font-mono text-sm">
               <thead>
                 <tr className="border-b border-fg/10">
@@ -735,38 +731,37 @@ export default function FilePermissions() {
       </ArticleSection>
 
       {/* ══════════ QUIZ & FLASHCARDS ══════════ */}
-      <section className="relative bg-gradient-to-b from-surface via-accent/[0.03] to-surface">
-        <div className="absolute inset-y-0 left-0 w-1 bg-gradient-to-b from-transparent via-accent/10 to-transparent" />
-        <div className="absolute inset-y-0 right-0 w-1 bg-gradient-to-b from-transparent via-danger/10 to-transparent" />
-        <div className="px-6 md:px-12 lg:px-20 xl:px-32 py-20 md:py-28">
-          <Reveal>
-            <Quiz
-              title="File Permissions Quiz"
-              questions={quizQuestions}
-              onComplete={(score, total) => {
-                if (score >= total * 0.8) { setShowConfetti(true); setShowCelebration(true); }
-              }}
-            />
-          </Reveal>
-          <div className="mt-24">
-            <Reveal><Flashcards cards={flashcardsData} title="Permissions Flashcards" /></Reveal>
-          </div>
-          <Reveal>
-            <div className="mt-24 text-center">
-              <motion.a
-                href="/fundamentals"
-                className="inline-flex items-center gap-2 px-8 py-4 bg-accent text-white rounded-xl hover:bg-accent/90 transition-colors text-lg shadow-lg shadow-accent/20"
-                whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                </svg>
-                Back to Fundamentals
-              </motion.a>
-            </div>
-          </Reveal>
+      <ArticleSection id="quiz">
+        <Reveal>
+          <Quiz
+            title="File Permissions Quiz"
+            questions={quizQuestions}
+            onComplete={(score, total) => {
+              if (score >= total * 0.8) { setShowConfetti(true); setShowCelebration(true); }
+            }}
+          />
+        </Reveal>
+        <div className="mt-12">
+          <Reveal><Flashcards cards={flashcardsData} title="Permissions Flashcards" /></Reveal>
         </div>
-      </section>
+        <Reveal>
+          <div className="mt-12 text-center">
+            <motion.a
+              href="/fundamentals"
+              className="inline-flex items-center gap-2 rounded-md bg-primary px-6 py-3 font-medium text-primary-fg transition-opacity hover:opacity-90 text-lg"
+              whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+              Back to Fundamentals
+            </motion.a>
+          </div>
+        </Reveal>
+      </ArticleSection>
+
+      <Confetti isActive={showConfetti} onComplete={() => setShowConfetti(false)} />
+      <CelebrationMessage isVisible={showCelebration} phaseName="File Permissions" onClose={() => setShowCelebration(false)} />
     </article>
   );
 }

@@ -127,12 +127,11 @@ const CronField = ({ value, label, desc, active }: { value: string; label: strin
 );
 
 export default function CronJobs() {
-  const [currentSection, setCurrentSection] = useState(0);
   const sectionRefs = useRef<(HTMLElement | null)[]>([]);
   const [showConfetti, setShowConfetti] = useState(false);
   const [activeExample, setActiveExample] = useState(0);
 
-  useReadingNav(navSections, sectionRefs, setCurrentSection);
+  useReadingNav(navSections, sectionRefs);
 
   const cronExamples = [
     { schedule: "* * * * *", meaning: "Every single minute", fields: ["*", "*", "*", "*", "*"] },
@@ -185,28 +184,28 @@ export default function CronJobs() {
         <SectionTitle title="The Schedule Format" />
         <P className="text-lg mb-8">Every cron job has a schedule written in this exact format. Five fields, then the command:</P>
         <Reveal>
-          <div className="bg-fg rounded-xl p-6 font-mono mb-8 overflow-x-auto">
-            <p className="text-white text-lg mb-4"><span className="text-terminal-accent">*</span> <span className="text-terminal-accent">*</span> <span className="text-[#6ee7b7]">*</span> <span className="text-terminal-info">*</span> <span className="text-terminal-accent">*</span> <span className="text-white/60">command-to-run</span></p>
+          <div className="bg-terminal rounded-xl p-6 font-mono mb-8 overflow-x-auto">
+            <p className="text-white text-lg mb-4"><span className="text-terminal-accent">*</span> <span className="text-terminal-danger">*</span> <span className="text-terminal-ok">*</span> <span className="text-terminal-info">*</span> <span className="text-terminal-fg">*</span> <span className="text-white/60">command-to-run</span></p>
             <div className="grid grid-cols-5 gap-2 text-xs text-center">
               {[
-                { val: "│", color: "text-terminal-accent" }, { val: "│", color: "text-terminal-accent" },
-                { val: "│", color: "text-[#6ee7b7]" }, { val: "│", color: "text-terminal-info" },
-                { val: "│", color: "text-terminal-accent" },
+                { val: "│", color: "text-terminal-accent" }, { val: "│", color: "text-terminal-danger" },
+                { val: "│", color: "text-terminal-ok" }, { val: "│", color: "text-terminal-info" },
+                { val: "│", color: "text-terminal-fg" },
               ].map((c, i) => <p key={i} className={c.color}>{c.val}</p>)}
               {[
                 { label: "Minute", range: "0–59", color: "text-terminal-accent" },
-                { label: "Hour", range: "0–23", color: "text-terminal-accent" },
-                { label: "Day", range: "1–31", color: "text-[#6ee7b7]" },
+                { label: "Hour", range: "0–23", color: "text-terminal-danger" },
+                { label: "Day", range: "1–31", color: "text-terminal-ok" },
                 { label: "Month", range: "1–12", color: "text-terminal-info" },
-                { label: "Weekday", range: "0=Sun..6=Sat", color: "text-terminal-accent" },
+                { label: "Weekday", range: "0=Sun..6=Sat", color: "text-terminal-fg" },
               ].map(f => (
                 <div key={f.label} className="text-center">
                   <p className={`font-semibold ${f.color}`}>{f.label}</p>
-                  <p className="text-white/40">{f.range}</p>
+                  <p className="text-terminal-fg/50">{f.range}</p>
                 </div>
               ))}
             </div>
-            <p className="text-white/40 text-xs mt-4">* means &quot;every&quot; — every minute, every hour, every day, etc.</p>
+            <p className="text-terminal-fg/50 text-xs mt-4">* means &quot;every&quot; — every minute, every hour, every day, etc.</p>
           </div>
         </Reveal>
         <P className="mb-4">The <Code>*</Code> wildcard means &quot;every possible value.&quot; So <Code>* * * * *</Code> runs every single minute of every day.</P>
@@ -287,8 +286,8 @@ export default function CronJobs() {
         <SectionTitle title="Real Crontab Examples" />
         <P className="text-lg mb-8">Here&apos;s what a typical sysadmin&apos;s crontab looks like:</P>
         <Reveal>
-          <div className="bg-fg rounded-xl p-5 font-mono text-sm overflow-x-auto mb-8">
-            <p className="text-white/40 mb-4"># crontab -l output</p>
+          <div className="bg-terminal rounded-xl p-5 font-mono text-sm overflow-x-auto mb-8">
+            <p className="text-terminal-fg/50 mb-4"># crontab -l output</p>
             {[
               { schedule: "*/5 * * * *", cmd: "/home/charith/scripts/collect-metrics.sh", note: "every 5 min" },
               { schedule: "0 * * * *", cmd: "/home/charith/scripts/check-services.sh", note: "every hour" },
@@ -298,8 +297,8 @@ export default function CronJobs() {
             ].map((job, i) => (
               <motion.div key={i} initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="py-1.5 border-b border-white/5 last:border-0">
                 <span className="text-terminal-accent">{job.schedule}</span>
-                <span className="text-[#6ee7b7] ml-3">{job.cmd}</span>
-                <span className="text-white/30 ml-3 text-xs">← {job.note}</span>
+                <span className="text-terminal-ok ml-3">{job.cmd}</span>
+                <span className="text-terminal-fg/50 ml-3 text-xs">← {job.note}</span>
               </motion.div>
             ))}
           </div>

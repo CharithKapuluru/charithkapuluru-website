@@ -53,7 +53,7 @@ const AnimatedDiagram = ({ title, steps, type = "pipeline" }: AnimatedDiagramPro
         <h3 className="text-xl font-display text-fg">{title}</h3>
         <button
           onClick={handlePlay}
-          className="px-4 py-1 text-sm font-mono text-accent border border-accent rounded hover:bg-accent hover:text-white transition-colors"
+          className="px-4 py-1 text-sm font-mono text-accent border border-accent rounded hover:bg-accent hover:text-bg transition-colors"
         >
           {isPlaying ? "Playing..." : "▶ Animate"}
         </button>
@@ -87,7 +87,7 @@ const AnimatedDiagram = ({ title, steps, type = "pipeline" }: AnimatedDiagramPro
                   <motion.div
                     className={`w-16 h-16 rounded-full flex items-center justify-center border-2 transition-all duration-300 ${
                       isActive
-                        ? "bg-accent border-accent text-white scale-110 shadow-lg"
+                        ? "bg-accent border-accent text-bg scale-110 shadow-lg"
                         : isComplete
                         ? "bg-accent/20 border-accent text-accent"
                         : "bg-surface border-fg/20 text-fg-3 group-hover:border-accent/50"
@@ -126,9 +126,9 @@ const AnimatedDiagram = ({ title, steps, type = "pipeline" }: AnimatedDiagramPro
                   onClick={() => handleStepClick(index)}
                   className={`px-4 py-3 rounded-lg border-2 cursor-pointer transition-all ${
                     isActive
-                      ? "bg-accent border-accent text-white shadow-lg"
+                      ? "bg-accent border-accent text-bg shadow-lg"
                       : isComplete
-                      ? "bg-accent/20 border-accent text-accent"
+                      ? "bg-accent/20 border-accent text-accent-strong"
                       : "bg-surface border-fg/20 text-fg-3 hover:border-accent/50"
                   }`}
                   animate={isActive ? { scale: [1, 1.05, 1] } : {}}

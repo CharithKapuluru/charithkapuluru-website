@@ -28,12 +28,20 @@ test("palette replacement follows the tone table and the terminal rule", () => {
   assert.equal(paletteReplacement("border", "purple", 300), "accent");
   assert.equal(paletteReplacement("from", "amber", 50), "tip-soft");
   assert.equal(paletteReplacement("border", "lime", 300), null);
+  assert.equal(paletteReplacement("border", "amber", 200), "tip/30");
 });
 
 test("palette classes rewrite in place, dropping a computed opacity when one already exists", () => {
   assert.equal(
     mapPaletteClasses('className="bg-amber-50 text-amber-700 border-amber-200/60 text-gray-400/50 hover:bg-purple-700"'),
     'className="bg-tip-soft text-tip border-tip/60 text-terminal-fg/70 hover:bg-accent"',
+  );
+});
+
+test("pale borders and rings soften to 30% unless the source class carries its own opacity", () => {
+  assert.equal(
+    mapPaletteClasses('className="border-amber-200 ring-blue-100 divide-gray-200 border-amber-200/60 border-purple-300"'),
+    'className="border-tip/30 ring-info/30 divide-border border-tip/60 border-accent"',
   );
 });
 

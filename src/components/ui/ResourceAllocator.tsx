@@ -18,10 +18,10 @@ interface ResourceAllocatorProps {
 }
 
 const colors = [
-  { bg: "bg-accent", text: "text-white" },
-  { bg: "bg-danger", text: "text-white" },
-  { bg: "bg-accent", text: "text-white" },
-  { bg: "bg-success", text: "text-fg" },
+  { bg: "bg-accent",  text: "text-bg" },
+  { bg: "bg-danger",  text: "text-bg" },
+  { bg: "bg-info",    text: "text-fg dark:text-bg" },
+  { bg: "bg-success", text: "text-bg" },
 ];
 
 const ResourceAllocator = ({
@@ -71,9 +71,9 @@ const ResourceAllocator = ({
 
               {/* Tooltip */}
               {hoveredIndex === i && (
-                <div className="absolute -top-12 left-1/2 -translate-x-1/2 bg-fg text-white text-xs rounded px-3 py-1.5 whitespace-nowrap z-10">
+                <div className="absolute -top-12 left-1/2 -translate-x-1/2 bg-primary text-primary-fg text-xs rounded px-3 py-1.5 whitespace-nowrap z-10">
                   {segment.detail}
-                  <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-fg" />
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-primary" />
                 </div>
               )}
             </motion.div>

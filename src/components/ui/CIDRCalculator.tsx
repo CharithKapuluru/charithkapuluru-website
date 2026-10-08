@@ -154,7 +154,7 @@ const CIDRCalculator = () => {
               }}
               className={`px-3 py-1.5 text-sm rounded-lg border transition-all ${
                 cidr === item.value
-                  ? "bg-tip/20 border-tip/40 text-tip"
+                  ? "bg-tip/20 border-tip/40 text-accent-strong"
                   : "bg-surface border-fg/10 text-fg-2 hover:border-tip/30"
               }`}
             >
@@ -179,7 +179,7 @@ const CIDRCalculator = () => {
         />
         <button
           onClick={handleCalculate}
-          className="px-4 py-2 bg-tip text-white rounded-lg hover:bg-tip
+          className="px-4 py-2 bg-tip text-bg rounded-lg hover:bg-accent-strong
                      transition-colors font-medium text-sm"
         >
           Calculate
@@ -246,18 +246,18 @@ const CIDRCalculator = () => {
                 Usable IP Range
               </p>
               <div className="flex items-center gap-2 font-mono text-sm">
-                <span className="px-2 py-1 bg-success/20 rounded text-accent">
+                <span className="px-2 py-1 bg-success/20 rounded text-fg">
                   {result.firstIP}
                 </span>
                 <span className="text-fg-3">to</span>
-                <span className="px-2 py-1 bg-success/20 rounded text-accent">
+                <span className="px-2 py-1 bg-success/20 rounded text-fg">
                   {result.lastIP}
                 </span>
               </div>
             </div>
 
             {/* AWS Reserved IPs */}
-            <div className="p-4 bg-tip-soft rounded-lg border border-tip">
+            <div className="p-4 bg-tip-soft rounded-lg border border-tip/30">
               <p className="text-xs text-tip mb-2 uppercase tracking-wider">
                 AWS Reserved IPs (5 per subnet)
               </p>

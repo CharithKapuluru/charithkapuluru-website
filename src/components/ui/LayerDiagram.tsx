@@ -51,7 +51,7 @@ const LayerDiagram = ({ layers, title }: LayerDiagramProps) => {
               <span className="font-semibold text-fg">
                 {layer.label}
               </span>
-              <span className="text-xs font-mono text-fg-3">
+              <span className="text-xs font-mono text-fg-2">
                 {activeLayer === i ? "close" : "click to learn more"}
               </span>
             </div>

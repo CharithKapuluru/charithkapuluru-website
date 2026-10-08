@@ -123,8 +123,8 @@ const TrafficFlowAnimation = () => {
   };
 
   const getStepColor = (index: number) => {
-    if (index < currentStep) return "bg-accent text-white";
-    if (index === currentStep) return "bg-tip text-white ring-4 ring-tip";
+    if (index < currentStep) return "bg-success text-bg";
+    if (index === currentStep) return "bg-tip text-bg ring-4 ring-tip/30";
     return "bg-surface-2 text-fg-3";
   };
 
@@ -161,7 +161,7 @@ const TrafficFlowAnimation = () => {
         <div className="flex items-center gap-2">
           <button
             onClick={handlePlay}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-accent text-white
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-accent text-bg
                        rounded-lg hover:bg-accent/90 transition-colors text-sm"
           >
             <svg
@@ -179,7 +179,7 @@ const TrafficFlowAnimation = () => {
       {/* Flow Diagram */}
       <div className="relative mb-6">
         {/* Connection Line */}
-        <div className="absolute top-6 left-6 right-6 h-0.5 bg-surface-2" />
+        <div className="absolute top-6 left-6 right-6 h-0.5 bg-border" />
         <motion.div
           className="absolute top-6 left-6 h-0.5 bg-tip"
           initial={{ width: "0%" }}
@@ -246,14 +246,14 @@ const TrafficFlowAnimation = () => {
               </p>
             </div>
             {flowSteps[currentStep].port && (
-              <span className="px-2 py-1 bg-info-soft text-info text-xs rounded font-mono">
+              <span className="px-2 py-1 bg-info-soft text-fg text-xs rounded font-mono">
                 Port {flowSteps[currentStep].port}
               </span>
             )}
           </div>
 
           {flowSteps[currentStep].security && (
-            <div className="mb-4 p-3 bg-tip-soft border border-tip rounded-lg">
+            <div className="mb-4 p-3 bg-tip-soft border border-tip/30 rounded-lg">
               <div className="flex items-center gap-2">
                 <svg
                   className="w-4 h-4 text-tip"
@@ -331,7 +331,7 @@ const TrafficFlowAnimation = () => {
                 setCurrentStep(index);
               }}
               className={`w-2 h-2 rounded-full transition-colors ${
-                index === currentStep ? "bg-tip" : "bg-surface-2"
+                index === currentStep ? "bg-tip" : "bg-fg-3"
               }`}
             />
           ))}

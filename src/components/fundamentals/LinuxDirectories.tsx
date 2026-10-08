@@ -121,11 +121,10 @@ const Code = ({ children }: { children: React.ReactNode }) => (
 );
 
 export default function LinuxDirectories() {
-  const [currentSection, setCurrentSection] = useState(0);
   const sectionRefs = useRef<(HTMLElement | null)[]>([]);
   const [showConfetti, setShowConfetti] = useState(false);
 
-  useReadingNav(navSections, sectionRefs, setCurrentSection);
+  useReadingNav(navSections, sectionRefs);
 
   return (
     <article>
@@ -211,8 +210,8 @@ export default function LinuxDirectories() {
         <H3>/etc/passwd — User Accounts</H3>
         <P className="mb-4">Every user on the system has an entry in this file. Run <Code>cat /etc/passwd</Code> to see it:</P>
         <Reveal>
-          <div className="bg-fg rounded-xl p-5 font-mono text-sm overflow-x-auto mb-6">
-            <p className="text-[#6ee7b7]">charith:x:1000:1000:Charith:/home/charith:/bin/bash</p>
+          <div className="bg-terminal rounded-xl p-5 font-mono text-sm overflow-x-auto mb-6">
+            <p className="text-terminal-ok">charith:x:1000:1000:Charith:/home/charith:/bin/bash</p>
             <div className="mt-4 grid grid-cols-2 gap-2 text-xs">
               {[
                 { part: "charith", desc: "username" },
@@ -225,7 +224,7 @@ export default function LinuxDirectories() {
               ].map(f => (
                 <div key={f.part} className="flex gap-2">
                   <span className="text-terminal-accent">{f.part}</span>
-                  <span className="text-white/40">→ {f.desc}</span>
+                  <span className="text-terminal-fg/50">→ {f.desc}</span>
                 </div>
               ))}
             </div>
@@ -301,8 +300,8 @@ export default function LinuxDirectories() {
         <P className="text-lg mb-6"><strong>LVM (Logical Volume Manager)</strong> solves one of the most painful problems in Linux administration: running out of disk space on a live server.</P>
         <H3>The Problem with Normal Partitions</H3>
         <Reveal>
-          <div className="bg-fg rounded-xl p-5 font-mono text-sm mb-6 overflow-x-auto">
-            <p className="text-white/40 mb-2">YOUR HARD DISK (60GB) — fixed partitions:</p>
+          <div className="bg-terminal rounded-xl p-5 font-mono text-sm mb-6 overflow-x-auto">
+            <p className="text-terminal-fg/50 mb-2">YOUR HARD DISK (60GB) — fixed partitions:</p>
             <p className="text-terminal-accent">┌─────────────┬────────────────┬────────┐</p>
             <p className="text-terminal-accent">│  /boot (2GB)│  / Linux (30GB)│  ???  │</p>
             <p className="text-terminal-accent">└─────────────┴────────────────┴────────┘</p>
@@ -311,18 +310,18 @@ export default function LinuxDirectories() {
         </Reveal>
         <H3>What LVM Does — The Pool System</H3>
         <Reveal>
-          <div className="bg-fg rounded-xl p-5 font-mono text-sm mb-6 overflow-x-auto">
-            <p className="text-white/40 mb-2">WITH LVM — flexible pool:</p>
-            <p className="text-[#6ee7b7]">┌─────────────────────────────────────┐</p>
-            <p className="text-[#6ee7b7]">│      POOL OF STORAGE (60GB)         │</p>
-            <p className="text-[#6ee7b7]">│  ┌──────────────┐ ┌─────────────┐  │</p>
-            <p className="text-[#6ee7b7]">│  │ Bucket A     │ │ Bucket B    │  │</p>
-            <p className="text-[#6ee7b7]">│  │ / (Linux)    │ │ /backups    │  │</p>
-            <p className="text-[#6ee7b7]">│  │ 30GB         │ │ 10GB        │  │</p>
-            <p className="text-[#6ee7b7]">│  └──────────────┘ └─────────────┘  │</p>
-            <p className="text-[#6ee7b7]">│              ~20GB FREE             │</p>
-            <p className="text-[#6ee7b7]">└─────────────────────────────────────┘</p>
-            <p className="text-[#6ee7b7] mt-3">Bucket A getting full? Two commands, 10 seconds. ✓</p>
+          <div className="bg-terminal rounded-xl p-5 font-mono text-sm mb-6 overflow-x-auto">
+            <p className="text-terminal-fg/50 mb-2">WITH LVM — flexible pool:</p>
+            <p className="text-terminal-ok">┌─────────────────────────────────────┐</p>
+            <p className="text-terminal-ok">│      POOL OF STORAGE (60GB)         │</p>
+            <p className="text-terminal-ok">│  ┌──────────────┐ ┌─────────────┐  │</p>
+            <p className="text-terminal-ok">│  │ Bucket A     │ │ Bucket B    │  │</p>
+            <p className="text-terminal-ok">│  │ / (Linux)    │ │ /backups    │  │</p>
+            <p className="text-terminal-ok">│  │ 30GB         │ │ 10GB        │  │</p>
+            <p className="text-terminal-ok">│  └──────────────┘ └─────────────┘  │</p>
+            <p className="text-terminal-ok">│              ~20GB FREE             │</p>
+            <p className="text-terminal-ok">└─────────────────────────────────────┘</p>
+            <p className="text-terminal-ok mt-3">Bucket A getting full? Two commands, 10 seconds. ✓</p>
           </div>
         </Reveal>
         <H3>The 3 LVM Terms</H3>

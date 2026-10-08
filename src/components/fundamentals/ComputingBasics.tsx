@@ -133,18 +133,14 @@ const Reveal = ({ children, delay = 0 }: { children: React.ReactNode; delay?: nu
 
 /* ═══════════ MAIN COMPONENT ═══════════ */
 const ComputingBasics = () => {
-  const [currentSection, setCurrentSection] = useState(0);
   const sectionRefs = useRef<(HTMLElement | null)[]>([]);
   const [showConfetti, setShowConfetti] = useState(false);
   const [showCelebration, setShowCelebration] = useState(false);
 
-  useReadingNav(navSections, sectionRefs, setCurrentSection);
+  useReadingNav(navSections, sectionRefs);
 
   return (
     <article>
-      <Confetti isActive={showConfetti} onComplete={() => setShowConfetti(false)} />
-      <CelebrationMessage isVisible={showCelebration} phaseName="Computing Basics" onClose={() => setShowCelebration(false)} />
-
       {/* ══════════ SECTION 0 — Virtual Machines ══════════ */}
       <ArticleSection id="section-0" ref={(el) => { sectionRefs.current[0] = el; }}>
         <SectionTitle title="What is a Virtual Machine (VM)?" />
@@ -503,10 +499,10 @@ const ComputingBasics = () => {
           <LayerDiagram
             title="The Computing Layer Stack"
             layers={[
-              { label: "Applications", description: "Chrome, Spotify, games, Word — the apps you use every day. They send requests down to the OS.", color: "rgba(163, 177, 138, 0.3)" },
-              { label: "Operating System", description: "The full package — desktop, file manager, settings, tools. Wraps around the kernel to give you a usable experience.", color: "rgba(212, 163, 115, 0.3)" },
-              { label: "Kernel", description: "The core translator. Takes requests from the OS and apps, and communicates with the hardware. Manages memory, processes, and devices.", color: "rgba(58, 90, 64, 0.3)" },
-              { label: "Hardware", description: "Physical components — CPU, RAM, storage, keyboard, screen, speakers. Raw power that needs the kernel to be useful.", color: "rgba(188, 71, 73, 0.2)" },
+              { label: "Applications", description: "Chrome, Spotify, games, Word — the apps you use every day. They send requests down to the OS.", color: "var(--info-soft)" },
+              { label: "Operating System", description: "The full package — desktop, file manager, settings, tools. Wraps around the kernel to give you a usable experience.", color: "var(--tip-soft)" },
+              { label: "Kernel", description: "The core translator. Takes requests from the OS and apps, and communicates with the hardware. Manages memory, processes, and devices.", color: "var(--success-soft)" },
+              { label: "Hardware", description: "Physical components — CPU, RAM, storage, keyboard, screen, speakers. Raw power that needs the kernel to be useful.", color: "var(--danger-soft)" },
             ]}
           />
         </Reveal>
@@ -631,7 +627,7 @@ const ComputingBasics = () => {
         </Reveal>
 
         <H3>1. sudo = &ldquo;Run as Admin/Boss&rdquo;</H3>
-        <P className="mb-4"><code className="font-mono text-accent bg-bg px-1.5 py-0.5 rounded">sudo</code> stands for &ldquo;Super User DO&rdquo;.</P>
+        <P className="mb-4"><code className="font-mono text-accent bg-surface-2 px-1.5 py-0.5 rounded">sudo</code> stands for &ldquo;Super User DO&rdquo;.</P>
 
         <Reveal>
           <AnalogyBox>
@@ -640,7 +636,7 @@ const ComputingBasics = () => {
         </Reveal>
 
         <H3>2. apt = The App Store (for the Terminal)</H3>
-        <P className="mb-6"><code className="font-mono text-accent bg-bg px-1.5 py-0.5 rounded">apt</code> stands for Advanced Package Tool. It&apos;s Ubuntu&apos;s software manager — like the App Store on your iPhone or Google Play Store on Android, but instead of tapping icons, you type commands.</P>
+        <P className="mb-6"><code className="font-mono text-accent bg-surface-2 px-1.5 py-0.5 rounded">apt</code> stands for Advanced Package Tool. It&apos;s Ubuntu&apos;s software manager — like the App Store on your iPhone or Google Play Store on Android, but instead of tapping icons, you type commands.</P>
 
         <H3>3. update vs upgrade</H3>
         <P className="mb-4">These two words sound similar but do very different things:</P>
@@ -648,20 +644,20 @@ const ComputingBasics = () => {
         <Reveal>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
             <motion.div
-              className="p-6 rounded-xl border border-accent/15 bg-accent/[0.03]"
-              whileHover={{ y: -3, borderColor: "rgba(58, 90, 64, 0.3)" }}
+              className="p-6 rounded-xl border border-accent/15 bg-accent/[0.03] transition-colors hover:border-accent/30"
+              whileHover={{ y: -3 }}
               transition={{ duration: 0.2 }}
             >
-              <code className="font-mono text-accent bg-bg px-2 py-1 rounded text-sm">sudo apt update</code>
+              <code className="font-mono text-accent bg-surface-2 px-2 py-1 rounded text-sm">sudo apt update</code>
               <p className="font-medium text-fg mt-3 mb-2">&ldquo;Check what&apos;s new&rdquo;</p>
               <p className="text-sm text-fg-2">Refreshes the list of available updates. It does NOT install anything.</p>
             </motion.div>
             <motion.div
-              className="p-6 rounded-xl border border-danger/15 bg-danger/[0.03]"
-              whileHover={{ y: -3, borderColor: "rgba(188, 71, 73, 0.3)" }}
+              className="p-6 rounded-xl border border-danger/15 bg-danger/[0.03] transition-colors hover:border-danger/30"
+              whileHover={{ y: -3 }}
               transition={{ duration: 0.2 }}
             >
-              <code className="font-mono text-danger bg-bg px-2 py-1 rounded text-sm">sudo apt upgrade -y</code>
+              <code className="font-mono text-danger bg-surface-2 px-2 py-1 rounded text-sm">sudo apt upgrade -y</code>
               <p className="font-medium text-fg mt-3 mb-2">&ldquo;Install all updates&rdquo;</p>
               <p className="text-sm text-fg-2">Actually downloads and installs all new versions. <code className="font-mono">-y</code> means &ldquo;yes to everything&rdquo;.</p>
             </motion.div>
@@ -675,7 +671,7 @@ const ComputingBasics = () => {
         </Reveal>
 
         <H3>4. && = &ldquo;If the first succeeds, then do the next&rdquo;</H3>
-        <P className="mb-6">The <code className="font-mono text-accent bg-bg px-1.5 py-0.5 rounded">&&</code> connects two commands. It means: run the first command, and <em>only if it succeeds</em>, run the next one. It makes no sense to install updates (upgrade) if you haven&apos;t checked what&apos;s available (update) first — it&apos;s like ordering food before seeing the menu.</P>
+        <P className="mb-6">The <code className="font-mono text-accent bg-surface-2 px-1.5 py-0.5 rounded">&&</code> connects two commands. It means: run the first command, and <em>only if it succeeds</em>, run the next one. It makes no sense to install updates (upgrade) if you haven&apos;t checked what&apos;s available (update) first — it&apos;s like ordering food before seeing the menu.</P>
 
         <Reveal>
           <Terminal
@@ -716,48 +712,46 @@ const ComputingBasics = () => {
       </ArticleSection>
 
       {/* ══════════ QUIZ & FLASHCARDS ══════════ */}
-      <section className="relative bg-gradient-to-b from-surface via-accent/[0.04] to-surface">
-        <div className="absolute inset-y-0 left-0 w-1 bg-gradient-to-b from-transparent via-accent/10 to-transparent" />
-        <div className="absolute inset-y-0 right-0 w-1 bg-gradient-to-b from-transparent via-success/10 to-transparent" />
+      <ArticleSection id="quiz">
+        <Reveal>
+          <Quiz
+            title="Computing Basics Quiz"
+            questions={quizQuestions}
+            onComplete={(score, total) => {
+              if (score >= total * 0.8) {
+                setShowConfetti(true);
+                setShowCelebration(true);
+              }
+            }}
+          />
+        </Reveal>
 
-        <div className="px-6 md:px-12 lg:px-20 xl:px-32 py-20 md:py-28">
+        <div className="mt-12">
           <Reveal>
-            <Quiz
-              title="Computing Basics Quiz"
-              questions={quizQuestions}
-              onComplete={(score, total) => {
-                if (score >= total * 0.8) {
-                  setShowConfetti(true);
-                  setShowCelebration(true);
-                }
-              }}
-            />
-          </Reveal>
-
-          <div className="mt-24">
-            <Reveal>
-              <Flashcards cards={flashcardsData} title="Key Concepts Flashcards" />
-            </Reveal>
-          </div>
-
-          {/* Back link */}
-          <Reveal>
-            <div className="mt-24 text-center">
-              <motion.a
-                href="/fundamentals"
-                className="inline-flex items-center gap-2 px-8 py-4 bg-accent text-white rounded-xl hover:bg-accent/90 transition-colors text-lg shadow-lg shadow-accent/20"
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                </svg>
-                Back to Fundamentals
-              </motion.a>
-            </div>
+            <Flashcards cards={flashcardsData} title="Key Concepts Flashcards" />
           </Reveal>
         </div>
-      </section>
+
+        {/* Back link */}
+        <Reveal>
+          <div className="mt-12 text-center">
+            <motion.a
+              href="/fundamentals"
+              className="inline-flex items-center gap-2 rounded-md bg-primary px-6 py-3 font-medium text-primary-fg transition-opacity hover:opacity-90 text-lg"
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+              Back to Fundamentals
+            </motion.a>
+          </div>
+        </Reveal>
+      </ArticleSection>
+
+      <Confetti isActive={showConfetti} onComplete={() => setShowConfetti(false)} />
+      <CelebrationMessage isVisible={showCelebration} phaseName="Computing Basics" onClose={() => setShowCelebration(false)} />
     </article>
   );
 };

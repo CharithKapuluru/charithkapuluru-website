@@ -119,7 +119,7 @@ const Reveal = ({ children, delay = 0 }: { children: React.ReactNode; delay?: nu
 
 /* ── Inline code pill ── */
 const Code = ({ children }: { children: React.ReactNode }) => (
-  <code className="font-mono text-danger bg-danger/8 px-1.5 py-0.5 rounded text-[0.9em]">{children}</code>
+  <code className="font-mono text-accent bg-accent/8 px-1.5 py-0.5 rounded text-[0.9em]">{children}</code>
 );
 
 /* ── Network diagram card ── */
@@ -134,7 +134,7 @@ const NetworkDiagram = ({ title, children }: { title: string; children: React.Re
     <div className="px-5 py-3 bg-fg/[0.03] border-b border-fg/8 flex items-center gap-2">
       <div className="w-3 h-3 rounded-full bg-danger/40" />
       <div className="w-3 h-3 rounded-full bg-accent/40" />
-      <div className="w-3 h-3 rounded-full bg-accent/40" />
+      <div className="w-3 h-3 rounded-full bg-success/40" />
       <span className="ml-2 text-xs font-mono text-fg-3">{title}</span>
     </div>
     <div className="p-5 md:p-8 overflow-x-auto">
@@ -160,18 +160,14 @@ const IPBadge = ({ ip, label, color = "moss" }: { ip: string; label: string; col
 };
 
 export default function NetworkingBasics() {
-  const [currentSection, setCurrentSection] = useState(0);
   const sectionRefs = useRef<(HTMLElement | null)[]>([]);
   const [showConfetti, setShowConfetti] = useState(false);
   const [showCelebration, setShowCelebration] = useState(false);
 
-  useReadingNav(navSections, sectionRefs, setCurrentSection);
+  useReadingNav(navSections, sectionRefs);
 
   return (
     <article>
-      <Confetti isActive={showConfetti} onComplete={() => setShowConfetti(false)} />
-      <CelebrationMessage isVisible={showCelebration} phaseName="Networking Basics" onClose={() => setShowCelebration(false)} />
-
       {/* ══════════ SECTION 0 — What is a Network? ══════════ */}
       <ArticleSection id="section-0" ref={(el) => { sectionRefs.current[0] = el; }}>
         <SectionTitle title="What is a Network?" />
@@ -685,38 +681,37 @@ You type on your Mac, but everything runs on the VM.`}
       </ArticleSection>
 
       {/* ══════════ QUIZ & FLASHCARDS ══════════ */}
-      <section className="relative bg-gradient-to-b from-surface via-danger/[0.03] to-surface">
-        <div className="absolute inset-y-0 left-0 w-1 bg-gradient-to-b from-transparent via-danger/10 to-transparent" />
-        <div className="absolute inset-y-0 right-0 w-1 bg-gradient-to-b from-transparent via-accent/10 to-transparent" />
-        <div className="px-6 md:px-12 lg:px-20 xl:px-32 py-20 md:py-28">
-          <Reveal>
-            <Quiz
-              title="Networking Basics Quiz"
-              questions={quizQuestions}
-              onComplete={(score, total) => {
-                if (score >= total * 0.8) { setShowConfetti(true); setShowCelebration(true); }
-              }}
-            />
-          </Reveal>
-          <div className="mt-24">
-            <Reveal><Flashcards cards={flashcardsData} title="Networking Flashcards" /></Reveal>
-          </div>
-          <Reveal>
-            <div className="mt-24 text-center">
-              <motion.a
-                href="/fundamentals"
-                className="inline-flex items-center gap-2 px-8 py-4 bg-danger text-white rounded-xl hover:bg-danger/90 transition-colors text-lg shadow-lg shadow-danger/20"
-                whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                </svg>
-                Back to Fundamentals
-              </motion.a>
-            </div>
-          </Reveal>
+      <ArticleSection id="quiz">
+        <Reveal>
+          <Quiz
+            title="Networking Basics Quiz"
+            questions={quizQuestions}
+            onComplete={(score, total) => {
+              if (score >= total * 0.8) { setShowConfetti(true); setShowCelebration(true); }
+            }}
+          />
+        </Reveal>
+        <div className="mt-12">
+          <Reveal><Flashcards cards={flashcardsData} title="Networking Flashcards" /></Reveal>
         </div>
-      </section>
+        <Reveal>
+          <div className="mt-12 text-center">
+            <motion.a
+              href="/fundamentals"
+              className="inline-flex items-center gap-2 rounded-md bg-primary px-6 py-3 font-medium text-primary-fg transition-opacity hover:opacity-90 text-lg"
+              whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+              Back to Fundamentals
+            </motion.a>
+          </div>
+        </Reveal>
+      </ArticleSection>
+
+      <Confetti isActive={showConfetti} onComplete={() => setShowConfetti(false)} />
+      <CelebrationMessage isVisible={showCelebration} phaseName="Networking Basics" onClose={() => setShowCelebration(false)} />
     </article>
   );
 }

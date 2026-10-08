@@ -129,11 +129,10 @@ const DockerCmd = ({ cmd, desc }: { cmd: string; desc: string }) => (
 );
 
 export default function DockerAndNginx() {
-  const [currentSection, setCurrentSection] = useState(0);
   const sectionRefs = useRef<(HTMLElement | null)[]>([]);
   const [showConfetti, setShowConfetti] = useState(false);
 
-  useReadingNav(navSections, sectionRefs, setCurrentSection);
+  useReadingNav(navSections, sectionRefs);
 
   return (
     <article>
@@ -164,9 +163,9 @@ export default function DockerAndNginx() {
           </div>
         </Reveal>
         <Reveal>
-          <div className="bg-fg rounded-xl p-5 text-center mb-8">
+          <div className="bg-terminal rounded-xl p-5 text-center mb-8">
             <p className="text-2xl text-white italic mb-2">&ldquo;It works on my machine!&rdquo;</p>
-            <p className="text-white/40 text-sm">— every developer, at least once</p>
+            <p className="text-terminal-fg/50 text-sm">— every developer, at least once</p>
           </div>
         </Reveal>
         <P>Docker solves this completely by packaging your app <em>and everything it needs</em> into a single portable box called a <strong>container</strong>.</P>
@@ -178,19 +177,19 @@ export default function DockerAndNginx() {
         <SectionTitle title="What is Docker?" />
         <P className="text-lg mb-8">Docker packages your app and all its dependencies into a <strong>container</strong> — a self-contained box that runs identically on any machine.</P>
         <Reveal>
-          <div className="bg-fg rounded-xl p-5 font-mono text-sm mb-8 overflow-x-auto">
-            <p className="text-white/40 mb-3">What&apos;s inside a container:</p>
-            <p className="text-[#6ee7b7]">┌─────────────────────────────┐</p>
-            <p className="text-[#6ee7b7]">│         CONTAINER           │</p>
-            <p className="text-[#6ee7b7]">│                             │</p>
-            <p className="text-[#6ee7b7]">│  Your app                   │</p>
-            <p className="text-[#6ee7b7]">│  Python 3.11                │</p>
-            <p className="text-[#6ee7b7]">│  Library A 2.0              │</p>
-            <p className="text-[#6ee7b7]">│  Library B 5.1              │</p>
-            <p className="text-[#6ee7b7]">│  All config files           │</p>
-            <p className="text-[#6ee7b7]">│                             │</p>
-            <p className="text-[#6ee7b7]">└─────────────────────────────┘</p>
-            <div className="mt-4 space-y-1 text-[#6ee7b7]">
+          <div className="bg-terminal rounded-xl p-5 font-mono text-sm mb-8 overflow-x-auto">
+            <p className="text-terminal-fg/50 mb-3">What&apos;s inside a container:</p>
+            <p className="text-terminal-ok">┌─────────────────────────────┐</p>
+            <p className="text-terminal-ok">│         CONTAINER           │</p>
+            <p className="text-terminal-ok">│                             │</p>
+            <p className="text-terminal-ok">│  Your app                   │</p>
+            <p className="text-terminal-ok">│  Python 3.11                │</p>
+            <p className="text-terminal-ok">│  Library A 2.0              │</p>
+            <p className="text-terminal-ok">│  Library B 5.1              │</p>
+            <p className="text-terminal-ok">│  All config files           │</p>
+            <p className="text-terminal-ok">│                             │</p>
+            <p className="text-terminal-ok">└─────────────────────────────┘</p>
+            <div className="mt-4 space-y-1 text-terminal-ok">
               <p>Your Mac      → runs ✓</p>
               <p>Friend&apos;s PC  → runs ✓</p>
               <p>Ubuntu server → runs ✓</p>
@@ -306,8 +305,8 @@ export default function DockerAndNginx() {
         </div>
         <H3>A real Dockerfile</H3>
         <Reveal>
-          <div className="bg-fg rounded-xl p-5 font-mono text-sm overflow-x-auto">
-            <p className="text-white/40 mb-3">Dockerfile</p>
+          <div className="bg-terminal rounded-xl p-5 font-mono text-sm overflow-x-auto">
+            <p className="text-terminal-fg/50 mb-3">Dockerfile</p>
             <div className="space-y-2">
               {[
                 { code: "FROM ubuntu:24.04", comment: "← start from official Ubuntu image" },
@@ -316,8 +315,8 @@ export default function DockerAndNginx() {
                 { code: 'CMD ["python3", "/app/app.py"]', comment: "← run this on container start" },
               ].map(line => (
                 <div key={line.code} className="flex flex-wrap gap-3">
-                  <span className="text-[#6ee7b7]">{line.code}</span>
-                  <span className="text-white/30 text-xs self-end">{line.comment}</span>
+                  <span className="text-terminal-ok">{line.code}</span>
+                  <span className="text-terminal-fg/50 text-xs self-end">{line.comment}</span>
                 </div>
               ))}
             </div>
@@ -353,16 +352,16 @@ export default function DockerAndNginx() {
                 <p>Server 1 → Python 3.8, app v1.0</p>
                 <p>Server 2 → Python 3.9, app v1.0 ← drift</p>
                 <p>Server 3 → Python 3.8, app v1.1 ← drift</p>
-                <p className="text-terminal-danger mt-2">Nightmare to manage. Every server different.</p>
+                <p className="text-danger mt-2">Nightmare to manage. Every server different.</p>
               </div>
             </div>
             <div className="p-5 rounded-xl border-2 border-accent/15 bg-accent/5">
               <p className="font-semibold text-accent mb-3">With Docker</p>
               <div className="font-mono text-xs text-fg-2 space-y-1">
                 <p>docker run myapp:v1.0  ← all servers</p>
-                <p className="text-[#6ee7b7]">Identical everywhere, always.</p>
-                <p className="text-[#6ee7b7]">Update → docker run myapp:v1.1</p>
-                <p className="text-[#6ee7b7]">Rollback → docker run myapp:v1.0</p>
+                <p className="text-success">Identical everywhere, always.</p>
+                <p className="text-success">Update → docker run myapp:v1.1</p>
+                <p className="text-success">Rollback → docker run myapp:v1.0</p>
               </div>
             </div>
           </div>

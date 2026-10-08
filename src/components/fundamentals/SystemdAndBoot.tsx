@@ -117,7 +117,7 @@ const Reveal = ({ children, delay = 0 }: { children: React.ReactNode; delay?: nu
 );
 
 const Code = ({ children }: { children: React.ReactNode }) => (
-  <code className="font-mono text-danger bg-danger/8 px-1.5 py-0.5 rounded text-[0.9em]">{children}</code>
+  <code className="font-mono text-accent bg-accent/8 px-1.5 py-0.5 rounded text-[0.9em]">{children}</code>
 );
 
 const CtlCmd = ({ cmd, desc, color = "moss" }: { cmd: string; desc: string; color?: string }) => {
@@ -151,11 +151,10 @@ const BootStep = ({ step, title, desc, icon, delay }: { step: string; title: str
 );
 
 export default function SystemdAndBoot() {
-  const [currentSection, setCurrentSection] = useState(0);
   const sectionRefs = useRef<(HTMLElement | null)[]>([]);
   const [showConfetti, setShowConfetti] = useState(false);
 
-  useReadingNav(navSections, sectionRefs, setCurrentSection);
+  useReadingNav(navSections, sectionRefs);
 
   return (
     <article>
@@ -293,19 +292,19 @@ export default function SystemdAndBoot() {
         <P className="text-lg mb-6">systemd doesn&apos;t randomly start things. It reads <strong>service files</strong> — small config files that describe exactly how to run each service.</P>
         <P className="mb-8">Service files live in <Code>/etc/systemd/system/</Code> and <Code>/lib/systemd/system/</Code>. Here&apos;s what a typical one looks like:</P>
         <Reveal>
-          <div className="rounded-2xl border border-fg/10 bg-fg overflow-hidden mb-8">
+          <div className="rounded-2xl border border-border-strong bg-terminal overflow-hidden mb-8">
             <div className="px-5 py-3 bg-white/5 border-b border-white/10">
-              <p className="font-mono text-xs text-white/40">ssh.service</p>
+              <p className="font-mono text-xs text-terminal-fg/50">ssh.service</p>
             </div>
             <div className="p-5 font-mono text-sm space-y-1 overflow-x-auto">
-              <p className="text-white/40">[Unit]</p>
-              <p><span className="text-[#6ee7b7]">Description</span>=<span className="text-terminal-accent">OpenSSH Server</span></p>
-              <p><span className="text-[#6ee7b7]">After</span>=<span className="text-terminal-accent">network.target</span> <span className="text-white/30">← start AFTER networking</span></p>
-              <p className="mt-3 text-white/40">[Service]</p>
-              <p><span className="text-[#6ee7b7]">ExecStart</span>=<span className="text-terminal-accent">/usr/sbin/sshd -D</span> <span className="text-white/30">← command to run</span></p>
-              <p><span className="text-[#6ee7b7]">Restart</span>=<span className="text-terminal-accent">on-failure</span> <span className="text-white/30">← restart if it crashes</span></p>
-              <p className="mt-3 text-white/40">[Install]</p>
-              <p><span className="text-[#6ee7b7]">WantedBy</span>=<span className="text-terminal-accent">multi-user.target</span> <span className="text-white/30">← start on normal boot</span></p>
+              <p className="text-terminal-fg/50">[Unit]</p>
+              <p><span className="text-terminal-ok">Description</span>=<span className="text-terminal-accent">OpenSSH Server</span></p>
+              <p><span className="text-terminal-ok">After</span>=<span className="text-terminal-accent">network.target</span> <span className="text-terminal-fg/50">← start AFTER networking</span></p>
+              <p className="mt-3 text-terminal-fg/50">[Service]</p>
+              <p><span className="text-terminal-ok">ExecStart</span>=<span className="text-terminal-accent">/usr/sbin/sshd -D</span> <span className="text-terminal-fg/50">← command to run</span></p>
+              <p><span className="text-terminal-ok">Restart</span>=<span className="text-terminal-accent">on-failure</span> <span className="text-terminal-fg/50">← restart if it crashes</span></p>
+              <p className="mt-3 text-terminal-fg/50">[Install]</p>
+              <p><span className="text-terminal-ok">WantedBy</span>=<span className="text-terminal-accent">multi-user.target</span> <span className="text-terminal-fg/50">← start on normal boot</span></p>
             </div>
           </div>
         </Reveal>

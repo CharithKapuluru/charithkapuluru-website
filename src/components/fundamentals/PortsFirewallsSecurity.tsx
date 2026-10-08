@@ -112,7 +112,7 @@ const Reveal = ({ children, delay = 0 }: { children: React.ReactNode; delay?: nu
 );
 
 const Code = ({ children }: { children: React.ReactNode }) => (
-  <code className="font-mono text-danger bg-danger/8 px-1.5 py-0.5 rounded text-[0.9em]">{children}</code>
+  <code className="font-mono text-accent bg-accent/8 px-1.5 py-0.5 rounded text-[0.9em]">{children}</code>
 );
 
 const PortRow = ({ port, service, desc, risk }: { port: string; service: string; desc: string; risk?: boolean }) => (
@@ -125,11 +125,10 @@ const PortRow = ({ port, service, desc, risk }: { port: string; service: string;
 );
 
 export default function PortsFirewallsSecurity() {
-  const [currentSection, setCurrentSection] = useState(0);
   const sectionRefs = useRef<(HTMLElement | null)[]>([]);
   const [showConfetti, setShowConfetti] = useState(false);
 
-  useReadingNav(navSections, sectionRefs, setCurrentSection);
+  useReadingNav(navSections, sectionRefs);
 
   return (
     <article>
@@ -256,15 +255,15 @@ export default function PortsFirewallsSecurity() {
         <SectionTitle title="Fail2ban" />
         <P className="text-lg mb-6">Even with hardening, attackers will still try. <strong>Fail2ban</strong> watches your logs and automatically bans IPs that fail too many times.</P>
         <Reveal>
-          <div className="bg-fg rounded-xl p-5 font-mono text-sm mb-8 overflow-x-auto">
-            <p className="text-white/40 mb-3">How Fail2ban works:</p>
+          <div className="bg-terminal rounded-xl p-5 font-mono text-sm mb-8 overflow-x-auto">
+            <p className="text-terminal-fg/50 mb-3">How Fail2ban works:</p>
             {[
               { line: "Attacker tries password 1  → fail → logged in /var/log/auth.log", color: "text-terminal-accent" },
               { line: "Attacker tries password 2  → fail → logged", color: "text-terminal-accent" },
               { line: "Attacker tries password 3  → fail → logged", color: "text-terminal-accent" },
               { line: 'Fail2ban reads log         → "this IP failed 3 times"', color: "text-terminal-accent" },
-              { line: "Fail2ban adds rule         → IP 1.2.3.4 BANNED for 1 hour", color: "text-[#6ee7b7]" },
-              { line: "Attacker tries password 4  → connection REFUSED ✓", color: "text-[#6ee7b7]" },
+              { line: "Fail2ban adds rule         → IP 1.2.3.4 BANNED for 1 hour", color: "text-terminal-ok" },
+              { line: "Attacker tries password 4  → connection REFUSED ✓", color: "text-terminal-ok" },
             ].map((item, i) => (
               <motion.p key={i} initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className={`py-0.5 ${item.color}`}>{item.line}</motion.p>
             ))}

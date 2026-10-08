@@ -201,11 +201,11 @@ const ResourceNode = ({
   const getStatusColor = (status: string) => {
     switch (status) {
       case "created":
-        return "bg-accent text-white";
+        return "bg-success";
       case "creating":
-        return "bg-tip text-white animate-pulse";
+        return "bg-tip animate-pulse";
       default:
-        return "bg-surface-2 text-fg-3";
+        return "bg-fg-3";
     }
   };
 
@@ -249,8 +249,8 @@ const ResourceNode = ({
     <div className="select-none">
       <div
         className={`flex items-center gap-2 py-2 px-3 rounded-lg cursor-pointer
-                   transition-all hover:bg-bg ${
-                     isSelected ? "bg-tip-soft border border-tip" : ""
+                   transition-all hover:bg-surface-2 ${
+                     isSelected ? "bg-tip-soft border border-tip/30" : ""
                    }`}
         style={{ marginLeft: `${depth * 20}px` }}
         onClick={() => onSelect(resource)}
@@ -430,15 +430,15 @@ const TerraformResourceTree = () => {
           <button
             onClick={handleReset}
             className="px-3 py-1.5 text-sm text-fg-2 hover:text-fg
-                       border border-fg/10 rounded-lg hover:bg-surface"
+                       border border-fg/10 rounded-lg hover:bg-surface-2"
           >
             Reset
           </button>
           <button
             onClick={handleApply}
             disabled={isApplying}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-accent text-white
-                       rounded-lg hover:bg-accent transition-colors text-sm
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-accent text-bg
+                       rounded-lg hover:bg-accent-strong transition-colors text-sm
                        disabled:opacity-50"
           >
             {isApplying ? (
@@ -516,10 +516,10 @@ const TerraformResourceTree = () => {
                 <div
                   className={`w-3 h-3 rounded-full ${
                     selectedResource.status === "created"
-                      ? "bg-accent"
+                      ? "bg-success"
                       : selectedResource.status === "creating"
                       ? "bg-tip animate-pulse"
-                      : "bg-surface-2"
+                      : "bg-fg-3"
                   }`}
                 />
                 <span className="text-xs uppercase tracking-wider text-fg-3">
@@ -543,7 +543,7 @@ const TerraformResourceTree = () => {
                   <div className="space-y-1">
                     {selectedResource.properties.map((prop, index) => (
                       <div key={index} className="flex items-start gap-2 text-sm">
-                        <code className="text-accent">{prop.key}</code>
+                        <code className="text-fg-2">{prop.key}</code>
                         <span className="text-fg-3">=</span>
                         <code className="text-accent">{prop.value}</code>
                       </div>
@@ -563,7 +563,7 @@ const TerraformResourceTree = () => {
       {/* Legend */}
       <div className="mt-4 flex flex-wrap gap-4 text-xs text-fg-3">
         <div className="flex items-center gap-2">
-          <div className="w-2 h-2 rounded-full bg-surface-2" />
+          <div className="w-2 h-2 rounded-full bg-fg-3" />
           <span>Pending</span>
         </div>
         <div className="flex items-center gap-2">
@@ -571,7 +571,7 @@ const TerraformResourceTree = () => {
           <span>Creating</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-2 h-2 rounded-full bg-accent" />
+          <div className="w-2 h-2 rounded-full bg-success" />
           <span>Created</span>
         </div>
       </div>
