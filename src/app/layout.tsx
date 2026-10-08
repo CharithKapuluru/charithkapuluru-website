@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Fredoka, Nunito, JetBrains_Mono } from "next/font/google";
-import SmoothScroll from "@/components/SmoothScroll";
 import { ThemeProvider } from "@/components/ui/ThemeProvider";
 import { AuthProvider } from "@/context/AuthContext";
 import { WorldProvider } from "@/components/world/WorldProvider";
@@ -43,7 +42,6 @@ export default function RootLayout({
         <AuthProvider>
           <ThemeProvider>
             <WorldProvider>
-              <SmoothScroll />
               {children}
               <EasterEggs />
             </WorldProvider>
