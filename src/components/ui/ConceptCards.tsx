@@ -1,49 +1,40 @@
-"use client";
+import { iconFor, type IconName } from "./icons";
 
 interface ConceptCard {
-  icon: string;
+  icon: IconName;
   name: string;
   phase: number;
 }
 
 const concepts: ConceptCard[] = [
-  { icon: "🐍", name: "Python", phase: 1 },
-  { icon: "⚡", name: "FastAPI", phase: 1 },
-  { icon: "🧪", name: "Pytest", phase: 2 },
-  { icon: "🧹", name: "Ruff", phase: 3 },
-  { icon: "🐳", name: "Docker", phase: 4 },
-  { icon: "⚙️", name: "GitHub Actions", phase: 5 },
-  { icon: "🔒", name: "Semgrep", phase: 6 },
-  { icon: "🛡️", name: "Trivy", phase: 7 },
+  { icon: "code", name: "Python", phase: 1 },
+  { icon: "lightning", name: "FastAPI", phase: 1 },
+  { icon: "flask", name: "Pytest", phase: 2 },
+  { icon: "broom", name: "Ruff", phase: 3 },
+  { icon: "package", name: "Docker", phase: 4 },
+  { icon: "gear", name: "GitHub Actions", phase: 5 },
+  { icon: "lock", name: "Semgrep", phase: 6 },
+  { icon: "shield-check", name: "Trivy", phase: 7 },
 ];
 
-interface ConceptCardsProps {
-  onCardClick?: (phase: number) => void;
-}
-
-const ConceptCards = ({ onCardClick }: ConceptCardsProps) => {
+export default function ConceptCards({ onCardClick }: { onCardClick?: (phase: number) => void }) {
   return (
     <div className="my-12">
-      <h3 className="text-2xl font-serif text-text-charcoal mb-6">Tech Stack</h3>
-      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-4">
-        {concepts.map((concept) => (
+      <h3 className="text-h3 text-fg">Tech stack</h3>
+      <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-8">
+        {concepts.map((c) => (
           <button
-            key={concept.name}
-            onClick={() => onCardClick?.(concept.phase)}
-            className="group flex flex-col items-center justify-center p-4 bg-bg-cream rounded-lg border border-text-charcoal/10 hover:border-accent-moss/30 hover:shadow-md hover:-translate-y-1 transition-all duration-200"
+            key={c.name}
+            type="button"
+            onClick={() => onCardClick?.(c.phase)}
+            className="flex flex-col items-center justify-center gap-2 rounded-md border border-border bg-surface p-4 text-fg-2 transition-colors duration-150 hover:border-fg-3 hover:text-fg"
           >
-            <span className="text-4xl mb-2 group-hover:scale-110 transition-transform">
-              {concept.icon}
-            </span>
-            <span className="text-sm font-mono text-text-charcoal">
-              {concept.name}
-            </span>
-            <span className="text-xs text-text-olive mt-1">Phase {concept.phase}</span>
+            {iconFor(c.icon, { size: 24 })}
+            <span className="font-mono text-caption text-fg">{c.name}</span>
+            <span className="text-caption text-fg-3">Phase {c.phase}</span>
           </button>
         ))}
       </div>
     </div>
   );
-};
-
-export default ConceptCards;
+}

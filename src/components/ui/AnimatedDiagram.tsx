@@ -2,12 +2,13 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { iconFor } from "./icons";
 
 interface DiagramStep {
   id: string;
   label: string;
   description: string;
-  icon?: string;
+  icon?: string; // Can be icon name or emoji
 }
 
 interface AnimatedDiagramProps {
@@ -84,7 +85,7 @@ const AnimatedDiagram = ({ title, steps, type = "pipeline" }: AnimatedDiagramPro
                 >
                   {/* Node */}
                   <motion.div
-                    className={`w-16 h-16 rounded-full flex items-center justify-center text-2xl border-2 transition-all duration-300 ${
+                    className={`w-16 h-16 rounded-full flex items-center justify-center border-2 transition-all duration-300 ${
                       isActive
                         ? "bg-accent-moss border-accent-moss text-white scale-110 shadow-lg"
                         : isComplete
@@ -94,7 +95,7 @@ const AnimatedDiagram = ({ title, steps, type = "pipeline" }: AnimatedDiagramPro
                     animate={isActive ? { scale: [1, 1.1, 1] } : {}}
                     transition={{ duration: 0.5, repeat: isActive ? Infinity : 0, repeatDelay: 1 }}
                   >
-                    {step.icon || (index + 1)}
+                    {step.icon ? iconFor(step.icon, { size: 22 }) : (index + 1)}
                   </motion.div>
 
                   {/* Label */}
@@ -133,7 +134,7 @@ const AnimatedDiagram = ({ title, steps, type = "pipeline" }: AnimatedDiagramPro
                   animate={isActive ? { scale: [1, 1.05, 1] } : {}}
                   transition={{ duration: 0.5, repeat: isActive ? Infinity : 0, repeatDelay: 1 }}
                 >
-                  <div className="text-xl mb-1">{step.icon}</div>
+                  <div className="mb-1">{step.icon ? iconFor(step.icon, { size: 22 }) : null}</div>
                   <div className="text-xs font-mono whitespace-nowrap">{step.label}</div>
                 </motion.div>
 
@@ -166,7 +167,7 @@ const AnimatedDiagram = ({ title, steps, type = "pipeline" }: AnimatedDiagramPro
           className="mt-6 p-4 bg-bg-paper rounded-lg border border-text-charcoal/10"
         >
           <div className="flex items-center gap-2 mb-2">
-            <span className="text-2xl">{steps[activeStep].icon}</span>
+            {steps[activeStep].icon ? iconFor(steps[activeStep].icon, { size: 22 }) : null}
             <span className="font-serif text-lg text-text-charcoal">{steps[activeStep].label}</span>
           </div>
           <p className="text-text-taupe">{steps[activeStep].description}</p>
@@ -199,37 +200,37 @@ export const cicdPipelineSteps: DiagramStep[] = [
     id: "push",
     label: "Push Code",
     description: "Developer pushes code changes to GitHub repository, triggering the CI/CD pipeline automatically.",
-    icon: "📤",
+    icon: "export",
   },
   {
     id: "lint",
     label: "Lint & Format",
     description: "Ruff checks code for bugs, bad practices, and ensures consistent formatting across the codebase.",
-    icon: "🧹",
+    icon: "broom",
   },
   {
     id: "test",
     label: "Run Tests",
     description: "Pytest runs all automated tests to verify the code works correctly and nothing is broken.",
-    icon: "🧪",
+    icon: "flask",
   },
   {
     id: "sast",
     label: "Security Scan",
     description: "Semgrep scans source code for security vulnerabilities like SQL injection and XSS.",
-    icon: "🔒",
+    icon: "lock",
   },
   {
     id: "build",
     label: "Build Image",
     description: "Docker builds a container image containing the application and all its dependencies.",
-    icon: "🐳",
+    icon: "package",
   },
   {
     id: "trivy",
     label: "Container Scan",
     description: "Trivy scans the Docker image for known vulnerabilities in dependencies and OS packages.",
-    icon: "🛡️",
+    icon: "shield-check",
   },
 ];
 
@@ -238,31 +239,31 @@ export const dockerFlowSteps: DiagramStep[] = [
     id: "dockerfile",
     label: "Dockerfile",
     description: "A recipe file that contains instructions on how to build the Docker image - what base image to use, what to install, and how to run the app.",
-    icon: "📝",
+    icon: "file-text",
   },
   {
     id: "build",
     label: "Build Image",
     description: "Docker reads the Dockerfile and creates an image - a packaged, read-only template containing everything needed to run the application.",
-    icon: "🔨",
+    icon: "hammer",
   },
   {
     id: "image",
     label: "Docker Image",
     description: "The built image is stored locally or pushed to a registry. It's like a blueprint that can create identical containers anywhere.",
-    icon: "📦",
+    icon: "package",
   },
   {
     id: "run",
     label: "Run Container",
     description: "When you run the image, Docker creates a container - a running instance of your application that can handle real requests.",
-    icon: "▶️",
+    icon: "play",
   },
   {
     id: "scale",
     label: "Scale Up",
     description: "During high traffic, multiple containers can be created from the same image, distributing the load across them.",
-    icon: "📈",
+    icon: "trend-up",
   },
 ];
 

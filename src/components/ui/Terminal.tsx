@@ -1,6 +1,8 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { ArrowCounterClockwise, SkipForward } from "@phosphor-icons/react/dist/ssr";
+import { initialTerminalState } from "@/lib/terminal-state";
 
 interface TerminalLine {
   type: "command" | "output" | "comment";
@@ -14,201 +16,111 @@ interface TerminalProps {
   autoPlay?: boolean;
 }
 
-const Terminal = ({ title = "Terminal", lines, autoPlay = false }: TerminalProps) => {
-  const [visibleLines, setVisibleLines] = useState<number>(0);
-  const [currentText, setCurrentText] = useState("");
-  const [isTyping, setIsTyping] = useState(false);
-  const [isPlaying, setIsPlaying] = useState(autoPlay);
-  const [isComplete, setIsComplete] = useState(false);
-  const [showThinkingDots, setShowThinkingDots] = useState(false);
-  const terminalRef = useRef<HTMLDivElement>(null);
+const typingDelay = (char: string, base: number) => {
+  if (char === " ") return base + Math.random() * 30 + 20;
+  if (char === "." || char === ",") return base + Math.random() * 50 + 40;
+  return base + (Math.random() * 20 - 10);
+};
 
-  // Variable typing speed - slower at spaces and periods for realism
-  const getTypingDelay = (char: string, baseDelay: number): number => {
-    if (char === " ") return baseDelay + Math.random() * 30 + 20; // Slower at spaces
-    if (char === "." || char === ",") return baseDelay + Math.random() * 50 + 40; // Slower at punctuation
-    if (char === "-") return baseDelay + Math.random() * 20 + 10;
-    // Add slight random variation for natural feel
-    return baseDelay + (Math.random() * 20 - 10);
-  };
+export default function Terminal({ title = "Terminal", lines, autoPlay = false }: TerminalProps) {
+  const init = initialTerminalState(autoPlay, lines.length);
+  const [visibleLines, setVisibleLines] = useState(init.visibleLines);
+  const [playing, setPlaying] = useState(init.playing);
+  const [complete, setComplete] = useState(init.complete);
+  const [typed, setTyped] = useState("");
+  const [typing, setTyping] = useState(false);
+  const bodyRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!isPlaying || visibleLines >= lines.length) {
-      if (visibleLines >= lines.length) {
-        setIsComplete(true);
-        setIsPlaying(false);
-      }
+    if (!playing) return;
+    if (visibleLines >= lines.length) {
+      setComplete(true);
+      setPlaying(false);
       return;
     }
+    const line = lines[visibleLines];
+    const base = line.delay ?? 40;
+    let timeout: ReturnType<typeof setTimeout>;
 
-    const currentLine = lines[visibleLines];
-    const baseDelay = currentLine.delay || 40;
-
-    if (currentLine.type === "command") {
-      setIsTyping(true);
-      let charIndex = 0;
-      let timeoutId: NodeJS.Timeout;
-
-      const typeNextChar = () => {
-        if (charIndex <= currentLine.content.length) {
-          setCurrentText(currentLine.content.slice(0, charIndex));
-          const currentChar = currentLine.content[charIndex] || "";
-          const delay = getTypingDelay(currentChar, baseDelay);
-          charIndex++;
-          timeoutId = setTimeout(typeNextChar, delay);
+    if (line.type === "command") {
+      setTyping(true);
+      let i = 0;
+      const step = () => {
+        if (i <= line.content.length) {
+          setTyped(line.content.slice(0, i));
+          timeout = setTimeout(step, typingDelay(line.content[i] ?? "", base));
+          i += 1;
         } else {
-          setIsTyping(false);
-          // Show "thinking" dots before output appears
-          const nextLine = lines[visibleLines + 1];
-          if (nextLine && nextLine.type === "output" && nextLine.content.length > 0) {
-            setShowThinkingDots(true);
-            setTimeout(() => {
-              setShowThinkingDots(false);
-              setVisibleLines((prev) => prev + 1);
-              setCurrentText("");
-            }, 400 + Math.random() * 300);
-          } else {
-            setTimeout(() => {
-              setVisibleLines((prev) => prev + 1);
-              setCurrentText("");
-            }, 200);
-          }
+          setTyping(false);
+          timeout = setTimeout(() => {
+            setVisibleLines((v) => v + 1);
+            setTyped("");
+          }, 250);
         }
       };
-
-      typeNextChar();
-
-      return () => {
-        if (timeoutId) clearTimeout(timeoutId);
-      };
+      step();
     } else {
-      // Output or comment - show with slight delay
-      const delay = currentLine.type === "output" ? 80 + Math.random() * 40 : 60;
-      const timeoutId = setTimeout(() => {
-        setVisibleLines((prev) => prev + 1);
-      }, delay);
-
-      return () => clearTimeout(timeoutId);
+      timeout = setTimeout(() => setVisibleLines((v) => v + 1), line.type === "output" ? 90 : 60);
     }
-  }, [isPlaying, visibleLines, lines]);
+    return () => clearTimeout(timeout);
+  }, [playing, visibleLines, lines]);
 
   useEffect(() => {
-    if (terminalRef.current) {
-      terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
-    }
-  }, [visibleLines, currentText, showThinkingDots]);
+    if (playing && bodyRef.current) bodyRef.current.scrollTop = bodyRef.current.scrollHeight;
+  }, [visibleLines, typed, playing]);
 
-  const handlePlay = () => {
-    if (isComplete) {
-      setVisibleLines(0);
-      setCurrentText("");
-      setIsComplete(false);
-    }
-    setIsPlaying(true);
+  const replay = () => {
+    setVisibleLines(0);
+    setTyped("");
+    setComplete(false);
+    setPlaying(true);
   };
 
-  const handleSkip = () => {
+  const skip = () => {
     setVisibleLines(lines.length);
-    setIsTyping(false);
-    setCurrentText("");
-    setShowThinkingDots(false);
-    setIsComplete(true);
-    setIsPlaying(false);
+    setTyped("");
+    setTyping(false);
+    setComplete(true);
+    setPlaying(false);
   };
 
   return (
-    <div className="my-6 rounded-lg overflow-hidden border border-text-charcoal/20 shadow-lg">
-      {/* Terminal Header */}
-      <div className="flex items-center justify-between px-4 py-2 bg-text-charcoal">
-        <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full bg-accent-terracotta" />
-          <div className="w-3 h-3 rounded-full bg-accent-sand" />
-          <div className="w-3 h-3 rounded-full bg-accent-moss" />
-        </div>
-        <span className="text-xs font-mono text-white/70">{title}</span>
-        <div className="flex items-center gap-2">
-          {!isComplete && !isPlaying && (
-            <button
-              onClick={handlePlay}
-              className="text-xs font-mono text-accent-moss hover:text-accent-sage transition-colors"
-            >
-              ▶ Play
-            </button>
-          )}
-          {isPlaying && (
-            <button
-              onClick={handleSkip}
-              className="text-xs font-mono text-accent-sand hover:text-white transition-colors"
-            >
-              ⏭ Skip
-            </button>
-          )}
-          {isComplete && (
-            <button
-              onClick={handlePlay}
-              className="text-xs font-mono text-accent-sage hover:text-white transition-colors"
-            >
-              ↺ Replay
-            </button>
-          )}
-        </div>
+    <div className="my-6 overflow-hidden rounded-md border border-border-strong bg-terminal text-terminal-fg">
+      <div className="flex items-center justify-between gap-3 border-b border-white/10 px-4 py-2">
+        <span className="font-mono text-caption text-terminal-fg/70">{title}</span>
+        {playing ? (
+          <button type="button" onClick={skip} className="inline-flex h-8 items-center gap-1.5 rounded-sm px-2 font-mono text-caption text-terminal-fg/80 hover:bg-white/10 hover:text-terminal-fg">
+            <SkipForward size={14} aria-hidden /> Skip
+          </button>
+        ) : (
+          <button type="button" onClick={replay} className="inline-flex h-8 items-center gap-1.5 rounded-sm px-2 font-mono text-caption text-terminal-fg/80 hover:bg-white/10 hover:text-terminal-fg">
+            <ArrowCounterClockwise size={14} aria-hidden /> {complete ? "Replay" : "Play"}
+          </button>
+        )}
       </div>
-
-      {/* Terminal Body */}
-      <div
-        ref={terminalRef}
-        className="bg-[#1a1a1a] p-4 font-mono text-sm min-h-[200px] max-h-[400px] overflow-y-auto"
-      >
-        {lines.slice(0, visibleLines).map((line, index) => (
-          <div key={index} className="mb-1">
+      <div ref={bodyRef} className="max-h-[400px] overflow-y-auto p-4 font-mono text-small leading-relaxed">
+        {lines.slice(0, visibleLines).map((line, i) => (
+          <div key={i} className="mb-1">
             {line.type === "command" ? (
               <div className="flex">
-                <span className="text-accent-moss mr-2">$</span>
-                <span className="text-white">{line.content}</span>
+                <span className="mr-2 text-terminal-accent">$</span>
+                <span>{line.content}</span>
               </div>
             ) : line.type === "comment" ? (
-              <div className="text-text-olive italic"># {line.content}</div>
+              <div className="italic text-terminal-fg/50"># {line.content}</div>
             ) : (
-              <div className="text-gray-400 pl-4">{line.content}</div>
+              <div className="pl-4 text-terminal-fg/80">{line.content}</div>
             )}
           </div>
         ))}
-
-        {/* Currently typing line */}
-        {isTyping && (
+        {typing && (
           <div className="flex">
-            <span className="text-accent-moss mr-2">$</span>
-            <span className="text-white">{currentText}</span>
-            <span className="text-white animate-pulse">▊</span>
-          </div>
-        )}
-
-        {/* Thinking dots before output */}
-        {showThinkingDots && (
-          <div className="flex items-center pl-4 text-gray-400">
-            <span className="animate-pulse">...</span>
-          </div>
-        )}
-
-        {/* Cursor when idle */}
-        {!isTyping && !isComplete && isPlaying && !showThinkingDots && (
-          <div className="flex">
-            <span className="text-accent-moss mr-2">$</span>
-            <span className="text-white animate-pulse">▊</span>
-          </div>
-        )}
-
-        {/* Prompt when not started */}
-        {!isPlaying && visibleLines === 0 && (
-          <div className="flex flex-col items-center justify-center py-8 text-center">
-            <div className="text-4xl mb-3">▶️</div>
-            <p className="text-accent-sage font-medium mb-1">Click the Play button above to start!</p>
-            <p className="text-text-olive text-xs">Watch the commands execute step by step</p>
+            <span className="mr-2 text-terminal-accent">$</span>
+            <span>{typed}</span>
+            <span className="animate-pulse" aria-hidden>▊</span>
           </div>
         )}
       </div>
     </div>
   );
-};
-
-export default Terminal;
+}

@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { Confetti as ConfettiIcon } from "@phosphor-icons/react/dist/ssr";
+import Button from "./Button";
 
 interface ConfettiPiece {
   id: number;
@@ -17,14 +19,7 @@ interface ConfettiProps {
   onComplete?: () => void;
 }
 
-const colors = [
-  "#3A5A40", // moss
-  "#BC4749", // terracotta
-  "#D4A373", // sand
-  "#A3B18A", // sage
-  "#5A8A60", // light moss
-  "#E8B88A", // light sand
-];
+const colors = ["#eb9b63", "#a84d18", "#2f9e6a", "#4f7fd9", "#a7a7b0"];
 
 const Confetti = ({ isActive, onComplete }: ConfettiProps) => {
   const [pieces, setPieces] = useState<ConfettiPiece[]>([]);
@@ -56,7 +51,7 @@ const Confetti = ({ isActive, onComplete }: ConfettiProps) => {
   return (
     <AnimatePresence>
       {pieces.length > 0 && (
-        <div className="fixed inset-0 pointer-events-none z-[100] overflow-hidden">
+        <div className="fixed inset-0 pointer-events-none z-50 overflow-hidden">
           {pieces.map((piece) => (
             <motion.div
               key={piece.id}
@@ -92,48 +87,43 @@ const Confetti = ({ isActive, onComplete }: ConfettiProps) => {
   );
 };
 
-// Celebration message component
-export const CelebrationMessage = ({
-  isVisible,
-  phaseName,
-  onClose
-}: {
-  isVisible: boolean;
-  phaseName: string;
-  onClose: () => void;
-}) => {
+export const CelebrationMessage = ({ isVisible, phaseName, onClose }: { isVisible: boolean; phaseName: string; onClose: () => void }) => {
+  const reduce = useReducedMotion();
+  useEffect(() => {
+    if (!isVisible) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [isVisible, onClose]);
+
   return (
     <AnimatePresence>
       {isVisible && (
         <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.8 }}
-          className="fixed inset-0 flex items-center justify-center z-[99] bg-black/30"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="celebration-title"
+          initial={reduce ? false : { opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-40 flex items-center justify-center bg-[rgb(11_11_13_/_0.5)] p-4"
           onClick={onClose}
         >
           <motion.div
-            initial={{ y: 50 }}
-            animate={{ y: 0 }}
-            className="bg-bg-paper p-8 rounded-lg shadow-2xl text-center max-w-md mx-4"
+            initial={reduce ? false : { y: 16, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+            className="w-full max-w-md rounded-lg border border-border bg-surface p-8 text-center shadow-float"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="text-6xl mb-4">🎉</div>
-            <h3 className="text-2xl font-serif text-text-charcoal mb-2">
-              Phase Complete!
-            </h3>
-            <p className="text-text-taupe mb-4">
-              You&apos;ve completed <strong className="text-accent-moss">{phaseName}</strong>
+            <ConfettiIcon size={40} aria-hidden className="mx-auto text-accent" />
+            <h3 id="celebration-title" className="mt-4 text-h3 text-fg">Phase complete</h3>
+            <p className="mt-2 text-body text-fg-2">
+              You finished <strong className="text-fg">{phaseName}</strong>.
             </p>
-            <p className="text-sm text-text-olive mb-6">
-              Keep up the great work! Continue to the next phase.
-            </p>
-            <button
-              onClick={onClose}
-              className="px-6 py-2 bg-accent-moss text-white rounded-lg hover:bg-accent-moss/90 transition-colors"
-            >
-              Continue Learning
-            </button>
+            <Button onClick={onClose} className="mt-6" autoFocus>
+              Continue
+            </Button>
           </motion.div>
         </motion.div>
       )}

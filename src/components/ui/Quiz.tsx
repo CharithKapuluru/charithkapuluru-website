@@ -1,7 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { Check, Lightning, X } from "@phosphor-icons/react/dist/ssr";
+import Button from "./Button";
+import { cn } from "@/lib/utils";
 
 interface QuizQuestion {
   question: string;
@@ -16,253 +19,156 @@ interface QuizProps {
   onComplete?: (score: number, total: number) => void;
 }
 
-// Randomized success messages for personality
-const successMessages = [
-  { text: "Nailed it!", emoji: "🎯" },
-  { text: "Exactly right!", emoji: "✨" },
-  { text: "You got it!", emoji: "🔥" },
-  { text: "Perfect!", emoji: "💯" },
-  { text: "Spot on!", emoji: "🎉" },
-  { text: "Nice work!", emoji: "👏" },
-];
+const correctLines = ["Correct.", "Exactly right.", "You got it.", "Spot on."];
+const incorrectLines = ["Not quite.", "Close, but no.", "Not this one."];
 
-const incorrectMessages = [
-  { text: "Not quite!", emoji: "🤔" },
-  { text: "Close, but...", emoji: "💭" },
-  { text: "Almost there!", emoji: "📚" },
-  { text: "Keep learning!", emoji: "💪" },
-];
-
-const Quiz = ({ title, questions, onComplete }: QuizProps) => {
-  const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
+export default function Quiz({ title, questions, onComplete }: QuizProps) {
+  const reduce = useReducedMotion();
+  const [current, setCurrent] = useState(0);
+  const [selected, setSelected] = useState<number | null>(null);
   const [showResult, setShowResult] = useState(false);
   const [score, setScore] = useState(0);
   const [streak, setStreak] = useState(0);
-  const [answeredQuestions, setAnsweredQuestions] = useState<boolean[]>(
-    new Array(questions.length).fill(false)
-  );
-  const [lastFeedback, setLastFeedback] = useState<{ text: string; emoji: string; isCorrect: boolean } | null>(null);
+  const [answered, setAnswered] = useState<boolean[]>(() => new Array(questions.length).fill(false));
+  const [feedback, setFeedback] = useState<{ text: string; correct: boolean } | null>(null);
 
-  const handleAnswerSelect = (index: number) => {
-    if (answeredQuestions[currentQuestion]) return;
+  const question = questions[current];
+  const isAnswered = answered[current];
 
-    setSelectedAnswer(index);
-    const isCorrect = index === questions[currentQuestion].correctIndex;
-
-    // Pick random feedback message
-    const messages = isCorrect ? successMessages : incorrectMessages;
-    const randomMessage = messages[Math.floor(Math.random() * messages.length)];
-    setLastFeedback({ ...randomMessage, isCorrect });
-
-    if (isCorrect) {
-      setScore((prev) => prev + 1);
-      setStreak((prev) => prev + 1);
+  const choose = (index: number) => {
+    if (isAnswered) return;
+    setSelected(index);
+    const correct = index === question.correctIndex;
+    const pool = correct ? correctLines : incorrectLines;
+    setFeedback({ text: pool[Math.floor(Math.random() * pool.length)], correct });
+    if (correct) {
+      setScore((s) => s + 1);
+      setStreak((s) => s + 1);
     } else {
       setStreak(0);
     }
-
-    setAnsweredQuestions((prev) => {
-      const newAnswered = [...prev];
-      newAnswered[currentQuestion] = true;
-      return newAnswered;
-    });
+    setAnswered((prev) => prev.map((a, i) => (i === current ? true : a)));
   };
 
-  const handleNext = () => {
-    if (currentQuestion < questions.length - 1) {
-      setCurrentQuestion((prev) => prev + 1);
-      setSelectedAnswer(null);
-      setLastFeedback(null);
+  const next = () => {
+    if (current < questions.length - 1) {
+      setCurrent((c) => c + 1);
+      setSelected(null);
+      setFeedback(null);
     } else {
       setShowResult(true);
-      // Notify parent when quiz is completed
-      if (onComplete) {
-        onComplete(score, questions.length);
-      }
+      onComplete?.(score, questions.length);
     }
   };
 
-  const handleRestart = () => {
-    setCurrentQuestion(0);
-    setSelectedAnswer(null);
+  const restart = () => {
+    setCurrent(0);
+    setSelected(null);
     setShowResult(false);
     setScore(0);
     setStreak(0);
-    setLastFeedback(null);
-    setAnsweredQuestions(new Array(questions.length).fill(false));
+    setFeedback(null);
+    setAnswered(new Array(questions.length).fill(false));
   };
 
   if (showResult) {
-    const percentage = Math.round((score / questions.length) * 100);
+    const pct = Math.round((score / questions.length) * 100);
+    const line = pct >= 80 ? "Strong understanding of this section." : pct >= 60 ? "Good. Review the questions you missed." : "Worth a second read before moving on.";
     return (
-      <motion.div
-        className="my-8 p-6 bg-bg-cream rounded-lg border border-text-charcoal/10"
-        initial={{ opacity: 0, scale: 0.98 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ type: "spring", stiffness: 200, damping: 20 }}
-      >
-        <h3 className="text-2xl font-serif text-text-charcoal mb-4">{title} - Results</h3>
-        <div className="text-center py-8">
-          <motion.div
-            className="text-6xl font-serif text-accent-moss mb-4"
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ type: "spring", stiffness: 200, delay: 0.2 }}
-          >
-            {percentage}%
-          </motion.div>
-          <p className="text-xl text-text-taupe mb-2">
-            You got {score} out of {questions.length} correct!
-          </p>
-          <p className="text-text-olive mb-6">
-            {percentage >= 80
-              ? "🎉 Excellent! You have a strong understanding of this phase."
-              : percentage >= 60
-              ? "👍 Good job! Review the concepts you missed."
-              : "📚 Keep learning! Review this phase and try again."}
-          </p>
-          <button
-            onClick={handleRestart}
-            className="px-6 py-3 bg-accent-moss text-white rounded-lg hover:bg-accent-moss/90 transition-colors"
-          >
-            Try Again
-          </button>
-        </div>
-      </motion.div>
+      <section aria-label={`${title} results`} className="my-8 rounded-lg border border-border bg-surface p-6 md:p-8">
+        <h3 className="text-h3 text-fg">{title}</h3>
+        <p className="mt-6 font-display text-figure tabular text-accent">{pct}%</p>
+        <p className="mt-2 text-body text-fg-2">
+          {score} of {questions.length} correct. {line}
+        </p>
+        <Button variant="secondary" size="sm" onClick={restart} className="mt-6">
+          Try again
+        </Button>
+      </section>
     );
   }
 
-  const question = questions[currentQuestion];
-  const isAnswered = answeredQuestions[currentQuestion];
-
   return (
-    <div className="my-8 p-6 bg-bg-cream rounded-lg border border-text-charcoal/10">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-xl font-serif text-text-charcoal">{title}</h3>
-        <div className="flex items-center gap-3">
-          {/* Streak counter */}
-          <AnimatePresence>
-            {streak >= 2 && (
-              <motion.div
-                className="flex items-center gap-1 text-sm font-mono"
-                initial={{ scale: 0, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0, opacity: 0 }}
-                transition={{ type: "spring", stiffness: 300 }}
-              >
-                <span className="text-orange-500">🔥</span>
-                <span className="text-accent-terracotta font-semibold">{streak}</span>
-              </motion.div>
-            )}
-          </AnimatePresence>
-          <span className="text-sm font-mono text-text-olive">
-            {currentQuestion + 1} / {questions.length}
+    <section aria-label={title} className="my-8 rounded-lg border border-border bg-surface p-6 md:p-8">
+      <div className="flex items-center justify-between gap-4">
+        <h3 className="text-h3 text-fg">{title}</h3>
+        <div className="flex items-center gap-3 font-mono text-caption text-fg-3 tabular">
+          {streak >= 2 && (
+            <span className="inline-flex items-center gap-1 text-accent">
+              <Lightning size={14} weight="fill" aria-hidden /> {streak}
+            </span>
+          )}
+          <span>
+            {current + 1} / {questions.length}
           </span>
         </div>
       </div>
 
-      <div className="mb-6">
-        <p className="text-lg text-text-charcoal mb-4">{question.question}</p>
+      <p className="mt-5 text-body text-fg">{question.question}</p>
 
-        <div className="space-y-3">
-          {question.options.map((option, index) => {
-            const isSelected = selectedAnswer === index;
-            const isCorrect = index === question.correctIndex;
-            const showCorrect = isAnswered && isCorrect;
-            const showWrong = isAnswered && isSelected && !isCorrect;
-
-            return (
-              <motion.button
-                key={index}
-                onClick={() => handleAnswerSelect(index)}
-                disabled={isAnswered}
-                className={`w-full text-left p-4 rounded-lg border transition-all ${
-                  showCorrect
-                    ? "bg-accent-moss/20 border-accent-moss text-text-charcoal"
-                    : showWrong
-                    ? "bg-accent-terracotta/20 border-accent-terracotta text-text-charcoal"
-                    : isSelected
-                    ? "bg-accent-moss/10 border-accent-moss"
-                    : "bg-bg-paper border-text-charcoal/10 hover:border-accent-moss/50"
-                } ${isAnswered ? "cursor-default" : "cursor-pointer"}`}
-                whileTap={!isAnswered ? { scale: 0.98 } : undefined}
-                animate={
-                  showCorrect
-                    ? { scale: [1, 1.02, 1] }
-                    : showWrong
-                    ? { x: [0, -5, 5, -5, 5, 0] }
-                    : {}
-                }
-                transition={{ duration: 0.3 }}
+      <div className="mt-4 space-y-2" role="group" aria-label="Answers">
+        {question.options.map((option, index) => {
+          const isSelected = selected === index;
+          const isCorrect = index === question.correctIndex;
+          const showCorrect = isAnswered && isCorrect;
+          const showWrong = isAnswered && isSelected && !isCorrect;
+          return (
+            <button
+              key={index}
+              type="button"
+              onClick={() => choose(index)}
+              disabled={isAnswered}
+              aria-pressed={isSelected}
+              className={cn(
+                "flex w-full items-center gap-3 rounded-md border px-4 py-3 text-left text-body transition-colors duration-150",
+                showCorrect && "border-success bg-success-soft text-fg",
+                showWrong && "border-danger bg-danger-soft text-fg",
+                !isAnswered && "border-border bg-bg text-fg-2 hover:border-fg-3 hover:text-fg",
+                isAnswered && !showCorrect && !showWrong && "border-border bg-bg text-fg-3",
+              )}
+            >
+              <span
+                className={cn(
+                  "inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-sm border font-mono text-caption",
+                  showCorrect ? "border-success text-success" : showWrong ? "border-danger text-danger" : "border-border-strong",
+                )}
+                aria-hidden
               >
-                <div className="flex items-center gap-3">
-                  <span
-                    className={`w-6 h-6 rounded-full border flex items-center justify-center text-sm font-mono ${
-                      showCorrect
-                        ? "bg-accent-moss border-accent-moss text-white"
-                        : showWrong
-                        ? "bg-accent-terracotta border-accent-terracotta text-white"
-                        : "border-text-charcoal/30"
-                    }`}
-                  >
-                    {showCorrect ? "✓" : showWrong ? "✗" : String.fromCharCode(65 + index)}
-                  </span>
-                  <span>{option}</span>
-                </div>
-              </motion.button>
-            );
-          })}
-        </div>
+                {showCorrect ? <Check size={14} /> : showWrong ? <X size={14} /> : String.fromCharCode(65 + index)}
+              </span>
+              <span>{option}</span>
+            </button>
+          );
+        })}
       </div>
 
-      {/* Feedback message */}
       <AnimatePresence>
-        {lastFeedback && (
-          <motion.div
-            className={`mb-4 p-3 rounded-lg text-center ${
-              lastFeedback.isCorrect ? "bg-accent-moss/10" : "bg-accent-terracotta/10"
-            }`}
-            initial={{ opacity: 0, y: -10 }}
+        {feedback && (
+          <motion.p
+            role="status"
+            initial={reduce ? false : { opacity: 0, y: -4 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ type: "spring", stiffness: 300, damping: 20 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className={cn("mt-4 text-small font-medium", feedback.correct ? "text-success" : "text-danger")}
           >
-            <span className="text-2xl mr-2">{lastFeedback.emoji}</span>
-            <span
-              className={`font-semibold ${
-                lastFeedback.isCorrect ? "text-accent-moss" : "text-accent-terracotta"
-              }`}
-            >
-              {lastFeedback.text}
-            </span>
-          </motion.div>
+            {feedback.text}
+          </motion.p>
         )}
       </AnimatePresence>
 
       {isAnswered && (
-        <div className="mb-4 p-4 bg-bg-paper rounded-lg border border-text-charcoal/10">
-          <p className="text-sm text-text-taupe">
-            <strong className="text-text-charcoal">Explanation:</strong> {question.explanation}
-          </p>
-        </div>
+        <p className="mt-3 rounded-md border border-border bg-bg p-4 text-small leading-relaxed text-fg-2">
+          <strong className="text-fg">Why: </strong>
+          {question.explanation}
+        </p>
       )}
 
-      <div className="flex justify-end">
-        <button
-          onClick={handleNext}
-          disabled={!isAnswered}
-          className={`px-6 py-2 rounded-lg transition-colors ${
-            isAnswered
-              ? "bg-accent-moss text-white hover:bg-accent-moss/90"
-              : "bg-text-charcoal/10 text-text-olive cursor-not-allowed"
-          }`}
-        >
-          {currentQuestion < questions.length - 1 ? "Next Question" : "See Results"}
-        </button>
+      <div className="mt-5 flex justify-end">
+        <Button size="sm" onClick={next} disabled={!isAnswered}>
+          {current < questions.length - 1 ? "Next question" : "See results"}
+        </Button>
       </div>
-    </div>
+    </section>
   );
-};
-
-export default Quiz;
+}
