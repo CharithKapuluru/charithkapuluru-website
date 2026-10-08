@@ -91,7 +91,7 @@ export const topics: FundamentalsTopic[] = [
     subtitle: "chmod, Users & Special Bits",
     lede: "chmod demystified: who can read, write and execute files, how permission numbers work, reading ls -l output, SSH key requirements, and SUID, SGID and sticky bits.",
     description:
-      "Linux file permissions demystified. Who can read, write, and execute files, how chmod numbers work, reading ls -l output, SSH permission requirements, and advanced SUID/SGID/Sticky bits.",
+      "Linux file permissions demystified: who can read, write, and execute files, how chmod numbers work, reading ls -l output, SSH permission requirements, and advanced SUID/SGID/Sticky bits.",
     category: "linux",
     readingTime: "25 min",
     sectionCount: 7,

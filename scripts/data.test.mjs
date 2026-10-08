@@ -29,8 +29,8 @@ test("every topic has a lede, belongs to a known category and has no gradient or
 });
 
 test("no shell copy in the data files contains an em-dash or en-dash", () => {
-  for (const t of topics) assert.doesNotMatch(t.lede + t.description, /[–—]/, t.slug);
-  for (const p of projects) assert.doesNotMatch(p.lede + p.outcome + p.whatYouBuild + p.description, /[–—]/, p.slug);
+  for (const t of topics) assert.doesNotMatch(t.lede + t.description, /[\u2013\u2014]/, t.slug);
+  for (const p of projects) assert.doesNotMatch(p.lede + p.outcome + p.whatYouBuild + p.description, /[\u2013\u2014]/, p.slug);
 });
 
 test("next helpers wrap around", () => {
