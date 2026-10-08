@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Bricolage_Grotesque, Geist, Geist_Mono } from "next/font/google";
 import { Providers } from "./providers";
+import SkipLink from "@/components/layout/SkipLink";
 import { WorldProvider } from "@/components/world/WorldProvider";
+import Konami from "@/components/brand/Konami";
 import EasterEggs from "@/components/world/EasterEggs";
 import "./globals.css";
 
@@ -51,10 +53,12 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="en" suppressHydrationWarning className={`${display.variable} ${sans.variable} ${mono.variable}`}>
       <body className="bg-bg font-sans text-fg antialiased">
         <Providers>
+          <SkipLink />
           <WorldProvider>
             {children}
             <EasterEggs />
           </WorldProvider>
+          <Konami />
         </Providers>
       </body>
     </html>
