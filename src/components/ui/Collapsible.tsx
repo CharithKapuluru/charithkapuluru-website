@@ -27,7 +27,7 @@ export default function Collapsible({ title, children, defaultOpen = false }: Co
         className="flex w-full items-center justify-between gap-4 rounded-md px-4 py-3 text-left text-body font-medium text-fg hover:bg-surface-2"
       >
         <span>{title}</span>
-        <CaretDown size={18} aria-hidden className={cn("shrink-0 text-fg-3 transition-transform duration-200", open && "rotate-180")} />
+        <CaretDown size={18} weight="regular" aria-hidden className={cn("shrink-0 text-fg-3 transition-transform duration-200", open && "rotate-180")} />
       </button>
       <AnimatePresence initial={false}>
         {open && (
