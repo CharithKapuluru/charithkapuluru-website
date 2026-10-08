@@ -35,6 +35,11 @@ export const PAIRS = [
   { fg: "info", bg: "bg", min: 3 },
   { fg: "success", bg: "bg", min: 3 },
   { fg: "danger", bg: "bg", min: 3 },
+  { fg: "success", bg: "surface", min: 4.5 },
+  { fg: "danger", bg: "surface", min: 4.5 },
+  { fg: "success", bg: "success-soft", min: 3 },
+  { fg: "danger", bg: "danger-soft", min: 3 },
+  { fg: "info", bg: "info-soft", min: 3 },
 ];
 
 function hexToRgb(hex) {
