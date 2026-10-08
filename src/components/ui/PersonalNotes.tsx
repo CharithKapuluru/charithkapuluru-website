@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { collection, deleteDoc, doc, onSnapshot, query, setDoc, where } from "firebase/firestore";
-import { Books, Note, Trash, X } from "@phosphor-icons/react/dist/ssr";
+import { Books, Note as NoteIcon, Trash, X } from "@phosphor-icons/react/dist/ssr";
 import { useAuth } from "@/context/AuthContext";
 import { db } from "@/lib/firebase";
 import { readJson, writeJson } from "@/lib/storage";
@@ -51,6 +51,7 @@ export default function PersonalNotes({ phaseId, phaseName, projectSlug = "devse
         await setDoc(doc(db, "users", user.uid, "notes", note.id), note);
       } catch (error) {
         console.error("Error saving note:", error);
+        return;
       }
     } else {
       writeJson(storageKey, [...readJson<Note[]>(storageKey, []), note]);
@@ -80,13 +81,13 @@ export default function PersonalNotes({ phaseId, phaseName, projectSlug = "devse
   return (
     <>
       <Button variant="secondary" size="sm" onClick={() => dialogRef.current?.showModal()} aria-haspopup="dialog">
-        <Note size={16} weight="regular" aria-hidden />
+        <NoteIcon size={16} weight="regular" aria-hidden />
         Notes{notes.length > 0 ? ` (${notes.length})` : ""}
       </Button>
       <dialog
         ref={dialogRef}
         aria-label={`Notes for ${phaseName}`}
-        className="m-auto w-full max-w-md rounded-lg border border-border bg-surface p-0 text-fg shadow-float"
+        className="m-auto w-[calc(100%-2rem)] max-w-md rounded-lg border border-border bg-surface p-0 text-fg shadow-float"
         onClick={(e) => e.target === dialogRef.current && dialogRef.current.close()}
       >
         <div className="flex items-center justify-between border-b border-border px-4 py-3">
@@ -152,7 +153,19 @@ export const AllNotesViewer = ({ variant = "inline" }: { variant?: "inline" | "f
         setAllNotes(data.sort((a, b) => b.timestamp - a.timestamp));
       });
     }
-    setAllNotes(readJson<Note[]>("personalNotes", []).sort((a, b) => b.timestamp - a.timestamp));
+    const allNotes: Note[] = [];
+    try {
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && (key.startsWith("personalNotes_") || key === "personalNotes")) {
+          const notes = readJson<Note[]>(key, []);
+          allNotes.push(...notes);
+        }
+      }
+    } catch {
+      // Storage unavailable
+    }
+    setAllNotes(allNotes.sort((a, b) => b.timestamp - a.timestamp));
   }, [open, user]);
 
   const show = () => {
@@ -169,7 +182,7 @@ export const AllNotesViewer = ({ variant = "inline" }: { variant?: "inline" | "f
       <dialog
         ref={dialogRef}
         aria-label="All your notes"
-        className="m-auto w-full max-w-2xl rounded-lg border border-border bg-surface p-0 text-fg shadow-float"
+        className="m-auto w-[calc(100%-2rem)] max-w-2xl rounded-lg border border-border bg-surface p-0 text-fg shadow-float"
         onClick={(e) => e.target === dialogRef.current && dialogRef.current.close()}
         onClose={() => setOpen(false)}
       >
@@ -186,7 +199,7 @@ export const AllNotesViewer = ({ variant = "inline" }: { variant?: "inline" | "f
             <ul className="space-y-3">
               {allNotes.map((n) => (
                 <li key={n.id} className="rounded-md border border-border bg-bg p-4">
-                  <Tag>Phase {n.phaseId}</Tag>
+                  <Tag>{n.projectSlug ?? "project"} · Phase {n.phaseId}</Tag>
                   <p className="mt-2 whitespace-pre-wrap text-small text-fg-2">{n.content}</p>
                   <p className="mt-2 text-caption text-fg-3">{new Date(n.timestamp).toLocaleString()}</p>
                 </li>

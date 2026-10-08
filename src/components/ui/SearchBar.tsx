@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { MagnifyingGlass } from "@phosphor-icons/react/dist/ssr";
 import Button from "./Button";
 import Tag from "./Tag";
@@ -83,8 +83,10 @@ export default function SearchBar({ trigger = false }: { trigger?: boolean }) {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        const el = dialogRef.current;
+        if (!el || (!el.open && !el.parentElement?.checkVisibility())) return;
         e.preventDefault();
-        if (dialogRef.current?.open) close();
+        if (el.open) close();
         else open();
       }
     };
@@ -92,10 +94,9 @@ export default function SearchBar({ trigger = false }: { trigger?: boolean }) {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
-  useEffect(() => {
+  const results = useMemo(() => {
     if (query.length < 2) {
-      setResults([]);
-      return;
+      return [];
     }
     const term = query.toLowerCase();
     const matches: SearchResult[] = [];
@@ -111,7 +112,7 @@ export default function SearchBar({ trigger = false }: { trigger?: boolean }) {
       }
       matches.push({ phaseId: item.phaseId, phaseName: item.phaseName, matchText: keyword ?? term, context });
     }
-    setResults(matches);
+    return matches;
   }, [query]);
 
   const go = (phaseId: number) => {
@@ -131,7 +132,7 @@ export default function SearchBar({ trigger = false }: { trigger?: boolean }) {
       <dialog
         ref={dialogRef}
         aria-label="Search this project"
-        className="m-auto mt-[10vh] w-full max-w-xl rounded-lg border border-border bg-surface p-0 text-fg shadow-float"
+        className="m-auto mt-[10vh] w-[calc(100%-2rem)] max-w-xl rounded-lg border border-border bg-surface p-0 text-fg shadow-float"
         onClick={(e) => e.target === dialogRef.current && close()}
         onClose={() => setQuery("")}
       >
@@ -162,7 +163,7 @@ export default function SearchBar({ trigger = false }: { trigger?: boolean }) {
                       <Tag>Phase {r.phaseId}</Tag>
                       <span className="text-small font-medium text-fg">{r.phaseName}</span>
                     </span>
-                    <span className="mt-1 line-clamp-2 block text-caption text-fg-3">{r.context}</span>
+                    <span className="mt-1 line-clamp-2 text-caption text-fg-3">{r.context}</span>
                   </button>
                 </li>
               ))}
