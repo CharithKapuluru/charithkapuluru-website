@@ -19,6 +19,18 @@ const POSE_ALT: Record<PoseName, string> = {
 
 const POKE_LINES = ["hi!", "that tickles", "yes?", "still me", "ok ok stop poking me"];
 
+/** Intrinsic dimensions of public/world/poses/*.webp to prevent layout shift with explicit dimensions. */
+const POSE_SIZE: Record<PoseName, { w: number; h: number }> = {
+  master: { w: 413, h: 1238 },
+  wave: { w: 489, h: 1237 },
+  laptop: { w: 600, h: 821 },
+  peek: { w: 570, h: 1198 },
+  point: { w: 440, h: 1237 },
+  read: { w: 600, h: 1230 },
+  bored: { w: 428, h: 1202 },
+  lost: { w: 572, h: 1211 },
+};
+
 interface AvatarProps {
   pose?: PoseName;
   width?: number;
@@ -35,6 +47,7 @@ interface AvatarProps {
 export default function Avatar({ pose = "master", width = 220, flip = false, className, track = false, pokeable = true, priority = false }: AvatarProps) {
   const reduce = useReducedMotion();
   const ref = useRef<HTMLDivElement>(null);
+  const pokeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const [pokeCount, setPokeCount] = useState(0);
   const [pokeLine, setPokeLine] = useState<string | null>(null);
 
@@ -58,15 +71,27 @@ export default function Avatar({ pose = "master", width = 220, flip = false, cla
     return () => window.removeEventListener("pointermove", onMove);
   }, [track, reduce, mx, my]);
 
+  useEffect(() => {
+    return () => {
+      if (pokeTimeoutRef.current) {
+        clearTimeout(pokeTimeoutRef.current);
+      }
+    };
+  }, []);
+
   const poke = () => {
     if (!pokeable) return;
+    if (pokeTimeoutRef.current) {
+      clearTimeout(pokeTimeoutRef.current);
+    }
     const next = Math.min(pokeCount + 1, POKE_LINES.length);
     setPokeCount(next);
     setPokeLine(POKE_LINES[next - 1]);
-    setTimeout(() => setPokeLine(null), 1800);
+    pokeTimeoutRef.current = setTimeout(() => setPokeLine(null), 1800);
   };
 
-  const height = Math.round(width * 1.4);
+  const { w, h } = POSE_SIZE[pose];
+  const height = Math.round((width * h) / w);
 
   return (
     <motion.div
@@ -83,6 +108,7 @@ export default function Avatar({ pose = "master", width = 220, flip = false, cla
         </span>
       )}
       {/* Plain img: images are unoptimized in static export, and explicit dimensions prevent layout shift. */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={`/world/poses/${pose}.webp`}
         alt={POSE_ALT[pose]}

@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import { motion, useMotionValue, useReducedMotion, useSpring, useTransform } from "framer-motion";
 import { cn } from "@/lib/utils";
 
-/** Head-only sprite that leans toward the cursor. Used as the wordmark mark. */
+/** Head-only sprite that leans toward the cursor. Used as the wordmark mark. Intrinsic size: 800x945. */
 export default function AvatarHead({ width = 36, className }: { width?: number; className?: string }) {
   const reduce = useReducedMotion();
   const ref = useRef<HTMLDivElement>(null);
@@ -26,9 +26,12 @@ export default function AvatarHead({ width = 36, className }: { width?: number; 
     return () => window.removeEventListener("pointermove", onMove);
   }, [reduce, mx, my]);
 
+  const height = Math.round((width * 945) / 800);
+
   return (
     <motion.div ref={ref} style={reduce ? undefined : { rotate, y: ty }} className={cn("inline-block shrink-0", className)}>
-      <img src="/world/poses/head.webp" alt="" aria-hidden width={width} height={width} decoding="async" style={{ width, height: width }} />
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src="/world/poses/head.webp" alt="" aria-hidden width={width} height={height} decoding="async" style={{ width, height }} />
     </motion.div>
   );
 }

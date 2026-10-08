@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import Avatar from "./Avatar";
 import { useKonami } from "@/hooks/useKonami";
@@ -9,12 +9,24 @@ import { useKonami } from "@/hooks/useKonami";
 export default function Konami() {
   const reduce = useReducedMotion();
   const [dancing, setDancing] = useState(false);
+  const danceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (danceTimeoutRef.current) {
+        clearTimeout(danceTimeoutRef.current);
+      }
+    };
+  }, []);
 
   useKonami(
     useCallback(() => {
       if (reduce || dancing) return;
+      if (danceTimeoutRef.current) {
+        clearTimeout(danceTimeoutRef.current);
+      }
       setDancing(true);
-      setTimeout(() => setDancing(false), 3200);
+      danceTimeoutRef.current = setTimeout(() => setDancing(false), 3200);
     }, [reduce, dancing]),
   );
 
