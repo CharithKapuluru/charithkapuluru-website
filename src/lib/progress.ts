@@ -11,5 +11,5 @@ export function toggleIndex(prev: number[], index: number): number[] {
 }
 
 export function percentComplete(completed: number[], total: number): number {
-  return total === 0 ? 0 : Math.round((completed.length / total) * 100);
+  return total === 0 ? 0 : Math.min(100, Math.max(0, Math.round((completed.length / total) * 100)));
 }

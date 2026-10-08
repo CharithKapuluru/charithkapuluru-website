@@ -1,4 +1,4 @@
-import { Fragment } from "react";
+import { Fragment, type ReactNode } from "react";
 import Link from "next/link";
 import Wordmark from "@/components/brand/Wordmark";
 import Button from "@/components/ui/Button";
@@ -11,7 +11,8 @@ export interface Crumb {
   href?: string;
 }
 
-export default function ContextualNav({ crumbs, sheetLabel }: { crumbs: Crumb[]; sheetLabel: "Sections" | "Phases" }) {
+export default function ContextualNav({ crumbs, sheetLabel, sheetContent }: { crumbs: Crumb[]; sheetLabel: "Sections" | "Phases"; sheetContent?: ReactNode }) {
+  const lastIndex = crumbs.length - 1;
   return (
     <header className="sticky top-0 z-20 border-b border-border bg-bg/85 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-[1280px] items-center justify-between gap-4 px-4 sm:px-6">
@@ -22,18 +23,18 @@ export default function ContextualNav({ crumbs, sheetLabel }: { crumbs: Crumb[];
               <Fragment key={`${c.label}-${i}`}>
                 {i > 0 && <span aria-hidden>/</span>}
                 {c.href ? (
-                  <Link href={c.href} className="shrink-0 hover:text-fg">
+                  <Link href={c.href} aria-current={i === lastIndex ? "page" : undefined} className="shrink-0 hover:text-fg">
                     {c.label}
                   </Link>
                 ) : (
-                  <span className="truncate text-fg-2">{c.label}</span>
+                  <span aria-current={i === lastIndex ? "page" : undefined} className="truncate text-fg-2">{c.label}</span>
                 )}
               </Fragment>
             ))}
           </nav>
         </div>
         <div className="flex shrink-0 items-center gap-1 sm:gap-2">
-          <SectionsSheet label={sheetLabel} className="xl:hidden" />
+          <SectionsSheet label={sheetLabel} content={sheetContent} className="xl:hidden" />
           <ThemeToggle />
           <Button href="/ck.pdf" download="Charith_Kapuluru_Resume.pdf" size="sm" className="hidden md:inline-flex">
             Resume

@@ -12,11 +12,11 @@ export default function PhaseRail({ progressKey, actions }: { progressKey: strin
   const total = ctx?.sections.length ?? 0;
   const activeIndex = ctx?.activeIndex ?? 0;
   const progress = useProgress(progressKey, total);
-  const { markBefore } = progress;
+  const { markBefore, ready } = progress;
 
   useEffect(() => {
-    if (total > 0) markBefore(activeIndex);
-  }, [activeIndex, total, markBefore]);
+    if (total > 0 && ready) markBefore(activeIndex);
+  }, [activeIndex, total, markBefore, ready]);
 
   return (
     <nav aria-label="Phases" className="text-small">
@@ -42,14 +42,16 @@ export default function PhaseRail({ progressKey, actions }: { progressKey: strin
             const done = progress.completed.includes(i);
             return (
               <li key={String(s.id)} className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  checked={done}
-                  disabled={!progress.signedIn || !progress.ready}
-                  onChange={() => progress.toggle(i)}
-                  aria-label={`Mark ${s.label} complete`}
-                  className="h-4 w-4 shrink-0 accent-accent disabled:opacity-50"
-                />
+                <span className="flex h-6 w-6 items-center justify-center">
+                  <input
+                    type="checkbox"
+                    checked={done}
+                    disabled={!progress.signedIn || !progress.ready}
+                    onChange={() => progress.toggle(i)}
+                    aria-label={`Mark ${s.label} complete`}
+                    className="h-5 w-5 shrink-0 accent-accent disabled:opacity-50"
+                  />
+                </span>
                 <button
                   type="button"
                   onClick={() => ctx.scrollTo(i)}

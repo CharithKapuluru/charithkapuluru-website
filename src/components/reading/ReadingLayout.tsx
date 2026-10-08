@@ -17,7 +17,7 @@ interface ReadingLayoutProps {
 export default function ReadingLayout({ crumbs, sheetLabel, header, rail, after, children }: ReadingLayoutProps) {
   return (
     <ReadingNavProvider>
-      <ContextualNav crumbs={crumbs} sheetLabel={sheetLabel} />
+      <ContextualNav crumbs={crumbs} sheetLabel={sheetLabel} sheetContent={rail} />
       <main id="main" className="mx-auto w-full max-w-[1280px] px-4 sm:px-6">
         <div className="grid gap-10 py-10 md:py-14 xl:grid-cols-[minmax(0,1fr)_minmax(0,44rem)_272px] xl:gap-12">
           <div className="hidden xl:block" aria-hidden />

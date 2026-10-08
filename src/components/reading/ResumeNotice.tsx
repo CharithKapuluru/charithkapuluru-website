@@ -51,6 +51,8 @@ export default function ResumeNotice({ slug, progressKey }: { slug: string; prog
   };
 
   const startFresh = async () => {
+    // Jump to the top instantly first, so the active section is 0 before any write and auto-complete cannot re-save a partial list after the delete.
+    window.scrollTo({ top: 0, behavior: "auto" });
     removeKey(key);
     setPosition(null);
     if (user) {
@@ -60,7 +62,6 @@ export default function ResumeNotice({ slug, progressKey }: { slug: string; prog
         console.error("Could not clear progress:", error);
       }
     }
-    window.scrollTo({ top: 0, behavior: scrollBehavior(prefersReducedMotion()) });
   };
 
   return (

@@ -23,3 +23,14 @@ test("percentComplete rounds and handles zero", () => {
   assert.equal(percentComplete([0, 1, 2], 8), 38);
   assert.equal(percentComplete([], 0), 0);
 });
+
+test("completeThrough on an already complete list returns the same entries, so the hook skips the write", () => {
+  const finished = [0, 1, 2, 3, 4, 5, 6, 7];
+  const next = completeThrough(finished, 3, 8);
+  assert.deepEqual(next, finished);
+  assert.equal(next.length, finished.length);
+});
+
+test("percentComplete never exceeds 100 for an over-long list", () => {
+  assert.equal(percentComplete([0, 1, 2, 3, 4, 5, 6, 7, 8], 8), 100);
+});
