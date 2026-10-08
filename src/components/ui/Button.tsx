@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { AnchorHTMLAttributes, ButtonHTMLAttributes, ReactNode } from "react";
+import type { AnchorHTMLAttributes, ButtonHTMLAttributes, ReactNode, Ref } from "react";
 import { cn } from "@/lib/utils";
 
 export type ButtonVariant = "primary" | "secondary" | "ghost";
@@ -26,7 +26,7 @@ export function buttonClasses(variant: ButtonVariant = "primary", size: ButtonSi
 
 type Common = { variant?: ButtonVariant; size?: ButtonSize; className?: string; children: ReactNode };
 type AsLink = Common & { href: string } & Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "href" | "className" | "children">;
-type AsButton = Common & { href?: undefined } & Omit<ButtonHTMLAttributes<HTMLButtonElement>, "className" | "children">;
+type AsButton = Common & { href?: undefined; ref?: Ref<HTMLButtonElement> } & Omit<ButtonHTMLAttributes<HTMLButtonElement>, "className" | "children">;
 
 export default function Button(props: AsLink | AsButton) {
   const classes = buttonClasses(props.variant, props.size, props.className);

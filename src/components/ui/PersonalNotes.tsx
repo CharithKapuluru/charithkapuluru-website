@@ -153,19 +153,19 @@ export const AllNotesViewer = ({ variant = "inline" }: { variant?: "inline" | "f
         setAllNotes(data.sort((a, b) => b.timestamp - a.timestamp));
       });
     }
-    const allNotes: Note[] = [];
+    const merged: Note[] = [];
     try {
       for (let i = 0; i < localStorage.length; i++) {
         const key = localStorage.key(i);
         if (key && (key.startsWith("personalNotes_") || key === "personalNotes")) {
           const notes = readJson<Note[]>(key, []);
-          allNotes.push(...notes);
+          merged.push(...notes);
         }
       }
     } catch {
       // Storage unavailable
     }
-    setAllNotes(allNotes.sort((a, b) => b.timestamp - a.timestamp));
+    setAllNotes(merged.sort((a, b) => b.timestamp - a.timestamp));
   }, [open, user]);
 
   const show = () => {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Copy, EnvelopeSimple, LinkedinLogo, ShareNetwork, XLogo } from "@phosphor-icons/react/dist/ssr";
 import Button from "./Button";
 
@@ -16,10 +16,10 @@ export default function ShareButtons({ title, phaseId }: ShareButtonsProps) {
   const triggerRef = useRef<HTMLButtonElement>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  const closeMenu = () => {
+  const closeMenu = useCallback(() => {
     setOpen(false);
     triggerRef.current?.focus();
-  };
+  }, []);
 
   useEffect(() => {
     if (!open) return;
@@ -31,7 +31,7 @@ export default function ShareButtons({ title, phaseId }: ShareButtonsProps) {
       window.removeEventListener("keydown", onKey);
       window.removeEventListener("mousedown", onClick);
     };
-  }, [open]);
+  }, [open, closeMenu]);
 
   useEffect(() => {
     return () => {
@@ -65,7 +65,7 @@ export default function ShareButtons({ title, phaseId }: ShareButtonsProps) {
     { label: copied ? "Copied" : "Copy link", icon: Copy, onClick: copy },
     { label: "X", icon: XLogo, onClick: () => popup(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text())}&url=${encodeURIComponent(url())}`) },
     { label: "LinkedIn", icon: LinkedinLogo, onClick: () => popup(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url())}`) },
-    { label: "Email", icon: EnvelopeSimple, onClick: () => { window.location.href = `mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(`${text()}\n\n${url()}`)}`; setOpen(false); } },
+    { label: "Email", icon: EnvelopeSimple, onClick: () => { window.location.href = `mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(`${text()}\n\n${url()}`)}`; closeMenu(); } },
   ];
 
   return (

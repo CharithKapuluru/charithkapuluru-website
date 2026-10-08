@@ -69,7 +69,6 @@ export default function SearchBar({ trigger = false }: { trigger?: boolean }) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState<SearchResult[]>([]);
 
   const open = () => {
     dialogRef.current?.showModal();
@@ -84,7 +83,7 @@ export default function SearchBar({ trigger = false }: { trigger?: boolean }) {
     const onKey = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
         const el = dialogRef.current;
-        if (!el || (!el.open && !el.parentElement?.checkVisibility())) return;
+        if (!el || (!el.open && !(el.parentElement?.checkVisibility?.() ?? true))) return;
         e.preventDefault();
         if (el.open) close();
         else open();
