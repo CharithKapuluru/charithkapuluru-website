@@ -273,6 +273,7 @@ Expected: FAIL (`@theme inline` block content does not contain `--color-bg:` tok
   --radius-xl: 14px;
   --radius-2xl: 14px;
   --radius-3xl: 14px;
+  --radius-4xl: 14px;
 
   --text-display-xl: clamp(2.5rem, 1.5rem + 4.2vw, 4.75rem);
   --text-display-xl--line-height: 1.02;
@@ -328,9 +329,9 @@ Expected: FAIL (`@theme inline` block content does not contain `--color-bg:` tok
   --tip-soft: #f9e8dc;
   --info: #4f7fd9;
   --info-soft: #e9f0fb;
-  --success: #2f9e6a;
+  --success: #1f7a50;
   --success-soft: #e4f5ec;
-  --danger: #d1483f;
+  --danger: #bf3a31;
   --danger-soft: #fbe7e5;
   --shadow-float-value: 0 12px 32px -12px rgb(24 24 27 / 0.18);
 }

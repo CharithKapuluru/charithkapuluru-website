@@ -135,8 +135,8 @@ Semantic tints exist only inside tutorial callouts and status UI:
 | --- | --- | --- | --- | --- | --- |
 | `tip` | accent | accent-soft | accent | accent-soft | Key takeaway |
 | `info` | `#4f7fd9` | `#e9f0fb` | `#8fb0ee` | `rgb(79 127 217 / 0.14)` | Analogy, info notes |
-| `success` | `#2f9e6a` | `#e4f5ec` | `#6fcb9b` | `rgb(47 158 106 / 0.16)` | Did you know, correct answers |
-| `danger` | `#d1483f` | `#fbe7e5` | `#ef8a83` | `rgb(209 72 63 / 0.16)` | Warning, wrong answers, form errors |
+| `success` | `#1f7a50` | `#e4f5ec` | `#6fcb9b` | `rgb(47 158 106 / 0.16)` | Did you know, correct answers |
+| `danger` | `#bf3a31` | `#fbe7e5` | `#ef8a83` | `rgb(209 72 63 / 0.16)` | Warning, wrong answers, form errors |
 | `neutral` | border-strong | surface-2 | border-strong | surface-2 | Real talk |
 
 Token names: `--color-{tone}` for the border and icon color and `--color-{tone}-soft` for the tint, where tone is `tip`, `info`, `success` or `danger`; `neutral` reuses `border-strong` and `surface-2`.
