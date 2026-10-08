@@ -48,12 +48,12 @@ const AnimatedDiagram = ({ title, steps, type = "pipeline" }: AnimatedDiagramPro
   };
 
   return (
-    <div className="my-8 p-6 bg-bg-cream rounded-lg border border-text-charcoal/10">
+    <div className="my-8 p-6 bg-bg rounded-lg border border-fg/10">
       <div className="flex items-center justify-between mb-6">
-        <h3 className="text-xl font-serif text-text-charcoal">{title}</h3>
+        <h3 className="text-xl font-display text-fg">{title}</h3>
         <button
           onClick={handlePlay}
-          className="px-4 py-1 text-sm font-mono text-accent-moss border border-accent-moss rounded hover:bg-accent-moss hover:text-white transition-colors"
+          className="px-4 py-1 text-sm font-mono text-accent border border-accent rounded hover:bg-accent hover:text-white transition-colors"
         >
           {isPlaying ? "Playing..." : "▶ Animate"}
         </button>
@@ -63,9 +63,9 @@ const AnimatedDiagram = ({ title, steps, type = "pipeline" }: AnimatedDiagramPro
       {type === "pipeline" && (
         <div className="relative">
           {/* Connection Line */}
-          <div className="absolute top-8 left-0 right-0 h-0.5 bg-text-charcoal/10 hidden md:block" />
+          <div className="absolute top-8 left-0 right-0 h-0.5 bg-fg/10 hidden md:block" />
           <div
-            className="absolute top-8 left-0 h-0.5 bg-accent-moss transition-all duration-500 hidden md:block"
+            className="absolute top-8 left-0 h-0.5 bg-accent transition-all duration-500 hidden md:block"
             style={{ width: `${(activeStep / (steps.length - 1)) * 100}%` }}
           />
 
@@ -87,10 +87,10 @@ const AnimatedDiagram = ({ title, steps, type = "pipeline" }: AnimatedDiagramPro
                   <motion.div
                     className={`w-16 h-16 rounded-full flex items-center justify-center border-2 transition-all duration-300 ${
                       isActive
-                        ? "bg-accent-moss border-accent-moss text-white scale-110 shadow-lg"
+                        ? "bg-accent border-accent text-white scale-110 shadow-lg"
                         : isComplete
-                        ? "bg-accent-moss/20 border-accent-moss text-accent-moss"
-                        : "bg-bg-paper border-text-charcoal/20 text-text-olive group-hover:border-accent-moss/50"
+                        ? "bg-accent/20 border-accent text-accent"
+                        : "bg-surface border-fg/20 text-fg-3 group-hover:border-accent/50"
                     }`}
                     animate={isActive ? { scale: [1, 1.1, 1] } : {}}
                     transition={{ duration: 0.5, repeat: isActive ? Infinity : 0, repeatDelay: 1 }}
@@ -101,7 +101,7 @@ const AnimatedDiagram = ({ title, steps, type = "pipeline" }: AnimatedDiagramPro
                   {/* Label */}
                   <span
                     className={`mt-3 text-xs font-mono text-center transition-colors ${
-                      isActive ? "text-accent-moss font-medium" : "text-text-olive"
+                      isActive ? "text-accent font-medium" : "text-fg-3"
                     }`}
                   >
                     {step.label}
@@ -126,10 +126,10 @@ const AnimatedDiagram = ({ title, steps, type = "pipeline" }: AnimatedDiagramPro
                   onClick={() => handleStepClick(index)}
                   className={`px-4 py-3 rounded-lg border-2 cursor-pointer transition-all ${
                     isActive
-                      ? "bg-accent-moss border-accent-moss text-white shadow-lg"
+                      ? "bg-accent border-accent text-white shadow-lg"
                       : isComplete
-                      ? "bg-accent-moss/20 border-accent-moss text-accent-moss"
-                      : "bg-bg-paper border-text-charcoal/20 text-text-olive hover:border-accent-moss/50"
+                      ? "bg-accent/20 border-accent text-accent"
+                      : "bg-surface border-fg/20 text-fg-3 hover:border-accent/50"
                   }`}
                   animate={isActive ? { scale: [1, 1.05, 1] } : {}}
                   transition={{ duration: 0.5, repeat: isActive ? Infinity : 0, repeatDelay: 1 }}
@@ -142,7 +142,7 @@ const AnimatedDiagram = ({ title, steps, type = "pipeline" }: AnimatedDiagramPro
                 {index < steps.length - 1 && (
                   <motion.div
                     className={`mx-2 text-xl hidden md:block ${
-                      index < activeStep ? "text-accent-moss" : "text-text-charcoal/20"
+                      index < activeStep ? "text-accent" : "text-fg/20"
                     }`}
                     animate={index === activeStep - 1 ? { x: [0, 5, 0] } : {}}
                     transition={{ duration: 0.5, repeat: Infinity }}
@@ -164,13 +164,13 @@ const AnimatedDiagram = ({ title, steps, type = "pipeline" }: AnimatedDiagramPro
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -10 }}
           transition={{ duration: 0.3 }}
-          className="mt-6 p-4 bg-bg-paper rounded-lg border border-text-charcoal/10"
+          className="mt-6 p-4 bg-surface rounded-lg border border-fg/10"
         >
           <div className="flex items-center gap-2 mb-2">
             {steps[activeStep].icon ? iconFor(steps[activeStep].icon, { size: 22 }) : null}
-            <span className="font-serif text-lg text-text-charcoal">{steps[activeStep].label}</span>
+            <span className="text-lg text-fg">{steps[activeStep].label}</span>
           </div>
-          <p className="text-text-taupe">{steps[activeStep].description}</p>
+          <p className="text-fg-2">{steps[activeStep].description}</p>
         </motion.div>
       </AnimatePresence>
 
@@ -182,10 +182,10 @@ const AnimatedDiagram = ({ title, steps, type = "pipeline" }: AnimatedDiagramPro
             onClick={() => handleStepClick(index)}
             className={`w-2 h-2 rounded-full transition-all ${
               index === activeStep
-                ? "bg-accent-moss w-6"
+                ? "bg-accent w-6"
                 : index < activeStep
-                ? "bg-accent-moss/50"
-                : "bg-text-charcoal/20"
+                ? "bg-accent/50"
+                : "bg-fg/20"
             }`}
           />
         ))}

@@ -163,11 +163,11 @@ const ArchitectureDiagram = ({
   };
 
   return (
-    <div className="my-8 p-6 bg-bg-cream/50 border border-text-charcoal/10 rounded-xl">
+    <div className="my-8 p-6 bg-bg/50 border border-fg/10 rounded-xl">
       <div className="flex items-center gap-3 mb-4">
-        <div className="w-10 h-10 rounded-lg bg-orange-500/20 flex items-center justify-center">
+        <div className="w-10 h-10 rounded-lg bg-tip/20 flex items-center justify-center">
           <svg
-            className="w-5 h-5 text-orange-600"
+            className="w-5 h-5 text-tip"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -181,10 +181,10 @@ const ArchitectureDiagram = ({
           </svg>
         </div>
         <div>
-          <h3 className="text-xl font-serif text-text-charcoal">
+          <h3 className="text-xl font-display text-fg">
             AWS Architecture Diagram
           </h3>
-          <p className="text-sm text-text-olive">
+          <p className="text-sm text-fg-3">
             Click on components to learn more
           </p>
         </div>
@@ -712,12 +712,12 @@ const ArchitectureDiagram = ({
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 20 }}
-              className="absolute top-4 right-4 w-72 bg-bg-paper border border-text-charcoal/10
+              className="absolute top-4 right-4 w-72 bg-surface border border-fg/10
                          rounded-lg shadow-lg p-4"
             >
               <button
                 onClick={() => setSelectedComponent(null)}
-                className="absolute top-2 right-2 text-text-olive hover:text-text-charcoal"
+                className="absolute top-2 right-2 text-fg-3 hover:text-fg"
               >
                 <svg
                   className="w-5 h-5"
@@ -733,21 +733,21 @@ const ArchitectureDiagram = ({
                   />
                 </svg>
               </button>
-              <h4 className="text-lg font-serif text-text-charcoal mb-1">
+              <h4 className="text-lg font-display text-fg mb-1">
                 {selectedComponent.name}
               </h4>
               {selectedComponent.phase && (
-                <span className="inline-block px-2 py-0.5 text-xs bg-amber-100 text-amber-700 rounded mb-2">
+                <span className="inline-block px-2 py-0.5 text-xs bg-tip-soft text-tip rounded mb-2">
                   {selectedComponent.phase}
                 </span>
               )}
-              <p className="text-sm text-text-taupe mb-3">
+              <p className="text-sm text-fg-2 mb-3">
                 {selectedComponent.description}
               </p>
               <ul className="space-y-1">
                 {selectedComponent.details.map((detail, index) => (
-                  <li key={index} className="flex items-start gap-2 text-xs text-text-olive">
-                    <span className="w-1.5 h-1.5 rounded-full bg-accent-moss mt-1.5 flex-shrink-0" />
+                  <li key={index} className="flex items-start gap-2 text-xs text-fg-3">
+                    <span className="w-1.5 h-1.5 rounded-full bg-accent mt-1.5 flex-shrink-0" />
                     {detail}
                   </li>
                 ))}
@@ -758,21 +758,21 @@ const ArchitectureDiagram = ({
       </div>
 
       {/* Legend */}
-      <div className="mt-4 flex flex-wrap gap-4 text-xs text-text-olive">
+      <div className="mt-4 flex flex-wrap gap-4 text-xs text-fg-3">
         <div className="flex items-center gap-2">
-          <div className="w-4 h-3 bg-blue-100 border border-blue-400 rounded" />
+          <div className="w-4 h-3 bg-info-soft border border-info rounded" />
           <span>Public Subnet</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-4 h-3 bg-purple-100 border border-purple-400 rounded" />
+          <div className="w-4 h-3 bg-accent-soft border border-accent rounded" />
           <span>Private Subnet</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-4 h-3 bg-green-100 border border-green-400 rounded" />
+          <div className="w-4 h-3 bg-success-soft border border-success rounded" />
           <span>ECS Task</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-4 h-3 bg-yellow-100 border border-yellow-400 rounded" />
+          <div className="w-4 h-3 bg-tip-soft border border-tip rounded" />
           <span>Load Balancer</span>
         </div>
       </div>

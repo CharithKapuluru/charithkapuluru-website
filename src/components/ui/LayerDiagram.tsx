@@ -19,14 +19,14 @@ const LayerDiagram = ({ layers, title }: LayerDiagramProps) => {
 
   return (
     <motion.div
-      className="my-8 p-5 md:p-6 bg-bg-cream rounded-lg border border-text-charcoal/10"
+      className="my-8 p-5 md:p-6 bg-bg rounded-lg border border-fg/10"
       initial={{ opacity: 0, y: 10 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-50px" }}
       transition={{ duration: 0.4, ease: "easeOut" }}
     >
       {title && (
-        <h4 className="font-serif font-semibold text-text-charcoal mb-4">
+        <h4 className="font-display font-semibold text-fg mb-4">
           {title}
         </h4>
       )}
@@ -37,8 +37,8 @@ const LayerDiagram = ({ layers, title }: LayerDiagramProps) => {
             key={i}
             className={`w-full text-left rounded-lg px-5 py-4 border transition-all cursor-pointer ${
               activeLayer === i
-                ? "border-text-charcoal/20 shadow-sm"
-                : "border-transparent hover:border-text-charcoal/10"
+                ? "border-fg/20 shadow-sm"
+                : "border-transparent hover:border-fg/10"
             }`}
             style={{ backgroundColor: layer.color }}
             initial={{ opacity: 0, x: -20 }}
@@ -48,10 +48,10 @@ const LayerDiagram = ({ layers, title }: LayerDiagramProps) => {
             onClick={() => setActiveLayer(activeLayer === i ? null : i)}
           >
             <div className="flex items-center justify-between">
-              <span className="font-serif font-semibold text-text-charcoal">
+              <span className="font-semibold text-fg">
                 {layer.label}
               </span>
-              <span className="text-xs font-mono text-text-olive">
+              <span className="text-xs font-mono text-fg-3">
                 {activeLayer === i ? "close" : "click to learn more"}
               </span>
             </div>
@@ -59,7 +59,7 @@ const LayerDiagram = ({ layers, title }: LayerDiagramProps) => {
             <AnimatePresence>
               {activeLayer === i && (
                 <motion.p
-                  className="text-sm text-text-taupe mt-2 leading-relaxed"
+                  className="text-sm text-fg-2 mt-2 leading-relaxed"
                   initial={{ height: 0, opacity: 0 }}
                   animate={{ height: "auto", opacity: 1 }}
                   exit={{ height: 0, opacity: 0 }}
@@ -73,7 +73,7 @@ const LayerDiagram = ({ layers, title }: LayerDiagramProps) => {
         ))}
       </div>
 
-      <p className="text-xs text-text-olive mt-4 text-center font-mono">
+      <p className="text-xs text-fg-3 mt-4 text-center font-mono">
         Top = closest to user | Bottom = closest to hardware
       </p>
     </motion.div>

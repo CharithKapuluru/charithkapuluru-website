@@ -201,11 +201,11 @@ const ResourceNode = ({
   const getStatusColor = (status: string) => {
     switch (status) {
       case "created":
-        return "bg-accent-moss text-white";
+        return "bg-accent text-white";
       case "creating":
-        return "bg-amber-500 text-white animate-pulse";
+        return "bg-tip text-white animate-pulse";
       default:
-        return "bg-bg-stone text-text-olive";
+        return "bg-surface-2 text-fg-3";
     }
   };
 
@@ -249,8 +249,8 @@ const ResourceNode = ({
     <div className="select-none">
       <div
         className={`flex items-center gap-2 py-2 px-3 rounded-lg cursor-pointer
-                   transition-all hover:bg-bg-cream ${
-                     isSelected ? "bg-amber-50 border border-amber-200" : ""
+                   transition-all hover:bg-bg ${
+                     isSelected ? "bg-tip-soft border border-tip" : ""
                    }`}
         style={{ marginLeft: `${depth * 20}px` }}
         onClick={() => onSelect(resource)}
@@ -262,7 +262,7 @@ const ResourceNode = ({
               e.stopPropagation();
               onToggleExpand(resource.id);
             }}
-            className="w-5 h-5 flex items-center justify-center text-text-olive hover:text-text-charcoal"
+            className="w-5 h-5 flex items-center justify-center text-fg-3 hover:text-fg"
           >
             <svg
               className={`w-4 h-4 transition-transform ${
@@ -288,12 +288,12 @@ const ResourceNode = ({
         <div className={`w-2 h-2 rounded-full ${getStatusColor(resource.status)}`} />
 
         {/* Type Icon */}
-        <div className="text-text-olive">{getTypeIcon(resource.type)}</div>
+        <div className="text-fg-3">{getTypeIcon(resource.type)}</div>
 
         {/* Resource Name */}
         <div className="flex-1">
-          <code className="text-sm font-mono text-accent-moss">{resource.name}</code>
-          <span className="ml-2 text-xs text-text-olive">({resource.type})</span>
+          <code className="text-sm font-mono text-accent">{resource.name}</code>
+          <span className="ml-2 text-xs text-fg-3">({resource.type})</span>
         </div>
       </div>
 
@@ -398,12 +398,12 @@ const TerraformResourceTree = () => {
   };
 
   return (
-    <div className="my-8 p-6 bg-bg-cream/50 border border-text-charcoal/10 rounded-xl">
+    <div className="my-8 p-6 bg-bg/50 border border-fg/10 rounded-xl">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-purple-500/20 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-lg bg-accent/20 flex items-center justify-center">
             <svg
-              className="w-5 h-5 text-purple-600"
+              className="w-5 h-5 text-accent"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -417,10 +417,10 @@ const TerraformResourceTree = () => {
             </svg>
           </div>
           <div>
-            <h3 className="text-xl font-serif text-text-charcoal">
+            <h3 className="text-xl font-display text-fg">
               Terraform Resource Tree
             </h3>
-            <p className="text-sm text-text-olive">
+            <p className="text-sm text-fg-3">
               Infrastructure dependency graph
             </p>
           </div>
@@ -429,16 +429,16 @@ const TerraformResourceTree = () => {
         <div className="flex items-center gap-2">
           <button
             onClick={handleReset}
-            className="px-3 py-1.5 text-sm text-text-taupe hover:text-text-charcoal
-                       border border-text-charcoal/10 rounded-lg hover:bg-bg-paper"
+            className="px-3 py-1.5 text-sm text-fg-2 hover:text-fg
+                       border border-fg/10 rounded-lg hover:bg-surface"
           >
             Reset
           </button>
           <button
             onClick={handleApply}
             disabled={isApplying}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-purple-600 text-white
-                       rounded-lg hover:bg-purple-700 transition-colors text-sm
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-accent text-white
+                       rounded-lg hover:bg-accent transition-colors text-sm
                        disabled:opacity-50"
           >
             {isApplying ? (
@@ -494,7 +494,7 @@ const TerraformResourceTree = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Tree View */}
-        <div className="bg-bg-paper rounded-lg border border-text-charcoal/10 p-4 max-h-96 overflow-y-auto">
+        <div className="bg-surface rounded-lg border border-fg/10 p-4 max-h-96 overflow-y-auto">
           {resources.map((resource) => (
             <ResourceNode
               key={resource.id}
@@ -509,43 +509,43 @@ const TerraformResourceTree = () => {
         </div>
 
         {/* Details Panel */}
-        <div className="bg-bg-paper rounded-lg border border-text-charcoal/10 p-4">
+        <div className="bg-surface rounded-lg border border-fg/10 p-4">
           {selectedResource ? (
             <div>
               <div className="flex items-center gap-2 mb-3">
                 <div
                   className={`w-3 h-3 rounded-full ${
                     selectedResource.status === "created"
-                      ? "bg-accent-moss"
+                      ? "bg-accent"
                       : selectedResource.status === "creating"
-                      ? "bg-amber-500 animate-pulse"
-                      : "bg-bg-stone"
+                      ? "bg-tip animate-pulse"
+                      : "bg-surface-2"
                   }`}
                 />
-                <span className="text-xs uppercase tracking-wider text-text-olive">
+                <span className="text-xs uppercase tracking-wider text-fg-3">
                   {selectedResource.status}
                 </span>
               </div>
 
-              <h4 className="text-lg font-mono text-accent-moss mb-1">
+              <h4 className="text-lg font-mono text-accent mb-1">
                 {selectedResource.name}
               </h4>
-              <p className="text-sm text-text-olive mb-4">
+              <p className="text-sm text-fg-3 mb-4">
                 {selectedResource.type}
               </p>
-              <p className="text-text-taupe mb-4">{selectedResource.description}</p>
+              <p className="text-fg-2 mb-4">{selectedResource.description}</p>
 
               {selectedResource.properties && (
-                <div className="bg-bg-cream rounded-lg p-3">
-                  <p className="text-xs text-text-olive mb-2 uppercase tracking-wider">
+                <div className="bg-bg rounded-lg p-3">
+                  <p className="text-xs text-fg-3 mb-2 uppercase tracking-wider">
                     Properties
                   </p>
                   <div className="space-y-1">
                     {selectedResource.properties.map((prop, index) => (
                       <div key={index} className="flex items-start gap-2 text-sm">
-                        <code className="text-purple-600">{prop.key}</code>
-                        <span className="text-text-olive">=</span>
-                        <code className="text-accent-moss">{prop.value}</code>
+                        <code className="text-accent">{prop.key}</code>
+                        <span className="text-fg-3">=</span>
+                        <code className="text-accent">{prop.value}</code>
                       </div>
                     ))}
                   </div>
@@ -553,7 +553,7 @@ const TerraformResourceTree = () => {
               )}
             </div>
           ) : (
-            <div className="flex items-center justify-center h-full text-text-olive">
+            <div className="flex items-center justify-center h-full text-fg-3">
               <p>Select a resource to view details</p>
             </div>
           )}
@@ -561,17 +561,17 @@ const TerraformResourceTree = () => {
       </div>
 
       {/* Legend */}
-      <div className="mt-4 flex flex-wrap gap-4 text-xs text-text-olive">
+      <div className="mt-4 flex flex-wrap gap-4 text-xs text-fg-3">
         <div className="flex items-center gap-2">
-          <div className="w-2 h-2 rounded-full bg-bg-stone" />
+          <div className="w-2 h-2 rounded-full bg-surface-2" />
           <span>Pending</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
+          <div className="w-2 h-2 rounded-full bg-tip animate-pulse" />
           <span>Creating</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-2 h-2 rounded-full bg-accent-moss" />
+          <div className="w-2 h-2 rounded-full bg-accent" />
           <span>Created</span>
         </div>
       </div>
