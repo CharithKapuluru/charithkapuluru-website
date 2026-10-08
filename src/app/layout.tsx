@@ -1,52 +1,61 @@
 import type { Metadata } from "next";
-import { Fredoka, Nunito, JetBrains_Mono } from "next/font/google";
-import { ThemeProvider } from "@/components/ui/ThemeProvider";
-import { AuthProvider } from "@/context/AuthContext";
+import { Bricolage_Grotesque, Geist, Geist_Mono } from "next/font/google";
+import { Providers } from "./providers";
 import { WorldProvider } from "@/components/world/WorldProvider";
 import EasterEggs from "@/components/world/EasterEggs";
 import "./globals.css";
 
-const fredoka = Fredoka({
-  variable: "--font-fredoka",
+const display = Bricolage_Grotesque({
   subsets: ["latin"],
+  variable: "--font-bricolage",
   display: "swap",
+  axes: ["opsz", "wdth"],
 });
 
-const nunito = Nunito({
-  variable: "--font-nunito",
-  subsets: ["latin"],
-  display: "swap",
-});
+const sans = Geist({ subsets: ["latin"], variable: "--font-geist", display: "swap" });
 
-const jetbrainsMono = JetBrains_Mono({
-  variable: "--font-jetbrains",
-  subsets: ["latin"],
-  display: "swap",
-});
+const mono = Geist_Mono({ subsets: ["latin"], variable: "--font-geist-mono", display: "swap" });
+
+const SITE = "https://charithkapuluru.com";
 
 export const metadata: Metadata = {
-  title: "Charith Kapuluru | Cloud & DevOps Engineer",
+  metadataBase: new URL(SITE),
+  title: {
+    default: "Charith Kapuluru | Cloud & DevOps Engineer",
+    template: "%s | Charith Kapuluru",
+  },
   description:
-    "Charith builds cloud infrastructure, DevSecOps pipelines, and friendly explanations of how computers actually work. Come say hi to the cartoon version of him.",
-  keywords: ["DevOps", "Cloud", "AWS", "Linux", "Software Engineer", "Portfolio"],
+    "Cloud and DevOps engineer. Project walkthroughs on DevSecOps pipelines, AWS ECS with Terraform and Linux administration, plus plain-language guides to how servers actually work.",
+  keywords: ["DevOps", "Cloud", "AWS", "Terraform", "Linux", "Docker", "Portfolio"],
+  openGraph: {
+    type: "website",
+    url: SITE,
+    siteName: "Charith Kapuluru",
+    title: "Charith Kapuluru | Cloud & DevOps Engineer",
+    description:
+      "Cloud and DevOps engineer. Project walkthroughs and plain-language guides to how servers actually work.",
+    images: [{ url: "/og.png", width: 1200, height: 630, alt: "Charith Kapuluru, Cloud and DevOps engineer" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Charith Kapuluru | Cloud & DevOps Engineer",
+    description:
+      "Cloud and DevOps engineer. Project walkthroughs and plain-language guides to how servers actually work.",
+    images: ["/og.png"],
+  },
+  robots: { index: true, follow: true },
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${fredoka.variable} ${nunito.variable} ${jetbrainsMono.variable}`}>
-      <body className="font-sans antialiased">
-        <AuthProvider>
-          <ThemeProvider>
-            <WorldProvider>
-              {children}
-              <EasterEggs />
-            </WorldProvider>
-          </ThemeProvider>
-        </AuthProvider>
+    <html lang="en" suppressHydrationWarning className={`${display.variable} ${sans.variable} ${mono.variable}`}>
+      <body className="bg-bg font-sans text-fg antialiased">
+        <Providers>
+          <WorldProvider>
+            {children}
+            <EasterEggs />
+          </WorldProvider>
+        </Providers>
       </body>
     </html>
   );
