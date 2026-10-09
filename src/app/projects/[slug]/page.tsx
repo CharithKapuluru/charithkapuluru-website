@@ -1,90 +1,70 @@
-import { Metadata } from "next";
+import type { ComponentType } from "react";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import Link from "next/link";
-import { projects, getProjectBySlug } from "@/lib/projectsData";
+import { projects, getProjectBySlug, getProjectProgressKey, getNextProject } from "@/lib/projectsData";
 import DevSecOpsProject from "@/components/projects/DevSecOpsProject";
 import TerraformECSProject from "@/components/projects/TerraformECSProject";
 import LinuxSysAdminProject from "@/components/projects/LinuxSysAdminProject";
-import WorldNav from "@/components/world/WorldNav";
-import WorkshopHeader from "@/components/world/scenes/WorkshopHeader";
-import { avatarLines } from "@/lib/avatarLines";
+import ReadingLayout from "@/components/reading/ReadingLayout";
+import ReadingHeader from "@/components/reading/ReadingHeader";
+import FactsPanel from "@/components/reading/FactsPanel";
+import ResumeNotice from "@/components/reading/ResumeNotice";
+import PhaseRail from "@/components/reading/PhaseRail";
+import ProjectTools from "@/components/reading/ProjectTools";
+import NextUp from "@/components/reading/NextUp";
+import Footer from "@/components/layout/Footer";
 
-// Generate static params for all projects
+const CONTENT: Record<string, ComponentType> = {
+  "devsecops-pipeline": DevSecOpsProject,
+  "terraform-ecs-deployment": TerraformECSProject,
+  "linux-sysadmin-deep-dive": LinuxSysAdminProject,
+};
+
 export function generateStaticParams() {
-  return projects.map((project) => ({
-    slug: project.slug,
-  }));
+  return projects.map((project) => ({ slug: project.slug }));
 }
 
-// Generate metadata for each project page
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const project = getProjectBySlug(slug);
-
-  if (!project) {
-    return {
-      title: "Project Not Found",
-    };
-  }
-
-  return {
-    title: `${project.title} | Charith Kapuluru`,
-    description: project.description,
-  };
+  if (!project) return { title: "Project not found" };
+  return { title: project.title, description: project.description };
 }
 
-export default async function ProjectPage({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
+export default async function ProjectPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const project = getProjectBySlug(slug);
-
-  if (!project) {
-    notFound();
-  }
+  if (!project) notFound();
+  const Content = CONTENT[slug];
+  const progressKey = getProjectProgressKey(project);
+  const next = getNextProject(slug);
 
   return (
-    <main className="min-h-screen bg-bg-cream">
-      <WorldNav />
-      <WorkshopHeader
-        title={project.title}
-        subtitle={project.subtitle}
-        avatarLine={avatarLines[slug]}
-      />
-      <div className="bg-bg-paper">
-        {slug === "devsecops-pipeline" && <DevSecOpsProject />}
-        {slug === "terraform-ecs-deployment" && <TerraformECSProject />}
-        {slug === "linux-sysadmin-deep-dive" && <LinuxSysAdminProject />}
-      </div>
-
-      {/* Fallback for future projects */}
-      {slug !== "devsecops-pipeline" && slug !== "terraform-ecs-deployment" && slug !== "linux-sysadmin-deep-dive" && (
-        <div className="container mx-auto px-6 md:px-12 lg:px-16 max-w-6xl py-16">
-          <h1 className="text-4xl md:text-5xl font-serif text-text-charcoal mb-8">
-            {project.title}
-          </h1>
-          <p className="text-lg text-text-taupe mb-8">{project.description}</p>
-          <div className="flex flex-wrap gap-2">
-            {project.technologies.map((tech) => (
-              <span
-                key={tech}
-                className="px-3 py-1 text-sm font-mono bg-bg-cream text-text-olive rounded-full"
-              >
-                {tech}
-              </span>
-            ))}
-          </div>
-          <p className="mt-8 text-text-taupe italic">
-            Content coming soon...
-          </p>
-        </div>
-      )}
-    </main>
+    <>
+      <ReadingLayout
+        crumbs={[{ label: "Projects", href: "/projects" }, { label: project.title }]}
+        sheetLabel="Phases"
+        header={
+          <>
+            <ReadingHeader
+              eyebrow="Project walkthrough"
+              title={project.title}
+              lede={project.lede}
+              meta={[
+                { label: "Phases", value: String(project.phaseCount) },
+                { label: "Time", value: project.estimatedTime },
+              ]}
+            />
+            <FactsPanel repo={project.repo} stack={project.technologies} phaseCount={project.phaseCount} estimatedTime={project.estimatedTime} outcome={project.outcome} />
+            <ResumeNotice slug={project.slug} progressKey={progressKey} />
+          </>
+        }
+        rail={<PhaseRail progressKey={progressKey} actions={<ProjectTools />} />}
+        after={<NextUp label="Next project" title={next.title} href={`/projects/${next.slug}`} meta={`${next.phaseCount} phases`} backHref="/projects" backLabel="All projects" />}
+      >
+        {Content ? <Content /> : <p className="text-fg-2">Content coming soon.</p>}
+      </ReadingLayout>
+      <Footer />
+    </>
   );
 }
