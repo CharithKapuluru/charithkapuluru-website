@@ -133,11 +133,11 @@ export default function CronJobs() {
               ].map(f => (
                 <div key={f.label} className="text-center">
                   <p className={`font-semibold ${f.color}`}>{f.label}</p>
-                  <p className="text-terminal-fg/50">{f.range}</p>
+                  <p className="text-terminal-fg/60">{f.range}</p>
                 </div>
               ))}
             </div>
-            <p className="text-terminal-fg/50 text-xs mt-4">* means &quot;every&quot; — every minute, every hour, every day, etc.</p>
+            <p className="text-terminal-fg/60 text-xs mt-4">* means &quot;every&quot; — every minute, every hour, every day, etc.</p>
           </div>
         </Reveal>
         <P className="mb-4">The <Code>*</Code> wildcard means &quot;every possible value.&quot; So <Code>* * * * *</Code> runs every single minute of every day.</P>
@@ -219,7 +219,7 @@ export default function CronJobs() {
         <P className="text-lg mb-8">Here&apos;s what a typical sysadmin&apos;s crontab looks like:</P>
         <Reveal>
           <div className="bg-terminal rounded-xl p-5 font-mono text-sm overflow-x-auto mb-8">
-            <p className="text-terminal-fg/50 mb-4"># crontab -l output</p>
+            <p className="text-terminal-fg/60 mb-4"># crontab -l output</p>
             {[
               { schedule: "*/5 * * * *", cmd: "/home/charith/scripts/collect-metrics.sh", note: "every 5 min" },
               { schedule: "0 * * * *", cmd: "/home/charith/scripts/check-services.sh", note: "every hour" },
@@ -230,7 +230,7 @@ export default function CronJobs() {
               <div key={i} className="py-1.5 border-b border-white/5 last:border-0">
                 <span className="text-terminal-accent">{job.schedule}</span>
                 <span className="text-terminal-ok ml-3">{job.cmd}</span>
-                <span className="text-terminal-fg/50 ml-3 text-xs">← {job.note}</span>
+                <span className="text-terminal-fg/60 ml-3 text-xs">← {job.note}</span>
               </div>
             ))}
           </div>

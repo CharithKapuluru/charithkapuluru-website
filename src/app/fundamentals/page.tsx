@@ -8,7 +8,7 @@ export default function FundamentalsPage() {
   return (
     <>
       <SiteNav active="fundamentals" />
-      <main id="main" className="mx-auto max-w-6xl px-4 py-14 sm:px-6 md:py-20">
+      <main id="main" tabIndex={-1} className="mx-auto max-w-6xl px-4 py-14 outline-none sm:px-6 md:py-20">
         <h1 className="text-display-lg text-fg">Fundamentals</h1>
         <p className="mt-4 max-w-[60ch] text-lede text-fg-2">Plain-language guides to how servers, Linux and networks actually work. Zero assumptions, real analogies.</p>
         <div className="mt-10">

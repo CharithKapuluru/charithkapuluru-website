@@ -92,7 +92,7 @@ export default function DockerAndNginx() {
         <Reveal>
           <div className="bg-terminal rounded-xl p-5 text-center mb-8">
             <p className="text-2xl text-white italic mb-2">&ldquo;It works on my machine!&rdquo;</p>
-            <p className="text-terminal-fg/50 text-sm">— every developer, at least once</p>
+            <p className="text-terminal-fg/60 text-sm">— every developer, at least once</p>
           </div>
         </Reveal>
         <P>Docker solves this completely by packaging your app <em>and everything it needs</em> into a single portable box called a <strong>container</strong>.</P>
@@ -105,7 +105,7 @@ export default function DockerAndNginx() {
         <P className="text-lg mb-8">Docker packages your app and all its dependencies into a <strong>container</strong> — a self-contained box that runs identically on any machine.</P>
         <Reveal>
           <div className="bg-terminal rounded-xl p-5 font-mono text-sm mb-8 overflow-x-auto">
-            <p className="text-terminal-fg/50 mb-3">What&apos;s inside a container:</p>
+            <p className="text-terminal-fg/60 mb-3">What&apos;s inside a container:</p>
             <p className="text-terminal-ok">┌─────────────────────────────┐</p>
             <p className="text-terminal-ok">│         CONTAINER           │</p>
             <p className="text-terminal-ok">│                             │</p>
@@ -233,7 +233,7 @@ export default function DockerAndNginx() {
         <H3>A real Dockerfile</H3>
         <Reveal>
           <div className="bg-terminal rounded-xl p-5 font-mono text-sm overflow-x-auto">
-            <p className="text-terminal-fg/50 mb-3">Dockerfile</p>
+            <p className="text-terminal-fg/60 mb-3">Dockerfile</p>
             <div className="space-y-2">
               {[
                 { code: "FROM ubuntu:24.04", comment: "← start from official Ubuntu image" },
@@ -243,7 +243,7 @@ export default function DockerAndNginx() {
               ].map(line => (
                 <div key={line.code} className="flex flex-wrap gap-3">
                   <span className="text-terminal-ok">{line.code}</span>
-                  <span className="text-terminal-fg/50 text-xs self-end">{line.comment}</span>
+                  <span className="text-terminal-fg/60 text-xs self-end">{line.comment}</span>
                 </div>
               ))}
             </div>

@@ -3,6 +3,7 @@ import { Bricolage_Grotesque, Geist, Geist_Mono } from "next/font/google";
 import { Providers } from "./providers";
 import SkipLink from "@/components/layout/SkipLink";
 import Konami from "@/components/brand/Konami";
+import { OG_IMAGES, SITE_NAME } from "@/lib/seo";
 import "./globals.css";
 
 const display = Bricolage_Grotesque({
@@ -29,11 +30,11 @@ export const metadata: Metadata = {
   keywords: ["DevOps", "Cloud", "AWS", "Terraform", "Linux", "Docker", "Portfolio"],
   openGraph: {
     type: "website",
-    siteName: "Charith Kapuluru",
+    siteName: SITE_NAME,
     title: "Charith Kapuluru | Cloud & DevOps Engineer",
     description:
       "Cloud and DevOps engineer. Project walkthroughs and plain-language guides to how servers actually work.",
-    images: [{ url: "/og.png", width: 1200, height: 630, alt: "Charith Kapuluru, Cloud and DevOps engineer" }],
+    images: OG_IMAGES,
   },
   twitter: {
     card: "summary_large_image",

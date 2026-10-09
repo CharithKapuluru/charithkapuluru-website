@@ -78,6 +78,7 @@ const DevSecOpsProject = () => {
         {/* Main Before/After Comparison */}
         <BeforeAfterComparison
           title="What Makes This Project Different?"
+          headingLevel="h2"
           rows={[
             {
               before: "No project structure",
@@ -125,6 +126,7 @@ const DevSecOpsProject = () => {
           >
             {iconFor("github", { size: 18 })}
             View on GitHub
+            <span className="sr-only"> (opens in a new tab)</span>
             {iconFor("arrow-up-right", { size: 16 })}
           </a>
         </div>

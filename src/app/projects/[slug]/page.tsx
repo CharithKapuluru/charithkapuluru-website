@@ -13,6 +13,7 @@ import PhaseRail from "@/components/reading/PhaseRail";
 import ProjectTools from "@/components/reading/ProjectTools";
 import NextUp from "@/components/reading/NextUp";
 import Footer from "@/components/layout/Footer";
+import { pageOpenGraph } from "@/lib/seo";
 
 const CONTENT: Record<string, ComponentType> = {
   "devsecops-pipeline": DevSecOpsProject,
@@ -28,7 +29,13 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const project = getProjectBySlug(slug);
   if (!project) return { title: "Project not found" };
-  return { title: project.title, description: project.description, alternates: { canonical: `/projects/${slug}/` } };
+  const canonical = `/projects/${slug}/`;
+  return {
+    title: project.title,
+    description: project.description,
+    alternates: { canonical },
+    openGraph: pageOpenGraph({ title: project.title, description: project.description, path: canonical }),
+  };
 }
 
 export default async function ProjectPage({ params }: { params: Promise<{ slug: string }> }) {

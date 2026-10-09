@@ -193,7 +193,7 @@ export default function PortsFirewallsSecurity() {
         <P className="text-lg mb-6">Even with hardening, attackers will still try. <strong>Fail2ban</strong> watches your logs and automatically bans IPs that fail too many times.</P>
         <Reveal>
           <div className="bg-terminal rounded-xl p-5 font-mono text-sm mb-8 overflow-x-auto">
-            <p className="text-terminal-fg/50 mb-3">How Fail2ban works:</p>
+            <p className="text-terminal-fg/60 mb-3">How Fail2ban works:</p>
             {[
               { line: "Attacker tries password 1  → fail → logged in /var/log/auth.log", color: "text-terminal-accent" },
               { line: "Attacker tries password 2  → fail → logged", color: "text-terminal-accent" },

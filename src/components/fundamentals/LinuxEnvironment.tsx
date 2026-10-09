@@ -200,7 +200,7 @@ export default function LinuxEnvironment() {
           <div className="bg-terminal rounded-xl p-6 font-mono text-sm overflow-x-auto">
             <div className="text-white space-y-1">
               <p><span className="text-terminal-ok">export</span> <span className="text-terminal-accent">PATH</span>=<span className="text-terminal-accent">&quot;</span><span className="text-terminal-info">$PATH</span><span className="text-terminal-accent">:</span><span className="text-terminal-ok">~/my-scripts</span><span className="text-terminal-accent">&quot;</span></p>
-              <p className="text-terminal-fg/50 text-xs mt-3">  └── OLD PATH ──┘ └─ NEW folder ─┘</p>
+              <p className="text-terminal-fg/60 text-xs mt-3">  └── OLD PATH ──┘ └─ NEW folder ─┘</p>
             </div>
           </div>
         </Reveal>

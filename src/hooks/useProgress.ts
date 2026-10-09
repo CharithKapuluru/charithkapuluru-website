@@ -25,7 +25,7 @@ export function useProgress(progressKey: string, total: number) {
     const mine = `${user.uid}:${progressKey}`;
     const ref = doc(db, "users", user.uid, "progress", progressKey);
     // Metadata changes are included so the server's answer still arrives when a cached "no document" was skipped below.
-    return onSnapshot(
+    const unsubscribe = onSnapshot(
       ref,
       { includeMetadataChanges: true },
       (snapshot) => {
@@ -39,6 +39,11 @@ export function useProgress(progressKey: string, total: number) {
         setRemote({ scope: mine, phases: [] });
       },
     );
+    return () => {
+      unsubscribe();
+      // Forget what this listener delivered: a sign-out followed by a sign-in as the same user has the same scope, and must not look ready with the old phases before the new listener answers.
+      setRemote(null);
+    };
   }, [user, loading, progressKey]);
 
   const save = useCallback(

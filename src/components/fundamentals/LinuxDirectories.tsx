@@ -156,7 +156,7 @@ export default function LinuxDirectories() {
               ].map(f => (
                 <div key={f.part} className="flex gap-2">
                   <span className="text-terminal-accent">{f.part}</span>
-                  <span className="text-terminal-fg/50">→ {f.desc}</span>
+                  <span className="text-terminal-fg/60">→ {f.desc}</span>
                 </div>
               ))}
             </div>
@@ -233,7 +233,7 @@ export default function LinuxDirectories() {
         <H3>The Problem with Normal Partitions</H3>
         <Reveal>
           <div className="bg-terminal rounded-xl p-5 font-mono text-sm mb-6 overflow-x-auto">
-            <p className="text-terminal-fg/50 mb-2">YOUR HARD DISK (60GB) — fixed partitions:</p>
+            <p className="text-terminal-fg/60 mb-2">YOUR HARD DISK (60GB) — fixed partitions:</p>
             <p className="text-terminal-accent">┌─────────────┬────────────────┬────────┐</p>
             <p className="text-terminal-accent">│  /boot (2GB)│  / Linux (30GB)│  ???  │</p>
             <p className="text-terminal-accent">└─────────────┴────────────────┴────────┘</p>
@@ -243,7 +243,7 @@ export default function LinuxDirectories() {
         <H3>What LVM Does — The Pool System</H3>
         <Reveal>
           <div className="bg-terminal rounded-xl p-5 font-mono text-sm mb-6 overflow-x-auto">
-            <p className="text-terminal-fg/50 mb-2">WITH LVM — flexible pool:</p>
+            <p className="text-terminal-fg/60 mb-2">WITH LVM — flexible pool:</p>
             <p className="text-terminal-ok">┌─────────────────────────────────────┐</p>
             <p className="text-terminal-ok">│      POOL OF STORAGE (60GB)         │</p>
             <p className="text-terminal-ok">│  ┌──────────────┐ ┌─────────────┐  │</p>

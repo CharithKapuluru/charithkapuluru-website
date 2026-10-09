@@ -226,17 +226,17 @@ export default function SystemdAndBoot() {
         <Reveal>
           <div className="rounded-2xl border border-border-strong bg-terminal overflow-hidden mb-8">
             <div className="px-5 py-3 bg-white/5 border-b border-white/10">
-              <p className="font-mono text-xs text-terminal-fg/50">ssh.service</p>
+              <p className="font-mono text-xs text-terminal-fg/60">ssh.service</p>
             </div>
             <div className="p-5 font-mono text-sm space-y-1 overflow-x-auto">
-              <p className="text-terminal-fg/50">[Unit]</p>
+              <p className="text-terminal-fg/60">[Unit]</p>
               <p><span className="text-terminal-ok">Description</span>=<span className="text-terminal-accent">OpenSSH Server</span></p>
-              <p><span className="text-terminal-ok">After</span>=<span className="text-terminal-accent">network.target</span> <span className="text-terminal-fg/50">← start AFTER networking</span></p>
-              <p className="mt-3 text-terminal-fg/50">[Service]</p>
-              <p><span className="text-terminal-ok">ExecStart</span>=<span className="text-terminal-accent">/usr/sbin/sshd -D</span> <span className="text-terminal-fg/50">← command to run</span></p>
-              <p><span className="text-terminal-ok">Restart</span>=<span className="text-terminal-accent">on-failure</span> <span className="text-terminal-fg/50">← restart if it crashes</span></p>
-              <p className="mt-3 text-terminal-fg/50">[Install]</p>
-              <p><span className="text-terminal-ok">WantedBy</span>=<span className="text-terminal-accent">multi-user.target</span> <span className="text-terminal-fg/50">← start on normal boot</span></p>
+              <p><span className="text-terminal-ok">After</span>=<span className="text-terminal-accent">network.target</span> <span className="text-terminal-fg/60">← start AFTER networking</span></p>
+              <p className="mt-3 text-terminal-fg/60">[Service]</p>
+              <p><span className="text-terminal-ok">ExecStart</span>=<span className="text-terminal-accent">/usr/sbin/sshd -D</span> <span className="text-terminal-fg/60">← command to run</span></p>
+              <p><span className="text-terminal-ok">Restart</span>=<span className="text-terminal-accent">on-failure</span> <span className="text-terminal-fg/60">← restart if it crashes</span></p>
+              <p className="mt-3 text-terminal-fg/60">[Install]</p>
+              <p><span className="text-terminal-ok">WantedBy</span>=<span className="text-terminal-accent">multi-user.target</span> <span className="text-terminal-fg/60">← start on normal boot</span></p>
             </div>
           </div>
         </Reveal>

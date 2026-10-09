@@ -73,9 +73,11 @@ export default function AboutSection() {
         <p className="mt-8 flex gap-5 text-small font-medium">
           <a href="https://github.com/CharithKapuluru" target="_blank" rel="noopener noreferrer" className="text-fg-2 hover:text-fg">
             GitHub
+            <span className="sr-only"> (opens in a new tab)</span>
           </a>
           <a href="https://www.linkedin.com/in/charith-kapuluru-159456329/" target="_blank" rel="noopener noreferrer" className="text-fg-2 hover:text-fg">
             LinkedIn
+            <span className="sr-only"> (opens in a new tab)</span>
           </a>
         </p>
       </div>

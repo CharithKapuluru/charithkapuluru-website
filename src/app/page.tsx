@@ -19,11 +19,11 @@ export default function Home() {
   return (
     <>
       <SiteNav active="home" />
-      <main id="main">
+      <main id="main" tabIndex={-1} className="outline-none">
         <Hero />
         <ProofStrip />
         <section id="projects" className="mx-auto max-w-6xl px-4 py-20 sm:px-6 md:py-28">
-          <span id="workshop" className="sr-only" aria-hidden />
+          <span id="workshop" className="sr-only scroll-mt-24" aria-hidden />
           <h2 className="text-h2 text-fg">Selected projects</h2>
           <p className="mt-3 max-w-[60ch] text-lede text-fg-2">Three production-style walkthroughs, built and documented end to end.</p>
           <ProjectRows className="mt-10" />

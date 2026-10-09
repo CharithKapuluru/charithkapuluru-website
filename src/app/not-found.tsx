@@ -6,7 +6,7 @@ export default function NotFound() {
   return (
     <>
       <SiteNav />
-      <main id="main" className="relative min-h-[calc(100dvh_-_4rem)] overflow-hidden">
+      <main id="main" tabIndex={-1} className="relative min-h-[calc(100dvh_-_4rem)] overflow-hidden outline-none">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/world/scenes/woods-1920.webp"

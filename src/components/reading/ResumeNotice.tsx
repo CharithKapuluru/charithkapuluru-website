@@ -1,11 +1,11 @@
 "use client";
 
-import { useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { deleteDoc, doc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useAuth } from "@/context/AuthContext";
 import Button from "@/components/ui/Button";
-import { removeKey, safeParse, writeJson } from "@/lib/storage";
+import { readJson, removeKey, writeJson } from "@/lib/storage";
 import { prefersReducedMotion, scrollBehavior } from "@/lib/scroll";
 
 interface Position {
@@ -14,36 +14,33 @@ interface Position {
   timestamp: number;
 }
 
-// The saved position is read once per page load and nothing else writes it while the notice is on screen, so there is nothing to subscribe to.
-const subscribeNever = () => () => {};
-
-function readSaved(key: string): string | null {
-  try {
-    return localStorage.getItem(key);
-  } catch {
-    return null; // no window, private mode, or blocked storage
-  }
-}
-
-/** Inline "welcome back" notice. Saves the reading position when the tab hides, the page unloads or the reader navigates away (no polling). */
+/**
+ * Inline "welcome back" notice. It offers the position that was stored when the page loaded, and saves the current one when the tab hides,
+ * the page unloads or the reader navigates away (no polling). The stored position is read exactly once, on mount, and that frozen value is
+ * what the notice offers and what save() protects until the reader answers; later renders and later saves never change it.
+ */
 export default function ResumeNotice({ slug, progressKey }: { slug: string; progressKey: string }) {
   const { user } = useAuth();
   const key = `readingPosition_${slug}`;
-  const raw = useSyncExternalStore(subscribeNever, () => readSaved(key), () => null);
-  const [dismissed, setDismissed] = useState(false);
-  const saved = useMemo(() => safeParse<Position | null>(raw, null), [raw]);
-  const position = !dismissed && saved && typeof saved.scroll === "number" && saved.scroll > 200 ? saved : null;
+  // The stored position at page load: undefined until it has been read, null when there is nothing worth offering. The page remounts for another slug, so one read per instance is one read per page load.
+  const offered = useRef<Position | null | undefined>(undefined);
+  // Set by Resume and Start fresh. Until then the stored position is waiting for an answer and save() must not overwrite it.
+  const answered = useRef(false);
+  const [position, setPosition] = useState<Position | null>(null);
 
-  // While the notice waits for an answer the stored position is the one it offers, so nothing may overwrite it.
-  const pending = useRef(false);
-  useLayoutEffect(() => {
-    pending.current = position !== null;
-  }, [position]);
+  useEffect(() => {
+    if (offered.current !== undefined) return; // a Strict Mode re-run or a later render must not read again
+    const stored = readJson<Position | null>(key, null);
+    offered.current = stored && typeof stored.scroll === "number" && stored.scroll > 200 ? stored : null;
+    // localStorage only exists after mount, so the notice appears from here (the one read per page load) and not from render.
+    if (offered.current) setPosition(offered.current);
+  }, [key]);
 
   // A layout effect, so the cleanup runs while the page being left is still mounted and scrolled: a client-side navigation fires neither pagehide nor visibilitychange.
   useLayoutEffect(() => {
     const save = () => {
-      if (pending.current) return;
+      if (offered.current === undefined) return; // storage not read yet, so nothing is known about what is stored
+      if (offered.current && !answered.current) return; // the stored position is on offer: leave it alone
       let phase = 0;
       document.querySelectorAll<HTMLElement>("[data-phase]").forEach((el, i) => {
         if (el.getBoundingClientRect().top <= 200) phase = i;
@@ -64,16 +61,18 @@ export default function ResumeNotice({ slug, progressKey }: { slug: string; prog
 
   const resume = () => {
     if (!position) return;
+    answered.current = true;
     window.scrollTo({ top: Math.max(0, position.scroll - 72), behavior: scrollBehavior(prefersReducedMotion()) });
-    setDismissed(true);
+    setPosition(null);
     removeKey(key);
   };
 
   const startFresh = async () => {
+    answered.current = true;
     // Jump to the top instantly first, so the active section is 0 before any write and auto-complete cannot re-save a partial list after the delete.
     window.scrollTo({ top: 0, behavior: "instant" });
     removeKey(key);
-    setDismissed(true);
+    setPosition(null);
     if (user) {
       try {
         await deleteDoc(doc(db, "users", user.uid, "progress", progressKey));

@@ -19,6 +19,7 @@ export default function FactsPanel({ repo, stack, phaseCount, estimatedTime, out
           <a href={repo} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-small font-medium text-accent hover:text-accent-strong">
             <GithubLogo size={16} weight="regular" aria-hidden />
             {repoName}
+            <span className="sr-only"> (opens in a new tab)</span>
             <ArrowUpRight size={14} weight="regular" aria-hidden />
           </a>
         </dd>

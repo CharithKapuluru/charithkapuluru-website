@@ -93,6 +93,7 @@ const LinuxSysAdminProject = () => {
             {/* Before/After Comparison */}
             <BeforeAfterComparison
               title="Before vs. After This Project"
+              headingLevel="h2"
               rows={[
                 {
                   before: "Afraid of the terminal",
@@ -2690,6 +2691,7 @@ echo "Alert check complete. Log: $ALERT_LOG"
             >
               {iconFor("github", { size: 18 })}
               View on GitHub
+              <span className="sr-only"> (opens in a new tab)</span>
               {iconFor("arrow-up-right", { size: 16 })}
             </a>
           </div>

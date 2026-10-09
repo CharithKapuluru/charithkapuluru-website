@@ -110,6 +110,7 @@ const TerraformECSProject = () => {
         {/* Main Before/After Comparison */}
         <BeforeAfterComparison
           title="What You&apos;ll Build"
+          headingLevel="h2"
           rows={[
             { before: "Manual AWS Console clicks", after: "Infrastructure as Code with Terraform" },
             { before: "No networking knowledge", after: "VPC, Subnets, CIDR mastery" },
@@ -139,6 +140,7 @@ const TerraformECSProject = () => {
           >
             {iconFor("github", { size: 18 })}
             View on GitHub
+            <span className="sr-only"> (opens in a new tab)</span>
             {iconFor("arrow-up-right", { size: 16 })}
           </a>
         </div>

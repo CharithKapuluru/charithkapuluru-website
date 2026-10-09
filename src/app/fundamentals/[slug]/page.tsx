@@ -20,6 +20,7 @@ import SignInControl from "@/components/reading/SignInControl";
 import AvatarNote from "@/components/reading/AvatarNote";
 import NextUp from "@/components/reading/NextUp";
 import Footer from "@/components/layout/Footer";
+import { pageOpenGraph } from "@/lib/seo";
 
 const CONTENT: Record<string, ComponentType> = {
   "computing-basics": ComputingBasics,
@@ -42,7 +43,14 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const topic = getTopicBySlug(slug);
   if (!topic) return { title: "Topic not found" };
-  return { title: `${topic.title} | Fundamentals | Charith Kapuluru`, description: topic.description, alternates: { canonical: `/fundamentals/${slug}/` } };
+  const title = `${topic.title} | Fundamentals | Charith Kapuluru`;
+  const canonical = `/fundamentals/${slug}/`;
+  return {
+    title,
+    description: topic.description,
+    alternates: { canonical },
+    openGraph: pageOpenGraph({ title, description: topic.description, path: canonical }),
+  };
 }
 
 export default async function FundamentalsArticlePage({ params }: { params: Promise<{ slug: string }> }) {
