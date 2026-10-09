@@ -94,29 +94,23 @@ const flashcardsData = [
 ];
 
 /* ── Shared layout primitives ── */
-const stagger = { visible: { transition: { staggerChildren: 0.08 } } };
-const fadeUp = {
-  hidden: { opacity: 0, y: 28 },
-  visible: (i: number) => ({ opacity: 1, y: 0, transition: { duration: 0.55, delay: i * 0.1, ease: "easeOut" as const } }),
-};
-
 const SectionTitle = ({ title }: { title: string }) => (
-  <motion.div className="mb-12" initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-80px" }} variants={stagger}>
-    <motion.div className="w-20 h-1.5 bg-accent mb-6 rounded-full" variants={fadeUp} custom={0} />
-    <motion.h2 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-display text-fg leading-tight" variants={fadeUp} custom={1}>{title}</motion.h2>
-  </motion.div>
+  <div className="mb-12">
+    <div className="w-20 h-1.5 bg-accent mb-6 rounded-full" />
+    <h2 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-display text-fg leading-tight">{title}</h2>
+  </div>
 );
 
 const H3 = ({ children }: { children: React.ReactNode }) => (
-  <motion.h3 className="text-xl md:text-2xl font-display text-fg mt-14 mb-5" initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, margin: "-40px" }} transition={{ duration: 0.5 }}>{children}</motion.h3>
+  <h3 className="text-xl md:text-2xl font-display text-fg mt-14 mb-5">{children}</h3>
 );
 
 const P = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (
-  <motion.p className={`text-fg-2 leading-relaxed ${className}`} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-40px" }} transition={{ duration: 0.5 }}>{children}</motion.p>
+  <p className={`text-fg-2 leading-relaxed ${className}`}>{children}</p>
 );
 
-const Reveal = ({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) => (
-  <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-40px" }} transition={{ duration: 0.5, delay }}>{children}</motion.div>
+const Reveal = ({ children }: { children: React.ReactNode }) => (
+  <div>{children}</div>
 );
 
 const Code = ({ children }: { children: React.ReactNode }) => (
@@ -182,14 +176,10 @@ export default function FilePermissions() {
               { icon: "user", title: "Owner", desc: "The person who created the file. Has the most control over it. Usually you.", color: "border-accent/20 bg-accent/[0.05]" },
               { icon: "users", title: "Group", desc: "A collection of users who share access. Files can belong to a group like 'developers' or 'admins'.", color: "border-danger/20 bg-danger/[0.04]" },
               { icon: "globe", title: "Others", desc: "Everyone else on the system — people who are neither the owner nor in the group.", color: "border-accent/25 bg-accent/[0.05]" },
-            ].map((c, i) => (
+            ].map((c) => (
               <motion.div
                 key={c.title}
                 className={`p-6 rounded-2xl border ${c.color} text-center`}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1, duration: 0.4 }}
                 whileHover={{ y: -4, transition: { duration: 0.2 } }}
               >
                 <span className="text-4xl block mb-3">{iconFor(c.icon, { size: 22 })}</span>
@@ -244,15 +234,12 @@ export default function FilePermissions() {
                 forDir: "Enter the directory (cd)",
                 color: "border-accent/25 bg-accent/[0.05]",
               },
-            ].map((p, i) => (
+            ].map((p) => (
               <motion.div
                 key={p.letter}
                 className={`p-6 rounded-2xl border ${p.color}`}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1, duration: 0.4 }}
                 whileHover={{ y: -4 }}
+                transition={{ duration: 0.2 }}
               >
                 <div className="flex items-center justify-between mb-4">
                   <code className="font-mono text-4xl font-bold text-fg">{p.letter}</code>
@@ -347,14 +334,10 @@ export default function FilePermissions() {
               { chmod: "chmod 700", owner: [true, true, true], group: [false, false, false], others: [false, false, false], desc: "Owner only. Nobody else can even see the contents. Used for private folders like ~/.ssh/", danger: false },
               { chmod: "chmod 644", owner: [true, true, false], group: [true, false, false], others: [true, false, false], desc: "Owner can read+write. Everyone else can only read. Common for config files.", danger: false },
               { chmod: "chmod 600", owner: [true, true, false], group: [false, false, false], others: [false, false, false], desc: "Owner can read+write. Nobody else has any access. Required for SSH private keys.", danger: false },
-            ].map((row, i) => (
-              <motion.div
+            ].map((row) => (
+              <div
                 key={row.chmod}
                 className={`p-5 rounded-2xl border ${row.danger ? "border-danger/20 bg-danger/[0.03]" : "border-fg/8 bg-surface"} hover:shadow-md transition-all`}
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.08, duration: 0.4 }}
               >
                 <div className="flex flex-col sm:flex-row sm:items-center gap-4">
                   <code className={`font-mono font-bold text-lg flex-shrink-0 ${row.danger ? "text-danger" : "text-accent"}`}>{row.chmod}</code>
@@ -374,7 +357,7 @@ export default function FilePermissions() {
                   </div>
                 </div>
                 <p className={`text-sm mt-3 ${row.danger ? "text-danger" : "text-fg-2"}`}>{row.desc}</p>
-              </motion.div>
+              </div>
             ))}
           </div>
         </Reveal>
@@ -438,15 +421,12 @@ export default function FilePermissions() {
               { chars: "rwx", label: "Owner", desc: "r=read, w=write, x=execute\n7 = full access", color: "bg-accent/10" },
               { chars: "r-x", label: "Group", desc: "r=read, -=no write, x=execute\n5 = read+execute", color: "bg-danger/8" },
               { chars: "r--", label: "Others", desc: "r=read, -=no write, -=no execute\n4 = read only", color: "bg-success/10" },
-            ].map((s, i) => (
+            ].map((s) => (
               <motion.div
                 key={s.label}
                 className={`p-5 rounded-2xl border border-fg/8 ${s.color} text-center`}
-                initial={{ opacity: 0, y: 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
                 whileHover={{ y: -3 }}
+                transition={{ duration: 0.2 }}
               >
                 <code className="font-mono text-2xl font-bold text-fg block mb-2">{s.chars}</code>
                 <p className="font-semibold text-fg mb-2">{s.label}</p>
@@ -547,14 +527,10 @@ export default function FilePermissions() {
                 why: "You and your group can do everything (create, delete, edit). Others can only read. Good for collaborative team directories.",
                 icon: "users",
               },
-            ].map((item, i) => (
-              <motion.div
+            ].map((item) => (
+              <div
                 key={item.chmod}
                 className="p-6 rounded-2xl border border-fg/8 bg-surface hover:border-accent/15 hover:shadow-md transition-all"
-                initial={{ opacity: 0, y: 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.08 }}
               >
                 <div className="flex items-start gap-4">
                   <span className="text-3xl flex-shrink-0">{iconFor(item.icon, { size: 22 })}</span>
@@ -562,12 +538,12 @@ export default function FilePermissions() {
                     <div className="flex flex-wrap items-center gap-3 mb-2">
                       <p className="font-semibold text-fg">{item.scenario}</p>
                       <code className="font-mono text-sm text-accent bg-accent/8 px-2 py-0.5 rounded">chmod {item.chmod}</code>
-                      <code className="font-mono text-xs text-fg-3 bg-bg px-2 py-0.5 rounded">{item.str}</code>
+                      <code className="font-mono text-xs text-fg-3 bg-surface-2 px-2 py-0.5 rounded">{item.str}</code>
                     </div>
                     <p className="text-sm text-fg-2 leading-relaxed">{item.why}</p>
                   </div>
                 </div>
-              </motion.div>
+              </div>
             ))}
           </div>
         </Reveal>
@@ -681,15 +657,8 @@ export default function FilePermissions() {
                 analogy: "A community fridge at work. Everyone can put their lunch in it, but you can only throw away your own food — not someone else's.",
                 color: "border-accent/25 bg-accent/[0.04]",
               },
-            ].map((bit, i) => (
-              <motion.div
-                key={bit.digit}
-                className={`rounded-2xl border ${bit.color} overflow-hidden`}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-              >
+            ].map((bit) => (
+              <div key={bit.digit} className={`rounded-2xl border ${bit.color} overflow-hidden`}>
                 <div className="p-6">
                   <div className="flex items-start gap-4 mb-4">
                     <span className="text-4xl flex-shrink-0">{iconFor(bit.icon, { size: 22 })}</span>
@@ -705,7 +674,7 @@ export default function FilePermissions() {
                   <p className="text-fg-2 leading-relaxed mb-3"><strong className="text-fg">Real example:</strong> {bit.example}</p>
                   <p className="text-sm text-fg-3 italic"><strong className="text-fg not-italic">Analogy:</strong> {bit.analogy}</p>
                 </div>
-              </motion.div>
+              </div>
             ))}
           </div>
         </Reveal>

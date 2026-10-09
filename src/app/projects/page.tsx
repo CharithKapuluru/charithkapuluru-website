@@ -6,6 +6,7 @@ import ProjectRows from "@/components/home/ProjectRows";
 export const metadata: Metadata = {
   title: "Projects",
   description: "Three production-style walkthroughs: a DevSecOps pipeline, AWS ECS Fargate with Terraform, and a Linux server built from scratch.",
+  alternates: { canonical: "/projects/" },
 };
 
 export default function ProjectsPage() {

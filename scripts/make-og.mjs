@@ -1,5 +1,6 @@
 // scripts/make-og.mjs
 // Generates public/og.png (1200x630): dark surface, avatar head, name and role. Run once; commit the output.
+// Give a replaced public image a new filename: the cache rule is one year.
 import sharp from "sharp";
 
 const W = 1200;

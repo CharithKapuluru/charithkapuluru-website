@@ -1,7 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
-import { motion } from "framer-motion";
+import { useRef } from "react";
 import { useReadingNav } from "@/hooks/useReadingNav";
 import ArticleSection from "@/components/reading/ArticleSection";
 import KeyTakeaway from "@/components/ui/KeyTakeaway";
@@ -9,9 +8,7 @@ import AnalogyBox from "@/components/ui/AnalogyBox";
 import DidYouKnow from "@/components/ui/DidYouKnow";
 import WarningBox from "@/components/ui/WarningBox";
 import Terminal from "@/components/ui/Terminal";
-import Quiz from "@/components/ui/Quiz";
 import Flashcards from "@/components/ui/Flashcards";
-import Confetti from "@/components/ui/Confetti";
 
 const sectionNames = [
   "What is a Port?",
@@ -23,59 +20,6 @@ const sectionNames = [
 ];
 const navSections = sectionNames.map((label, i) => ({ id: i, label }));
 
-const quizQuestions = [
-  {
-    question: "What is a port number?",
-    options: [
-      "The IP address of a server",
-      "An apartment number — tells the server which service an incoming connection wants",
-      "The speed of a network connection",
-      "The physical network socket on a machine",
-    ],
-    correctIndex: 1,
-    explanation: "IP address = the building. Port = the apartment number. 192.168.1.1:22 means 'building 192.168.1.1, apartment 22 (SSH)'. Ports let multiple services run on one IP address simultaneously.",
-  },
-  {
-    question: "What port does SSH use by default?",
-    options: ["80", "443", "22", "3306"],
-    correctIndex: 2,
-    explanation: "SSH runs on port 22 by default. This is why you can 'ssh user@server' without specifying a port — SSH clients automatically connect to port 22. You can change it in /etc/ssh/sshd_config.",
-  },
-  {
-    question: "What does ufw do?",
-    options: [
-      "Updates your system software",
-      "A firewall tool — blocks or allows connections based on rules you define",
-      "Monitors running processes",
-      "Creates user accounts",
-    ],
-    correctIndex: 1,
-    explanation: "ufw (Uncomplicated Firewall) is Ubuntu's firewall tool. When enabled, it blocks ALL incoming connections by default, and you explicitly allow what you need. Without it, any port with a listening service accepts connections from anywhere.",
-  },
-  {
-    question: "What does 'PasswordAuthentication no' in sshd_config do?",
-    options: [
-      "Disables SSH completely",
-      "Forces SSH key authentication — passwords can't be used to log in",
-      "Removes the root password",
-      "Blocks all incoming connections",
-    ],
-    correctIndex: 1,
-    explanation: "This makes SSH only accept key-based authentication, not passwords. Passwords can be guessed or brute-forced. SSH keys are mathematically impossible to brute-force. Combined with Fail2ban, this makes your server extremely hard to compromise.",
-  },
-  {
-    question: "What does DNS do?",
-    options: [
-      "Encrypts your internet traffic",
-      "Translates domain names (google.com) into IP addresses (142.250.80.46)",
-      "Assigns IP addresses to computers",
-      "Manages firewall rules",
-    ],
-    correctIndex: 1,
-    explanation: "DNS = Domain Name System. It's the internet's phonebook. You type 'google.com', DNS translates it to '142.250.80.46', and your browser connects to that IP. Without DNS you'd need to memorize IP addresses for every website.",
-  },
-];
-
 const flashcardsData = [
   { front: "What is a port?", back: "A number (1–65535) that identifies which service on a server an incoming connection wants. IP = building address, Port = apartment number." },
   { front: "What port does SSH use?", back: "Port 22. HTTP = 80, HTTPS = 443, MySQL = 3306, PostgreSQL = 5432. Ports 1–1024 are 'privileged' — only root can open them." },
@@ -86,29 +30,23 @@ const flashcardsData = [
   { front: "What is systemd-resolved?", back: "A local DNS resolver that runs on Ubuntu servers (listens on 127.0.0.53:53). It caches DNS results for the server itself and handles lookups when apt, curl, etc need to find servers." },
 ];
 
-const stagger = { visible: { transition: { staggerChildren: 0.08 } } };
-const fadeUp = {
-  hidden: { opacity: 0, y: 28 },
-  visible: (i: number) => ({ opacity: 1, y: 0, transition: { duration: 0.55, delay: i * 0.1, ease: "easeOut" as const } }),
-};
-
 const SectionTitle = ({ title }: { title: string }) => (
-  <motion.div className="mb-12" initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-80px" }} variants={stagger}>
-    <motion.div className="w-20 h-1.5 bg-accent mb-6 rounded-full" variants={fadeUp} custom={0} />
-    <motion.h2 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-display text-fg leading-tight" variants={fadeUp} custom={1}>{title}</motion.h2>
-  </motion.div>
+  <div className="mb-12">
+    <div className="w-20 h-1.5 bg-accent mb-6 rounded-full" />
+    <h2 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-display text-fg leading-tight">{title}</h2>
+  </div>
 );
 
 const H3 = ({ children }: { children: React.ReactNode }) => (
-  <motion.h3 className="text-xl md:text-2xl font-display text-fg mt-14 mb-5" initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, margin: "-40px" }} transition={{ duration: 0.5 }}>{children}</motion.h3>
+  <h3 className="text-xl md:text-2xl font-display text-fg mt-14 mb-5">{children}</h3>
 );
 
 const P = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (
-  <motion.p className={`text-fg-2 leading-relaxed ${className}`} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-40px" }} transition={{ duration: 0.5 }}>{children}</motion.p>
+  <p className={`text-fg-2 leading-relaxed ${className}`}>{children}</p>
 );
 
-const Reveal = ({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) => (
-  <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-40px" }} transition={{ duration: 0.5, delay }}>{children}</motion.div>
+const Reveal = ({ children }: { children: React.ReactNode }) => (
+  <div>{children}</div>
 );
 
 const Code = ({ children }: { children: React.ReactNode }) => (
@@ -126,7 +64,6 @@ const PortRow = ({ port, service, desc, risk }: { port: string; service: string;
 
 export default function PortsFirewallsSecurity() {
   const sectionRefs = useRef<(HTMLElement | null)[]>([]);
-  const [showConfetti, setShowConfetti] = useState(false);
 
   useReadingNav(navSections, sectionRefs);
 
@@ -227,8 +164,8 @@ export default function PortsFirewallsSecurity() {
               { setting: "MaxAuthTries 3", why: "Disconnect after 3 wrong attempts. Limits how fast an attacker can try passwords." },
               { setting: "LoginGraceTime 20", why: "Disconnect if not logged in within 20 seconds. Frees connections from automated scanners." },
               { setting: "AllowUsers charith", why: "Only this specific user can SSH in. Even if an attacker creates another account, they can't SSH." },
-            ].map((item, i) => (
-              <Reveal key={item.setting} delay={i * 0.08}>
+            ].map((item) => (
+              <Reveal key={item.setting}>
                 <div className="p-4 rounded-xl border border-fg/8 bg-surface hover:border-success/25 transition-all">
                   <div className="flex items-start gap-4">
                     <code className="font-mono text-sm text-accent bg-accent/8 px-2 py-0.5 rounded flex-shrink-0">{item.setting}</code>
@@ -265,7 +202,7 @@ export default function PortsFirewallsSecurity() {
               { line: "Fail2ban adds rule         → IP 1.2.3.4 BANNED for 1 hour", color: "text-terminal-ok" },
               { line: "Attacker tries password 4  → connection REFUSED ✓", color: "text-terminal-ok" },
             ].map((item, i) => (
-              <motion.p key={i} initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className={`py-0.5 ${item.color}`}>{item.line}</motion.p>
+              <p key={i} className={`py-0.5 ${item.color}`}>{item.line}</p>
             ))}
           </div>
         </Reveal>
@@ -307,8 +244,8 @@ export default function PortsFirewallsSecurity() {
               { step: "6", text: "Verisign says 'ask Google's nameserver'", detail: "google.com's own authoritative nameserver" },
               { step: "7", text: "Google says '142.250.80.46'", detail: "The actual IP address" },
               { step: "8", text: "Your browser connects to 142.250.80.46", detail: "All of this takes ~20–50ms. You never see it." },
-            ].map((item, i) => (
-              <Reveal key={item.step} delay={i * 0.07}>
+            ].map((item) => (
+              <Reveal key={item.step}>
                 <div className="flex gap-4 items-start p-3 rounded-lg border border-fg/6 bg-surface hover:border-accent/15 transition-all">
                   <span className="w-7 h-7 rounded-full bg-accent/10 border border-accent/20 flex items-center justify-center text-xs font-mono font-bold text-accent flex-shrink-0">{item.step}</span>
                   <div>
@@ -339,9 +276,6 @@ export default function PortsFirewallsSecurity() {
           </Reveal>
         </div>
       </ArticleSection>
-
-      <Confetti isActive={showConfetti} />
-
     </article>
   );
 }

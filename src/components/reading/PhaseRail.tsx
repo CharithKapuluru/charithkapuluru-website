@@ -19,56 +19,58 @@ export default function PhaseRail({ progressKey, actions }: { progressKey: strin
   }, [activeIndex, total, markBefore, ready]);
 
   return (
-    <nav aria-label="Phases" className="text-small">
-      <div className="mb-3 flex items-center justify-between">
-        <p className="text-caption font-medium text-fg-3">Phases</p>
-        {progress.signedIn && <p className="text-caption text-fg-3 tabular">{progress.percent}%</p>}
-      </div>
-      {progress.signedIn && (
-        <div className="mb-3 h-px w-full bg-border">
-          <div className="h-px bg-accent transition-[width] duration-300" style={{ width: `${progress.percent}%` }} />
+    <div className="text-small">
+      <nav aria-label="Phases">
+        <div className="mb-3 flex items-center justify-between">
+          <p className="text-caption font-medium text-fg-3">Phases</p>
+          {progress.signedIn && <p className="text-caption text-fg-3 tabular">{progress.percent}%</p>}
         </div>
-      )}
-      {!ctx || total === 0 ? (
-        <div className="space-y-2">
-          <Skeleton className="h-5 w-3/4" />
-          <Skeleton className="h-5 w-2/3" />
-          <Skeleton className="h-5 w-1/2" />
-        </div>
-      ) : (
-        <ol className="space-y-0.5">
-          {ctx.sections.map((s, i) => {
-            const active = i === activeIndex;
-            const done = progress.completed.includes(i);
-            return (
-              <li key={String(s.id)} className="flex items-center gap-2">
-                <span className="flex h-6 w-6 items-center justify-center">
-                  <input
-                    type="checkbox"
-                    checked={done}
-                    disabled={!progress.signedIn || !progress.ready}
-                    onChange={() => progress.toggle(i)}
-                    aria-label={`Mark ${s.label} complete`}
-                    className="h-5 w-5 shrink-0 accent-accent disabled:opacity-50"
-                  />
-                </span>
-                <button
-                  type="button"
-                  onClick={() => ctx.scrollTo(i)}
-                  aria-current={active ? "true" : undefined}
-                  className={cn(
-                    "flex h-8 min-w-0 flex-1 items-center rounded-md px-2 text-left text-fg-3 hover:text-fg",
-                    active && "bg-accent-soft font-medium text-accent",
-                    done && !active && "line-through",
-                  )}
-                >
-                  {s.label}
-                </button>
-              </li>
-            );
-          })}
-        </ol>
-      )}
+        {progress.signedIn && (
+          <div className="mb-3 h-px w-full bg-border">
+            <div className="h-px bg-accent transition-[width] duration-300" style={{ width: `${progress.percent}%` }} />
+          </div>
+        )}
+        {!ctx || total === 0 ? (
+          <div className="space-y-2">
+            <Skeleton className="h-5 w-3/4" />
+            <Skeleton className="h-5 w-2/3" />
+            <Skeleton className="h-5 w-1/2" />
+          </div>
+        ) : (
+          <ol className="space-y-0.5">
+            {ctx.sections.map((s, i) => {
+              const active = i === activeIndex;
+              const done = progress.completed.includes(i);
+              return (
+                <li key={String(s.id)} className="flex items-center gap-2">
+                  <label className="flex h-6 w-6 cursor-pointer items-center justify-center has-[:disabled]:cursor-default">
+                    <input
+                      type="checkbox"
+                      checked={done}
+                      disabled={!progress.signedIn || !progress.ready}
+                      onChange={() => progress.toggle(i)}
+                      aria-label={`Mark ${s.label} complete`}
+                      className="h-5 w-5 shrink-0 accent-accent disabled:opacity-50"
+                    />
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => ctx.scrollTo(i)}
+                    aria-current={active ? "true" : undefined}
+                    className={cn(
+                      "flex h-8 min-w-0 flex-1 items-center rounded-md px-2 text-left text-fg-3 hover:text-fg",
+                      active && "bg-accent-soft font-medium text-accent",
+                      done && !active && "line-through",
+                    )}
+                  >
+                    {s.label}
+                  </button>
+                </li>
+              );
+            })}
+          </ol>
+        )}
+      </nav>
       {progress.loading ? (
         <Skeleton className="mt-4 h-9 w-full" />
       ) : progress.signedIn ? (
@@ -80,6 +82,6 @@ export default function PhaseRail({ progressKey, actions }: { progressKey: strin
         </div>
       )}
       {actions && <div className="mt-4 flex flex-wrap gap-2 border-t border-border pt-4">{actions}</div>}
-    </nav>
+    </div>
   );
 }

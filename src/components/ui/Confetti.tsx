@@ -12,6 +12,7 @@ interface ConfettiPiece {
   delay: number;
   rotation: number;
   size: number;
+  round: boolean;
 }
 
 interface ConfettiProps {
@@ -19,34 +20,43 @@ interface ConfettiProps {
   onComplete?: () => void;
 }
 
-const colors = ["#eb9b63", "#a84d18", "#2f9e6a", "#4f7fd9", "#a7a7b0"];
+const colors = ["var(--accent)", "var(--accent-strong)", "var(--success)", "var(--info)", "var(--fg-3)"];
 
 const Confetti = ({ isActive, onComplete }: ConfettiProps) => {
+  const reduce = useReducedMotion();
   const [pieces, setPieces] = useState<ConfettiPiece[]>([]);
 
   useEffect(() => {
-    if (isActive) {
-      const newPieces: ConfettiPiece[] = [];
-      for (let i = 0; i < 50; i++) {
-        newPieces.push({
-          id: i,
-          x: Math.random() * 100,
-          color: colors[Math.floor(Math.random() * colors.length)],
-          delay: Math.random() * 0.5,
-          rotation: Math.random() * 360,
-          size: Math.random() * 8 + 4,
-        });
-      }
-      setPieces(newPieces);
-
-      const timer = setTimeout(() => {
-        setPieces([]);
-        onComplete?.();
-      }, 3000);
-
-      return () => clearTimeout(timer);
+    if (!isActive) return;
+    if (reduce) {
+      // Nothing flies under reduced motion, but the caller still hears that the celebration is over.
+      onComplete?.();
+      return;
     }
-  }, [isActive, onComplete]);
+    const newPieces: ConfettiPiece[] = [];
+    for (let i = 0; i < 50; i++) {
+      newPieces.push({
+        id: i,
+        x: Math.random() * 100,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        delay: Math.random() * 0.5,
+        rotation: Math.random() * 360,
+        size: Math.random() * 8 + 4,
+        round: Math.random() > 0.5,
+      });
+    }
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- the pieces are random, which is impure, so they are made after mount; the same effect owns the 3 s timer
+    setPieces(newPieces);
+
+    const timer = setTimeout(() => {
+      setPieces([]);
+      onComplete?.();
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, [isActive, onComplete, reduce]);
+
+  if (reduce) return null;
 
   return (
     <AnimatePresence>
@@ -77,7 +87,7 @@ const Confetti = ({ isActive, onComplete }: ConfettiProps) => {
                 width: piece.size,
                 height: piece.size,
                 backgroundColor: piece.color,
-                borderRadius: Math.random() > 0.5 ? "50%" : "0%",
+                borderRadius: piece.round ? "50%" : "0%",
               }}
             />
           ))}
@@ -106,7 +116,7 @@ export const CelebrationMessage = ({ isVisible, phaseName, onClose }: { isVisibl
           initial={reduce ? false : { opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-40 flex items-center justify-center bg-[rgb(11_11_13_/_0.5)] p-4"
+          className="fixed inset-0 z-40 flex items-center justify-center bg-terminal/50 p-4"
           onClick={onClose}
         >
           <motion.div

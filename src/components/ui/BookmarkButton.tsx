@@ -25,6 +25,7 @@ export default function BookmarkButton({ phaseId, phaseName, projectSlug = "devs
     if (user) {
       return onSnapshot(doc(db, "users", user.uid, "bookmarks", bookmarkId), (snap) => setBookmarked(snap.exists()));
     }
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- signed-out state lives in localStorage, which only exists after mount; the same effect owns the Firestore listener
     setBookmarked(readJson<number[]>(storageKey, []).includes(phaseId));
   }, [phaseId, user, bookmarkId, storageKey]);
 
@@ -49,9 +50,9 @@ export default function BookmarkButton({ phaseId, phaseName, projectSlug = "devs
 
   return (
     <>
-      <Button variant="secondary" size="sm" onClick={toggle} aria-pressed={bookmarked} title={bookmarked ? "Remove bookmark" : "Bookmark this phase"}>
+      <Button variant="secondary" size="sm" onClick={toggle} aria-pressed={bookmarked} title="Bookmark this phase">
         <BookmarkSimple size={16} weight={bookmarked ? "fill" : "regular"} aria-hidden className={bookmarked ? "text-accent" : undefined} />
-        {bookmarked ? "Bookmarked" : "Bookmark"}
+        Bookmark
       </Button>
       <span className="sr-only" aria-live="polite">
         {announce}

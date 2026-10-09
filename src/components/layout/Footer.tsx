@@ -22,10 +22,10 @@ export default function Footer() {
           <p className="font-display text-body font-semibold text-fg">Charith Kapuluru</p>
           <p className="mt-1 text-small text-fg-3">Cloud and DevOps engineer</p>
         </div>
-        <div className="flex gap-16">
+        <nav aria-label="Footer" className="flex gap-16">
           <div>
-            <p className="text-caption font-medium text-fg-3">Site</p>
-            <ul className="mt-3 space-y-2">
+            <p id="footer-site" className="text-caption font-medium text-fg-3">Site</p>
+            <ul aria-labelledby="footer-site" className="mt-3 space-y-2">
               {SITE_LINKS.map((l) => (
                 <li key={l.href}>
                   <Link href={l.href} className="text-small text-fg-2 hover:text-fg">
@@ -36,18 +36,22 @@ export default function Footer() {
             </ul>
           </div>
           <div>
-            <p className="text-caption font-medium text-fg-3">Elsewhere</p>
-            <ul className="mt-3 space-y-2">
-              {ELSEWHERE.map((l) => (
-                <li key={l.href}>
-                  <a href={l.href} target={l.href.startsWith("http") ? "_blank" : undefined} rel={l.href.startsWith("http") ? "noopener noreferrer" : undefined} className="text-small text-fg-2 hover:text-fg">
-                    {l.label}
-                  </a>
-                </li>
-              ))}
+            <p id="footer-elsewhere" className="text-caption font-medium text-fg-3">Elsewhere</p>
+            <ul aria-labelledby="footer-elsewhere" className="mt-3 space-y-2">
+              {ELSEWHERE.map((l) => {
+                const external = l.href.startsWith("http");
+                return (
+                  <li key={l.href}>
+                    <a href={l.href} target={external ? "_blank" : undefined} rel={external ? "noopener noreferrer" : undefined} className="text-small text-fg-2 hover:text-fg">
+                      {l.label}
+                      {external && <span className="sr-only"> (opens in a new tab)</span>}
+                    </a>
+                  </li>
+                );
+              })}
             </ul>
           </div>
-        </div>
+        </nav>
       </div>
       <div className="border-t border-border">
         <div className="mx-auto flex max-w-6xl flex-col gap-1 px-4 py-4 text-caption text-fg-3 sm:flex-row sm:justify-between sm:px-6">

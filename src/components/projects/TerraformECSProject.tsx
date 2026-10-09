@@ -1219,7 +1219,7 @@ const TerraformECSProject = () => {
         </div>
 
         {/* Conclusion */}
-        <div className="mb-16 p-8 bg-tip-soft border border-tip rounded-xl">
+        <div className="mb-16 p-8 bg-tip-soft border border-tip/30 rounded-xl">
           <h2 className="text-3xl font-display text-fg mb-4">
             Congratulations!
           </h2>

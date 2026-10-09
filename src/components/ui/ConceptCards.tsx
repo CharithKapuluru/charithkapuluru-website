@@ -1,3 +1,5 @@
+"use client";
+
 import { iconFor, type IconName } from "./icons";
 
 interface ConceptCard {

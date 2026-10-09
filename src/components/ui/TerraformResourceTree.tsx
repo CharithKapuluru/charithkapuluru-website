@@ -298,7 +298,7 @@ const ResourceNode = ({
       </div>
 
       {/* Children */}
-      <AnimatePresence>
+      <AnimatePresence initial={false}>
         {hasChildren && isExpanded && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}

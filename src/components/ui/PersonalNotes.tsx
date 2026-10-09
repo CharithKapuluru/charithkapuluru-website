@@ -6,6 +6,7 @@ import { Books, Note as NoteIcon, Trash, X } from "@phosphor-icons/react/dist/ss
 import { useAuth } from "@/context/AuthContext";
 import { db } from "@/lib/firebase";
 import { readJson, writeJson } from "@/lib/storage";
+import { useBackdropClose } from "@/hooks/useBackdropClose";
 import Button from "./Button";
 import Tag from "./Tag";
 
@@ -29,6 +30,7 @@ export default function PersonalNotes({ phaseId, phaseName, projectSlug = "devse
   const [notes, setNotes] = useState<Note[]>([]);
   const [draft, setDraft] = useState("");
   const storageKey = `personalNotes_${projectSlug}`;
+  const backdrop = useBackdropClose(dialogRef, () => dialogRef.current?.close());
 
   useEffect(() => {
     if (user) {
@@ -39,6 +41,7 @@ export default function PersonalNotes({ phaseId, phaseName, projectSlug = "devse
         setNotes(data.sort((a, b) => a.timestamp - b.timestamp));
       });
     }
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- signed-out notes live in localStorage, which only exists after mount; the same effect owns the Firestore listener
     setNotes(readJson<Note[]>(storageKey, []).filter((n) => n.phaseId === phaseId));
   }, [phaseId, user, projectSlug, storageKey]);
 
@@ -88,7 +91,7 @@ export default function PersonalNotes({ phaseId, phaseName, projectSlug = "devse
         ref={dialogRef}
         aria-label={`Notes for ${phaseName}`}
         className="m-auto w-[calc(100%-2rem)] max-w-md rounded-lg border border-border bg-surface p-0 text-fg shadow-float"
-        onClick={(e) => e.target === dialogRef.current && dialogRef.current.close()}
+        {...backdrop}
       >
         <div className="flex items-center justify-between border-b border-border px-4 py-3">
           <h4 className="font-display text-body font-semibold">Notes for {phaseName}</h4>
@@ -106,7 +109,7 @@ export default function PersonalNotes({ phaseId, phaseName, projectSlug = "devse
                   <p className="whitespace-pre-wrap text-small text-fg-2">{n.content}</p>
                   <div className="mt-2 flex items-center justify-between text-caption text-fg-3">
                     <span>{formatDate(n.timestamp)}</span>
-                    <button type="button" onClick={() => deleteNote(n.id)} className="inline-flex items-center gap-1 text-danger hover:underline">
+                    <button type="button" onClick={() => deleteNote(n.id)} aria-label={`Delete note from ${formatDate(n.timestamp)} for ${phaseName}`} className="inline-flex items-center gap-1 text-danger hover:underline">
                       <Trash size={14} weight="regular" aria-hidden /> Delete
                     </button>
                   </div>
@@ -143,6 +146,7 @@ export const AllNotesViewer = ({ variant = "inline" }: { variant?: "inline" | "f
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [open, setOpen] = useState(false);
   const [allNotes, setAllNotes] = useState<Note[]>([]);
+  const backdrop = useBackdropClose(dialogRef, () => dialogRef.current?.close());
 
   useEffect(() => {
     if (!open) return;
@@ -165,6 +169,7 @@ export const AllNotesViewer = ({ variant = "inline" }: { variant?: "inline" | "f
     } catch {
       // Storage unavailable
     }
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- signed-out notes are gathered from localStorage when the dialog opens; the same effect owns the Firestore listener
     setAllNotes(merged.sort((a, b) => b.timestamp - a.timestamp));
   }, [open, user]);
 
@@ -183,7 +188,7 @@ export const AllNotesViewer = ({ variant = "inline" }: { variant?: "inline" | "f
         ref={dialogRef}
         aria-label="All your notes"
         className="m-auto w-[calc(100%-2rem)] max-w-2xl rounded-lg border border-border bg-surface p-0 text-fg shadow-float"
-        onClick={(e) => e.target === dialogRef.current && dialogRef.current.close()}
+        {...backdrop}
         onClose={() => setOpen(false)}
       >
         <div className="flex items-center justify-between border-b border-border px-5 py-3">

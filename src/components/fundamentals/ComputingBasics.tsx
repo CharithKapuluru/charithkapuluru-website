@@ -55,80 +55,35 @@ const quizQuestions = [
   { question: "Why is SSH called 'Secure' Shell?", options: ["Because it only works on secure networks", "Because it encrypts all communication between computers", "Because it requires a physical key", "Because it only works on Linux"], correctIndex: 1, explanation: "SSH encrypts everything sent between your computer and the remote computer. Unlike the older Telnet, which sent passwords and commands as plain text, SSH makes everything private and secure." },
 ];
 
-/* ── Animation variants ── */
-const fadeUp = {
-  hidden: { opacity: 0, y: 30 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.6, delay: i * 0.1, ease: "easeOut" as const },
-  }),
-};
-
-const stagger = {
-  visible: { transition: { staggerChildren: 0.08 } },
-};
-
-/* ── Animated section heading ── */
+/* ── Section heading ── */
 const SectionTitle = ({ title }: { title: string }) => (
-  <motion.div
-    className="mb-12"
-    initial="hidden"
-    whileInView="visible"
-    viewport={{ once: true, margin: "-80px" }}
-    variants={stagger}
-  >
-    <motion.div
-      className="w-20 h-1.5 bg-accent mb-6 rounded-full"
-      variants={fadeUp}
-      custom={0}
-    />
-    <motion.h2
-      className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-display text-fg leading-tight"
-      variants={fadeUp}
-      custom={1}
-    >
+  <div className="mb-12">
+    <div className="w-20 h-1.5 bg-accent mb-6 rounded-full" />
+    <h2 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-display text-fg leading-tight">
       {title}
-    </motion.h2>
-  </motion.div>
+    </h2>
+  </div>
 );
 
-/* ── Animated paragraph ── */
+/* ── Paragraph ── */
 const P = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (
-  <motion.p
-    className={`text-fg-2 leading-relaxed ${className}`}
-    initial={{ opacity: 0, y: 16 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    viewport={{ once: true, margin: "-40px" }}
-    transition={{ duration: 0.5 }}
-  >
+  <p className={`text-fg-2 leading-relaxed ${className}`}>
     {children}
-  </motion.p>
+  </p>
 );
 
-/* ── Animated sub-heading ── */
+/* ── Sub-heading ── */
 const H3 = ({ children }: { children: React.ReactNode }) => (
-  <motion.h3
-    className="text-xl md:text-2xl font-display text-fg mt-14 mb-5"
-    initial={{ opacity: 0, x: -20 }}
-    whileInView={{ opacity: 1, x: 0 }}
-    viewport={{ once: true, margin: "-40px" }}
-    transition={{ duration: 0.5 }}
-  >
+  <h3 className="text-xl md:text-2xl font-display text-fg mt-14 mb-5">
     {children}
-  </motion.h3>
+  </h3>
 );
 
-/* ── Animated wrapper for any block ── */
-const Reveal = ({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) => (
-  <motion.div
-    initial={{ opacity: 0, y: 24 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    viewport={{ once: true, margin: "-40px" }}
-    transition={{ duration: 0.5, delay }}
-  >
+/* ── Wrapper for any block ── */
+const Reveal = ({ children }: { children: React.ReactNode }) => (
+  <div>
     {children}
-  </motion.div>
+  </div>
 );
 
 /* ═══════════ MAIN COMPONENT ═══════════ */
@@ -154,28 +109,22 @@ const ComputingBasics = () => {
         <H3>Why Do People Use Virtual Machines?</H3>
         <P className="mb-6">Let me give you some real scenarios:</P>
 
-        <motion.div
-          className="space-y-4"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          variants={stagger}
-        >
+        <div className="space-y-4">
           {[
             { title: "Testing a New Operating System", content: "Let's say you're using Windows on your laptop, but you're curious about Linux. You don't want to delete Windows and install Linux — what if you don't like it? Instead, you create a Virtual Machine inside your Windows computer, and you install Linux on that VM. Now you can use Linux inside a window on your desktop, just like opening any other app. If you don't like it, you just delete the VM. Your real computer is completely untouched." },
             { title: "Software Developers", content: "Imagine a developer is building an app. They need to test if the app works on Windows 10, Windows 11, macOS, and Ubuntu Linux. They don't need to buy 4 separate computers! Instead, they create 4 Virtual Machines on their one computer — each running a different operating system — and test the app on all of them." },
             { title: "Companies and Servers", content: "A big company like Amazon or Google has powerful physical servers. Instead of using one server for one task, they divide one powerful server into many Virtual Machines. One VM runs the email service, another runs the website, another runs the database. This saves them a LOT of money because they don't need to buy separate physical machines for each task." },
             { title: "Safety and Security", content: "Let's say you downloaded a suspicious file from the internet and you want to open it, but you're scared it might be a virus. You can open it inside a Virtual Machine. If the virus destroys the VM — no problem! Your real computer is completely safe. You just delete that VM and create a new one. It's like a sandbox — whatever happens inside stays inside." },
           ].map((item, i) => (
-            <motion.div key={item.title} variants={fadeUp} custom={i}>
+            <div key={item.title}>
               <Collapsible title={item.title} index={i}>
                 <p className="text-fg-2 leading-relaxed">{item.content}</p>
               </Collapsible>
-            </motion.div>
+            </div>
           ))}
-        </motion.div>
+        </div>
 
-        <Reveal delay={0.1}>
+        <Reveal>
           <WarningBox>
             <p>Never open suspicious files on your real machine! Use a Virtual Machine as a sandbox. Whatever happens inside stays inside — your real computer stays completely safe.</p>
           </WarningBox>
@@ -218,15 +167,12 @@ const ComputingBasics = () => {
               { name: "VMware Workstation", desc: "Popular in professional settings", icon: "buildings" },
               { name: "Hyper-V", desc: "Built into Windows Pro", icon: "app-window" },
               { name: "Parallels", desc: "Popular for Mac", icon: "apple-logo" },
-            ].map((vm, i) => (
+            ].map((vm) => (
               <motion.div
                 key={vm.name}
                 className="p-5 rounded-xl border border-fg/8 bg-surface hover:border-accent/20 hover:shadow-lg transition-all duration-300"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1, duration: 0.4 }}
                 whileHover={{ y: -4 }}
+                transition={{ duration: 0.2 }}
               >
                 <span className="text-2xl mb-2 block">{iconFor(vm.icon, { size: 22 })}</span>
                 <p className="font-medium text-fg">{vm.name}</p>
@@ -397,7 +343,7 @@ const ComputingBasics = () => {
         <P className="mb-4">When you open YouTube on your phone, your phone doesn&apos;t have all those videos stored inside it. So what happens?</P>
 
         <Reveal>
-          <motion.div className="relative pl-8 border-l-2 border-danger/30 space-y-4 mb-6">
+          <div className="relative pl-8 border-l-2 border-danger/30 space-y-4 mb-6">
             {[
               "You type youtube.com or open the app",
               'Your phone sends a request over the internet: "Hey, I want to watch this video"',
@@ -405,21 +351,14 @@ const ComputingBasics = () => {
               "The server finds the video, processes it, and sends it back to your phone",
               "You watch the video",
             ].map((step, i) => (
-              <motion.div
-                key={i}
-                className="flex items-start gap-3"
-                initial={{ opacity: 0, x: -10 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1, duration: 0.4 }}
-              >
+              <div key={i} className="flex items-start gap-3">
                 <span className="flex-shrink-0 w-7 h-7 rounded-full bg-danger/15 text-danger text-sm font-bold flex items-center justify-center mt-0.5">
                   {i + 1}
                 </span>
                 <p className="text-fg-2 leading-relaxed">{step}</p>
-              </motion.div>
+              </div>
             ))}
-          </motion.div>
+          </div>
         </Reveal>
 
         <Reveal>
@@ -446,13 +385,7 @@ const ComputingBasics = () => {
         </Reveal>
 
         <H3>What Does the Kernel Actually Do?</H3>
-        <motion.div
-          className="space-y-4"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          variants={stagger}
-        >
+        <div className="space-y-4">
           {[
             {
               title: "Example: You press a key on your keyboard",
@@ -470,7 +403,7 @@ const ComputingBasics = () => {
               note: "Without the kernel? All three apps would try to grab the CPU at the same time and everything would crash.",
             },
           ].map((item, i) => (
-            <motion.div key={item.title} variants={fadeUp} custom={i}>
+            <div key={item.title}>
               <Collapsible title={item.title} index={i}>
                 <ol className="list-decimal list-inside space-y-2 text-fg-2">
                   {item.steps.map((step, j) => (
@@ -479,9 +412,9 @@ const ComputingBasics = () => {
                 </ol>
                 <p className="text-fg-2 mt-3 italic">{item.note}</p>
               </Collapsible>
-            </motion.div>
+            </div>
           ))}
-        </motion.div>
+        </div>
 
         <H3>Kernel vs Operating System</H3>
 
@@ -544,15 +477,12 @@ const ComputingBasics = () => {
               { icon: "target", text: "Easy to install and use" },
               { icon: "sparkle", text: "Clean, modern look" },
               { icon: "handshake", text: "Huge community" },
-            ].map((item, i) => (
+            ].map((item) => (
               <motion.div
                 key={item.text}
                 className="p-4 rounded-xl bg-surface border border-fg/8 text-center hover:border-success/20 hover:shadow-md transition-all"
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.08, duration: 0.4 }}
                 whileHover={{ y: -3 }}
+                transition={{ duration: 0.2 }}
               >
                 <span className="text-2xl block mb-2">{iconFor(item.icon, { size: 22 })}</span>
                 <p className="text-sm text-fg">{item.text}</p>

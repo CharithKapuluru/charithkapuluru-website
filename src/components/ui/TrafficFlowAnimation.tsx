@@ -224,7 +224,7 @@ const TrafficFlowAnimation = () => {
       </div>
 
       {/* Step Details */}
-      <AnimatePresence mode="wait">
+      <AnimatePresence mode="wait" initial={false}>
         <motion.div
           key={currentStep}
           initial={{ opacity: 0, y: 10 }}

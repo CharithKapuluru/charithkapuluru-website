@@ -29,7 +29,6 @@ export const metadata: Metadata = {
   keywords: ["DevOps", "Cloud", "AWS", "Terraform", "Linux", "Docker", "Portfolio"],
   openGraph: {
     type: "website",
-    url: SITE,
     siteName: "Charith Kapuluru",
     title: "Charith Kapuluru | Cloud & DevOps Engineer",
     description:

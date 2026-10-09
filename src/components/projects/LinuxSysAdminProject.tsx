@@ -2,7 +2,6 @@
 
 import { useState, useRef } from "react";
 import { useReadingNav } from "@/hooks/useReadingNav";
-import { motion } from "framer-motion";
 import Terminal from "@/components/ui/Terminal";
 import KeyTakeaway from "@/components/ui/KeyTakeaway";
 import AnalogyBox from "@/components/ui/AnalogyBox";
@@ -79,12 +78,7 @@ const LinuxSysAdminProject = () => {
           data-phase="0" id="phase-0"
           className="scroll-mt-24 border-t border-border py-12 first:border-t-0 first:pt-0"
         >
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
-            viewport={{ once: true }}
-          >
+          <div>
             {/* Hero Section */}
             <p className="text-lg text-fg-2 leading-relaxed mb-8">
               This project documents my journey of setting up an Ubuntu Server
@@ -273,7 +267,7 @@ const LinuxSysAdminProject = () => {
               how real servers work in production — there is no desktop
               environment, just a terminal.
             </KeyTakeaway>
-          </motion.div>
+          </div>
         </div>
 
         {/* ============================================================ */}
@@ -286,13 +280,7 @@ const LinuxSysAdminProject = () => {
           data-phase="1" id="phase-1"
           className="scroll-mt-24 border-t border-border py-12 first:border-t-0 first:pt-0"
         >
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
-            viewport={{ once: true }}
-            className="bg-gradient-to-br from-success/[0.07] via-surface to-accent/[0.05] p-8 rounded-xl"
-          >
+          <div className="bg-gradient-to-br from-success/[0.07] via-surface to-accent/[0.05] p-8 rounded-xl">
             <h2 className="text-3xl font-display text-fg mb-4">
               Phase 1: Linux Foundations
             </h2>
@@ -706,7 +694,7 @@ echo "Log saved to: $LOG"
               shares, is mounted somewhere under this single tree. The command{" "}
               <code>mount</code> shows you where every device is attached.
             </DidYouKnow>
-          </motion.div>
+          </div>
         </div>
 
         {/* ============================================================ */}
@@ -719,13 +707,7 @@ echo "Log saved to: $LOG"
           data-phase="2" id="phase-2"
           className="scroll-mt-24 border-t border-border py-12 first:border-t-0 first:pt-0"
         >
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
-            viewport={{ once: true }}
-            className="bg-gradient-to-br from-bg via-surface to-accent/[0.05] p-8 rounded-xl"
-          >
+          <div className="bg-gradient-to-br from-bg via-surface to-accent/[0.05] p-8 rounded-xl">
             <h2 className="text-3xl font-display text-fg mb-4">
               Phase 2: Bash Scripting
             </h2>
@@ -1071,7 +1053,7 @@ done
               and shows the top 5 — all in a single line. This &quot;small tools
               connected by pipes&quot; philosophy is the Unix Way.
             </DidYouKnow>
-          </motion.div>
+          </div>
         </div>
 
         {/* ============================================================ */}
@@ -1084,13 +1066,7 @@ done
           data-phase="3" id="phase-3"
           className="scroll-mt-24 border-t border-border py-12 first:border-t-0 first:pt-0"
         >
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
-            viewport={{ once: true }}
-            className="bg-gradient-to-br from-success/[0.07] via-surface to-accent/[0.05] p-8 rounded-xl"
-          >
+          <div className="bg-gradient-to-br from-success/[0.07] via-surface to-accent/[0.05] p-8 rounded-xl">
             <h2 className="text-3xl font-display text-fg mb-4">
               Phase 3: Process & Service Management
             </h2>
@@ -1431,7 +1407,7 @@ systemctl status $SERVICE_NAME --no-pager
               systemd can restart them automatically — that is what{" "}
               <code>Restart=always</code> does in a unit file.
             </AnalogyBox>
-          </motion.div>
+          </div>
         </div>
 
         {/* ============================================================ */}
@@ -1444,13 +1420,7 @@ systemctl status $SERVICE_NAME --no-pager
           data-phase="4" id="phase-4"
           className="scroll-mt-24 border-t border-border py-12 first:border-t-0 first:pt-0"
         >
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
-            viewport={{ once: true }}
-            className="bg-gradient-to-br from-bg via-surface to-accent/[0.05] p-8 rounded-xl"
-          >
+          <div className="bg-gradient-to-br from-bg via-surface to-accent/[0.05] p-8 rounded-xl">
             <h2 className="text-3xl font-display text-fg mb-4">
               Phase 4: Networking & Security
             </h2>
@@ -1759,7 +1729,7 @@ echo "=== SCORE: $SCORE / $TOTAL ==="
               troublemakers. And security audits are the castle inspector who
               walks around checking for cracks in the walls.
             </AnalogyBox>
-          </motion.div>
+          </div>
         </div>
 
         {/* ============================================================ */}
@@ -1772,13 +1742,7 @@ echo "=== SCORE: $SCORE / $TOTAL ==="
           data-phase="5" id="phase-5"
           className="scroll-mt-24 border-t border-border py-12 first:border-t-0 first:pt-0"
         >
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
-            viewport={{ once: true }}
-            className="bg-gradient-to-br from-success/[0.07] via-surface to-accent/[0.05] p-8 rounded-xl"
-          >
+          <div className="bg-gradient-to-br from-success/[0.07] via-surface to-accent/[0.05] p-8 rounded-xl">
             <h2 className="text-3xl font-display text-fg mb-4">
               Phase 5: Storage & Disk Management
             </h2>
@@ -2039,7 +2003,7 @@ du -sh /var/log/* 2>/dev/null | sort -rh | head -5
               books. The <code>df -i</code> command is like checking how many
               blank catalog cards remain.
             </AnalogyBox>
-          </motion.div>
+          </div>
         </div>
 
         {/* ============================================================ */}
@@ -2052,13 +2016,7 @@ du -sh /var/log/* 2>/dev/null | sort -rh | head -5
           data-phase="6" id="phase-6"
           className="scroll-mt-24 border-t border-border py-12 first:border-t-0 first:pt-0"
         >
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
-            viewport={{ once: true }}
-            className="bg-gradient-to-br from-bg via-surface to-accent/[0.05] p-8 rounded-xl"
-          >
+          <div className="bg-gradient-to-br from-bg via-surface to-accent/[0.05] p-8 rounded-xl">
             <h2 className="text-3xl font-display text-fg mb-4">
               Phase 6: Monitoring, Alerting & Docker
             </h2>
@@ -2490,19 +2448,13 @@ echo "Alert check complete. Log: $ALERT_LOG"
                 </div>
               </div>
             </div>
-          </motion.div>
+          </div>
         </div>
 
         {/* ============================================================ */}
         {/* FINAL QUIZ                                                   */}
         {/* ============================================================ */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-          viewport={{ once: true }}
-          className="mb-16"
-        >
+        <div className="mb-16">
           <h2 className="text-3xl font-display text-fg mb-6">
             Final Quiz: Test Your Knowledge
           </h2>
@@ -2634,18 +2586,12 @@ echo "Alert check complete. Log: $ALERT_LOG"
               if (score / total >= 0.8) triggerCelebration(6);
             }}
           />
-        </motion.div>
+        </div>
 
         {/* ============================================================ */}
         {/* FLASHCARDS                                                   */}
         {/* ============================================================ */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-          viewport={{ once: true }}
-          className="mb-16"
-        >
+        <div className="mb-16">
           <h2 className="text-3xl font-display text-fg mb-6">
             Review Flashcards
           </h2>
@@ -2718,17 +2664,12 @@ echo "Alert check complete. Log: $ALERT_LOG"
               },
             ]}
           />
-        </motion.div>
+        </div>
 
         {/* ============================================================ */}
         {/* GITHUB LINK                                                  */}
         {/* ============================================================ */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-          viewport={{ once: true }}
-        >
+        <div>
           <div className="my-16 p-8 bg-bg/50 border border-fg/10 rounded-lg">
             <div className="flex items-center gap-4 mb-4">
               {iconFor("github", { size: 18 })}
@@ -2752,7 +2693,7 @@ echo "Alert check complete. Log: $ALERT_LOG"
               {iconFor("arrow-up-right", { size: 16 })}
             </a>
           </div>
-        </motion.div>
+        </div>
       </div>
     </article>
   );

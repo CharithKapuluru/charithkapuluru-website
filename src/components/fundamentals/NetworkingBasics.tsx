@@ -89,32 +89,23 @@ const flashcardsData = [
 ];
 
 /* ── Shared layout primitives (same as ComputingBasics) ── */
-const stagger = { visible: { transition: { staggerChildren: 0.08 } } };
-const fadeUp = {
-  hidden: { opacity: 0, y: 28 },
-  visible: (i: number) => ({
-    opacity: 1, y: 0,
-    transition: { duration: 0.55, delay: i * 0.1, ease: "easeOut" as const },
-  }),
-};
-
 const SectionTitle = ({ title }: { title: string }) => (
-  <motion.div className="mb-12" initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-80px" }} variants={stagger}>
-    <motion.div className="w-20 h-1.5 bg-accent mb-6 rounded-full" variants={fadeUp} custom={0} />
-    <motion.h2 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-display text-fg leading-tight" variants={fadeUp} custom={1}>{title}</motion.h2>
-  </motion.div>
+  <div className="mb-12">
+    <div className="w-20 h-1.5 bg-accent mb-6 rounded-full" />
+    <h2 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-display text-fg leading-tight">{title}</h2>
+  </div>
 );
 
 const H3 = ({ children }: { children: React.ReactNode }) => (
-  <motion.h3 className="text-xl md:text-2xl font-display text-fg mt-14 mb-5" initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, margin: "-40px" }} transition={{ duration: 0.5 }}>{children}</motion.h3>
+  <h3 className="text-xl md:text-2xl font-display text-fg mt-14 mb-5">{children}</h3>
 );
 
 const P = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (
-  <motion.p className={`text-fg-2 leading-relaxed ${className}`} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-40px" }} transition={{ duration: 0.5 }}>{children}</motion.p>
+  <p className={`text-fg-2 leading-relaxed ${className}`}>{children}</p>
 );
 
-const Reveal = ({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) => (
-  <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-40px" }} transition={{ duration: 0.5, delay }}>{children}</motion.div>
+const Reveal = ({ children }: { children: React.ReactNode }) => (
+  <div>{children}</div>
 );
 
 /* ── Inline code pill ── */
@@ -124,13 +115,7 @@ const Code = ({ children }: { children: React.ReactNode }) => (
 
 /* ── Network diagram card ── */
 const NetworkDiagram = ({ title, children }: { title: string; children: React.ReactNode }) => (
-  <motion.div
-    className="my-8 rounded-2xl border border-fg/8 bg-surface overflow-hidden"
-    initial={{ opacity: 0, y: 20 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    viewport={{ once: true }}
-    transition={{ duration: 0.5 }}
-  >
+  <div className="my-8 rounded-2xl border border-fg/8 bg-surface overflow-hidden">
     <div className="px-5 py-3 bg-fg/[0.03] border-b border-fg/8 flex items-center gap-2">
       <div className="w-3 h-3 rounded-full bg-danger/40" />
       <div className="w-3 h-3 rounded-full bg-accent/40" />
@@ -140,20 +125,20 @@ const NetworkDiagram = ({ title, children }: { title: string; children: React.Re
     <div className="p-5 md:p-8 overflow-x-auto">
       <pre className="font-mono text-xs md:text-sm text-fg leading-relaxed whitespace-pre">{children}</pre>
     </div>
-  </motion.div>
+  </div>
 );
 
 /* ── IP badge ── */
-const IPBadge = ({ ip, label, color = "moss" }: { ip: string; label: string; color?: string }) => {
+const IPBadge = ({ ip, label, color = "accent" }: { ip: string; label: string; color?: "accent" | "danger" | "success" | "soft" }) => {
   const colors: Record<string, string> = {
-    moss: "bg-accent/10 border-accent/20 text-accent",
-    terracotta: "bg-danger/10 border-danger/20 text-danger",
-    sand: "bg-accent/15 border-accent/30 text-fg",
-    sage: "bg-success/15 border-success/30 text-fg",
+    accent: "bg-accent/10 border-accent/20 text-accent",
+    danger: "bg-danger/10 border-danger/20 text-danger",
+    soft: "bg-accent/15 border-accent/30 text-fg",
+    success: "bg-success/15 border-success/30 text-fg",
   };
   return (
     <div className="flex items-center gap-3 py-2">
-      <code className={`font-mono text-sm px-3 py-1.5 rounded-lg border font-bold ${colors[color] || colors.moss}`}>{ip}</code>
+      <code className={`font-mono text-sm px-3 py-1.5 rounded-lg border font-bold ${colors[color]}`}>{ip}</code>
       <span className="text-fg-2 text-sm">{label}</span>
     </div>
   );
@@ -195,15 +180,12 @@ export default function NetworkingBasics() {
               { icon: "house", title: "Your Home Network", desc: "Your phone, laptop, and TV connected via WiFi router. Private, local, only visible inside your home." },
               { icon: "buildings", title: "Company Network", desc: "Hundreds of computers, servers, and printers connected in an office. Managed by IT professionals." },
               { icon: "globe", title: "The Internet", desc: "The world's largest network — millions of computers all connected, talking to each other globally." },
-            ].map((card, i) => (
+            ].map((card) => (
               <motion.div
                 key={card.title}
                 className="p-5 rounded-xl border border-fg/8 bg-surface hover:border-danger/20 hover:shadow-lg transition-all duration-300"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1, duration: 0.4 }}
                 whileHover={{ y: -4 }}
+                transition={{ duration: 0.2 }}
               >
                 <span className="text-3xl block mb-3">{iconFor(card.icon, { size: 22 })}</span>
                 <p className="font-medium text-fg mb-2">{card.title}</p>
@@ -234,12 +216,12 @@ export default function NetworkingBasics() {
         <P className="mb-4">A private IP address is used <strong className="text-fg">only inside your local network</strong> (like your home WiFi). Devices on the same network use private IPs to talk to each other.</P>
 
         <Reveal>
-          <div className="p-6 rounded-2xl bg-bg/60 border border-fg/8 mb-6">
+          <div className="p-6 rounded-2xl bg-surface-2/60 border border-fg/8 mb-6">
             <p className="text-sm font-mono uppercase tracking-wider text-fg-3 mb-4">Common private IP ranges</p>
             <div className="space-y-1">
-              <IPBadge ip="192.168.x.x" label="Most home routers use this range" color="moss" />
-              <IPBadge ip="10.x.x.x" label="Common in companies and offices" color="sage" />
-              <IPBadge ip="172.16.x.x" label="Less common, but also private" color="sand" />
+              <IPBadge ip="192.168.x.x" label="Most home routers use this range" color="accent" />
+              <IPBadge ip="10.x.x.x" label="Common in companies and offices" color="success" />
+              <IPBadge ip="172.16.x.x" label="Less common, but also private" color="soft" />
             </div>
           </div>
         </Reveal>
@@ -346,11 +328,11 @@ They can all talk to each other using these addresses.`}
               { step: 3, text: "Google receives it, sends response back to 74.83.52.19. Google has NO idea 192.168.1.6 exists — it only sees the router." },
               { step: 4, text: 'Router receives the response, remembers "this was for the Mac". Forwards it to 192.168.1.6.' },
               { step: 5, text: "You see search results on your Mac." },
-            ].map((s, i) => (
-              <motion.div key={s.step} className="flex items-start gap-4" initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.12, duration: 0.4 }}>
+            ].map((s) => (
+              <div key={s.step} className="flex items-start gap-4">
                 <span className="flex-shrink-0 w-8 h-8 rounded-full bg-danger/15 text-danger text-sm font-bold flex items-center justify-center mt-0.5">{s.step}</span>
                 <p className="text-fg-2 leading-relaxed">{s.text}</p>
-              </motion.div>
+              </div>
             ))}
           </div>
         </Reveal>
@@ -463,11 +445,11 @@ Works even with no WiFi. Never changes.`}
         <P className="mb-4">This surprises most people — your Mac can have several IP addresses simultaneously, each for a different network:</P>
 
         <Reveal>
-          <div className="p-6 rounded-2xl bg-bg/60 border border-fg/8 mb-8">
+          <div className="p-6 rounded-2xl bg-surface-2/60 border border-fg/8 mb-8">
             <div className="space-y-1">
-              <IPBadge ip="192.168.1.6" label="← on home WiFi (changes per network)" color="terracotta" />
-              <IPBadge ip="192.168.64.1" label="← on UTM VM network (always the same)" color="moss" />
-              <IPBadge ip="127.0.0.1" label="← localhost (always, on every computer)" color="sage" />
+              <IPBadge ip="192.168.1.6" label="← on home WiFi (changes per network)" color="danger" />
+              <IPBadge ip="192.168.64.1" label="← on UTM VM network (always the same)" color="accent" />
+              <IPBadge ip="127.0.0.1" label="← localhost (always, on every computer)" color="success" />
             </div>
           </div>
         </Reveal>

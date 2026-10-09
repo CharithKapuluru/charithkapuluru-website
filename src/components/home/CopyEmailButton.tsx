@@ -19,9 +19,15 @@ export default function CopyEmailButton({ email }: { email: string }) {
     }
   };
   return (
-    <Button variant="secondary" size="lg" onClick={copy} aria-live="polite">
-      {copied ? <Check size={18} weight="regular" aria-hidden /> : <Copy size={18} weight="regular" aria-hidden />}
-      {copied ? "Copied" : email}
-    </Button>
+    <>
+      <Button variant="secondary" size="lg" onClick={copy}>
+        {copied ? <Check size={18} weight="regular" aria-hidden /> : <Copy size={18} weight="regular" aria-hidden />}
+        {copied ? "Copied" : email}
+      </Button>
+      {/* A live region that is always mounted, so the result is announced when it appears. */}
+      <span role="status" className="sr-only">
+        {copied ? "Email address copied" : ""}
+      </span>
+    </>
   );
 }

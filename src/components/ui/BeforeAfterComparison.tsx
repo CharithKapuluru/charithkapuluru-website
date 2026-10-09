@@ -7,6 +7,8 @@ interface ComparisonRow {
 
 interface BeforeAfterComparisonProps {
   title?: string;
+  /** Heading element for the title, so the walkthrough outline does not skip a level. */
+  headingLevel?: "h2" | "h3" | "h4";
   rows: ComparisonRow[];
   beforeLabel?: string;
   afterLabel?: string;
@@ -14,13 +16,14 @@ interface BeforeAfterComparisonProps {
 
 export default function BeforeAfterComparison({
   title,
+  headingLevel: Heading = "h3",
   rows,
   beforeLabel = "Basic student project",
   afterLabel = "Production-ready project",
 }: BeforeAfterComparisonProps) {
   return (
     <div className="my-8 overflow-hidden rounded-lg border border-border">
-      {title && <h4 className="border-b border-border bg-surface-2 px-5 py-3 text-body font-medium text-fg">{title}</h4>}
+      {title && <Heading className="border-b border-border bg-surface-2 px-5 py-3 text-body font-medium text-fg">{title}</Heading>}
       <div className="grid md:grid-cols-2">
         <div className="hidden items-center gap-2 border-b border-border px-5 py-3 text-caption font-medium text-danger md:flex md:border-r">
           <X size={14} aria-hidden /> {beforeLabel}

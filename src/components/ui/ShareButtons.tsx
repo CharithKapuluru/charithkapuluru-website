@@ -79,6 +79,7 @@ export default function ShareButtons({ title, phaseId }: ShareButtonsProps) {
       </span>
       {open && (
         <ul aria-label="Share options" className="absolute right-0 z-10 mt-2 w-44 overflow-hidden rounded-md border border-border bg-surface py-1 shadow-float">
+          {/* eslint-disable-next-line react-hooks/refs -- the item handlers read refs only when a menu item is clicked, never during render */}
           {items.map((item) => (
             <li key={item.label}>
               <button type="button" onClick={item.onClick} className="flex w-full items-center gap-3 px-3 py-2 text-left text-small text-fg hover:bg-surface-2">

@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { CaretDown, X } from "@phosphor-icons/react/dist/ssr";
 import { useReadingNavContext } from "./ReadingNavContext";
+import { useBackdropClose } from "@/hooks/useBackdropClose";
 import { cn } from "@/lib/utils";
 
 /** Below xl this sheet carries the rail: `content` (the rail) when given, otherwise a plain list of the sections. */
@@ -10,6 +11,8 @@ export default function SectionsSheet({ label, className, content }: { label: "S
   const ctx = useReadingNavContext();
   const ref = useRef<HTMLDialogElement>(null);
   const [isOpen, setIsOpen] = useState(false);
+  const close = () => ref.current?.close();
+  const backdrop = useBackdropClose(ref, close);
 
   // The trigger is hidden from xl up, so close the dialog when the viewport crosses that width; otherwise it would stay modal and leave the page inert.
   useEffect(() => {
@@ -30,7 +33,6 @@ export default function SectionsSheet({ label, className, content }: { label: "S
     setIsOpen(true);
     ref.current?.showModal();
   };
-  const close = () => ref.current?.close();
 
   return (
     <div className={className}>
@@ -47,7 +49,7 @@ export default function SectionsSheet({ label, className, content }: { label: "S
         ref={ref}
         aria-label={label}
         className="m-0 mt-auto max-h-[80dvh] w-full max-w-none rounded-t-lg border border-border bg-surface p-0 text-fg sm:m-auto sm:max-w-md sm:rounded-lg"
-        onClick={(e) => e.target === ref.current && close()}
+        {...backdrop}
         // React re-dispatches a nested dialog's close up the tree, so only react to this dialog's own close.
         onClose={(e) => { if (e.target === e.currentTarget) setIsOpen(false); }}
       >
@@ -58,7 +60,7 @@ export default function SectionsSheet({ label, className, content }: { label: "S
           </button>
         </div>
         {content ? (
-          <div className="max-h-[70dvh] overflow-y-auto p-4">{isOpen ? content : null}</div>
+          <div className="max-h-[calc(80dvh-4rem)] overflow-y-auto p-4">{isOpen ? content : null}</div>
         ) : (
           <ol className="max-h-[60dvh] overflow-y-auto p-2">
             {ctx.sections.map((s, i) => (

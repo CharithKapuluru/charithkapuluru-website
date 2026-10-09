@@ -10,19 +10,35 @@ export interface ReadingSection {
 
 export type SectionRefs = RefObject<(HTMLElement | null)[]>;
 
-interface ReadingNavValue {
+interface ReadingNavState {
   sections: ReadingSection[];
   activeIndex: number;
+}
+
+interface ReadingNavActions {
   register: (sections: ReadingSection[], refs: SectionRefs) => void;
   registerSheet: (el: HTMLDialogElement | null) => void;
   setActive: (index: number) => void;
   scrollTo: (index: number) => void;
 }
 
-const ReadingNavContext = createContext<ReadingNavValue | null>(null);
+type ReadingNavValue = ReadingNavState & ReadingNavActions;
 
-export function useReadingNavContext() {
-  return useContext(ReadingNavContext);
+// Two contexts: the actions never change, the state changes with every active section. The article and project components only need the
+// actions (to register their sections and report the active one), so they do not re-render each time the reader scrolls into a new section.
+const StateContext = createContext<ReadingNavState | null>(null);
+const ActionsContext = createContext<ReadingNavActions | null>(null);
+
+/** The stable half: register, registerSheet, setActive, scrollTo. Null outside a ReadingNavProvider. */
+export function useReadingNavActions() {
+  return useContext(ActionsContext);
+}
+
+/** Both halves, for the rails and sheets that show the sections and the active one. */
+export function useReadingNavContext(): ReadingNavValue | null {
+  const state = useContext(StateContext);
+  const actions = useContext(ActionsContext);
+  return useMemo(() => (state && actions ? { ...state, ...actions } : null), [state, actions]);
 }
 
 function sameSections(a: ReadingSection[], b: ReadingSection[]) {
@@ -53,10 +69,12 @@ export function ReadingNavProvider({ children }: { children: ReactNode }) {
     refsRef.current?.current[index]?.scrollIntoView({ behavior: scrollBehavior(prefersReducedMotion()), block: "start" });
   }, []);
 
-  const value = useMemo(
-    () => ({ sections, activeIndex, register, registerSheet, setActive, scrollTo }),
-    [sections, activeIndex, register, registerSheet, setActive, scrollTo],
-  );
+  const state = useMemo(() => ({ sections, activeIndex }), [sections, activeIndex]);
+  const actions = useMemo(() => ({ register, registerSheet, setActive, scrollTo }), [register, registerSheet, setActive, scrollTo]);
 
-  return <ReadingNavContext.Provider value={value}>{children}</ReadingNavContext.Provider>;
+  return (
+    <ActionsContext.Provider value={actions}>
+      <StateContext.Provider value={state}>{children}</StateContext.Provider>
+    </ActionsContext.Provider>
+  );
 }

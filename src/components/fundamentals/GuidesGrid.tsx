@@ -28,7 +28,10 @@ export default function GuidesGrid({ topics, categories }: { topics: Fundamental
           </button>
         ))}
       </div>
-      <ul className="mt-8 grid gap-4 md:grid-cols-2" aria-live="polite">
+      <p role="status" className="sr-only">
+        Showing {visible.length} {visible.length === 1 ? "guide" : "guides"}
+      </p>
+      <ul className="mt-8 grid gap-4 md:grid-cols-2">
         {visible.map((t) => (
           <li key={t.slug}>
             <Link

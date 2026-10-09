@@ -63,7 +63,6 @@ const CIDRCalculator = () => {
 
     const network = numToIP(networkNum >>> 0);
     const broadcastNum = networkNum + totalIPs - 1;
-    const lastIP = numToIP(broadcastNum >>> 0);
 
     // AWS reserved IPs (first 4 + last 1)
     const awsReserved = [

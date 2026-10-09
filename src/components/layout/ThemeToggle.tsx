@@ -7,9 +7,12 @@ import { Monitor, Moon, Sun } from "@phosphor-icons/react/dist/ssr";
 const ORDER = ["system", "light", "dark"] as const;
 type Mode = (typeof ORDER)[number];
 
+// Nothing to subscribe to: the snapshot only tells the client render from the server render.
+const subscribeNever = () => () => {};
+
 export default function ThemeToggle() {
   const { theme, setTheme } = useTheme();
-  const mounted = useSyncExternalStore(() => () => {}, () => true, () => false);
+  const mounted = useSyncExternalStore(subscribeNever, () => true, () => false);
 
   // Before hydration the server and client both render "system", so markup matches.
   const current: Mode = mounted && ORDER.includes(theme as Mode) ? (theme as Mode) : "system";

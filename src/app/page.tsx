@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight } from "@phosphor-icons/react/dist/ssr";
 import SiteNav from "@/components/layout/SiteNav";
@@ -9,6 +10,10 @@ import FundamentalsIndex from "@/components/home/FundamentalsIndex";
 import AboutSection from "@/components/home/AboutSection";
 import ContactBand from "@/components/home/ContactBand";
 import PersonJsonLd from "@/components/home/PersonJsonLd";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
 
 export default function Home() {
   return (

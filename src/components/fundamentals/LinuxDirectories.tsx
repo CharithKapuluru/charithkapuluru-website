@@ -1,16 +1,13 @@
 "use client";
 
-import { useState, useRef } from "react";
-import { motion } from "framer-motion";
+import { useRef } from "react";
 import { useReadingNav } from "@/hooks/useReadingNav";
 import ArticleSection from "@/components/reading/ArticleSection";
 import KeyTakeaway from "@/components/ui/KeyTakeaway";
 import AnalogyBox from "@/components/ui/AnalogyBox";
 import DidYouKnow from "@/components/ui/DidYouKnow";
 import Terminal from "@/components/ui/Terminal";
-import Quiz from "@/components/ui/Quiz";
 import Flashcards from "@/components/ui/Flashcards";
-import Confetti from "@/components/ui/Confetti";
 import { iconFor } from "@/components/ui/icons";
 
 const sectionNames = [
@@ -23,64 +20,6 @@ const sectionNames = [
 ];
 const navSections = sectionNames.map((label, i) => ({ id: i, label }));
 
-const quizQuestions = [
-  {
-    question: "What's the difference between /bin and /sbin?",
-    options: [
-      "/bin is for scripts, /sbin is for system files",
-      "/bin has commands for all users, /sbin has system admin tools (mostly for root)",
-      "/bin is faster than /sbin",
-      "They are identical",
-    ],
-    correctIndex: 1,
-    explanation: "/bin contains essential commands everyone uses: ls, cp, mv. /sbin contains system administration tools used mostly by root: reboot, fsck, ip. The 's' in sbin stands for 'system'.",
-  },
-  {
-    question: "What lives in /etc?",
-    options: [
-      "Executable programs for all users",
-      "System logs and variable data",
-      "Configuration files for the system and installed programs",
-      "Temporary files",
-    ],
-    correctIndex: 2,
-    explanation: "/etc is the 'settings folder' of Linux. Configuration files for the whole system live here — /etc/passwd (user accounts), /etc/ssh/sshd_config (SSH settings), /etc/resolv.conf (DNS servers). Most are plain text files.",
-  },
-  {
-    question: "What does an inode NOT contain?",
-    options: [
-      "File size",
-      "The filename",
-      "Owner and permissions",
-      "Where on disk the data is stored",
-    ],
-    correctIndex: 1,
-    explanation: "Inodes store everything ABOUT the file except the filename. The filename is stored in the directory, which maps names to inode numbers. This is why you can have hard links — multiple names pointing to the same inode.",
-  },
-  {
-    question: "In LVM, what is a Volume Group (VG)?",
-    options: [
-      "The actual hard disk",
-      "A pool of storage created from one or more physical disks",
-      "A logical partition you mount",
-      "A type of filesystem",
-    ],
-    correctIndex: 1,
-    explanation: "VG = the combined pool of storage. Hard Disk (PV) → Pool (VG) → Buckets (LV). The VG is the water tank — you carve it into Logical Volumes (LVs) that Linux uses as partitions.",
-  },
-  {
-    question: "Why does LVM matter in production?",
-    options: [
-      "It makes disks faster",
-      "It lets you expand disk space in seconds with zero downtime, instead of hours of painful work",
-      "It adds encryption",
-      "It's required by Linux",
-    ],
-    correctIndex: 1,
-    explanation: "WITHOUT LVM: disk fills up → shut down server → hours of work → data risk. WITH LVM: two commands, 10 seconds, zero downtime. Every production Linux server uses LVM for exactly this reason.",
-  },
-];
-
 const flashcardsData = [
   { front: "What is /bin?", back: "Essential commands for all users: ls, cp, mv, cat. Required for basic system operation. Even if nothing else is mounted, /bin must be available." },
   { front: "What is /sbin?", back: "System administration tools, mostly for root: reboot, fsck (filesystem check), ip (network config). The 's' stands for system." },
@@ -91,29 +30,23 @@ const flashcardsData = [
   { front: "How do you expand a Linux filesystem with LVM?", back: "Two commands: 1) sudo lvextend -L +10G /dev/ubuntu-vg/ubuntu-lv (make bucket bigger) 2) sudo resize2fs /dev/ubuntu-vg/ubuntu-lv (tell filesystem to fill the space)" },
 ];
 
-const stagger = { visible: { transition: { staggerChildren: 0.08 } } };
-const fadeUp = {
-  hidden: { opacity: 0, y: 28 },
-  visible: (i: number) => ({ opacity: 1, y: 0, transition: { duration: 0.55, delay: i * 0.1, ease: "easeOut" as const } }),
-};
-
 const SectionTitle = ({ title }: { title: string }) => (
-  <motion.div className="mb-12" initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-80px" }} variants={stagger}>
-    <motion.div className="w-20 h-1.5 bg-accent mb-6 rounded-full" variants={fadeUp} custom={0} />
-    <motion.h2 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-display text-fg leading-tight" variants={fadeUp} custom={1}>{title}</motion.h2>
-  </motion.div>
+  <div className="mb-12">
+    <div className="w-20 h-1.5 bg-accent mb-6 rounded-full" />
+    <h2 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-display text-fg leading-tight">{title}</h2>
+  </div>
 );
 
 const H3 = ({ children }: { children: React.ReactNode }) => (
-  <motion.h3 className="text-xl md:text-2xl font-display text-fg mt-14 mb-5" initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, margin: "-40px" }} transition={{ duration: 0.5 }}>{children}</motion.h3>
+  <h3 className="text-xl md:text-2xl font-display text-fg mt-14 mb-5">{children}</h3>
 );
 
 const P = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (
-  <motion.p className={`text-fg-2 leading-relaxed ${className}`} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-40px" }} transition={{ duration: 0.5 }}>{children}</motion.p>
+  <p className={`text-fg-2 leading-relaxed ${className}`}>{children}</p>
 );
 
-const Reveal = ({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) => (
-  <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-40px" }} transition={{ duration: 0.5, delay }}>{children}</motion.div>
+const Reveal = ({ children }: { children: React.ReactNode }) => (
+  <div>{children}</div>
 );
 
 const Code = ({ children }: { children: React.ReactNode }) => (
@@ -122,7 +55,6 @@ const Code = ({ children }: { children: React.ReactNode }) => (
 
 export default function LinuxDirectories() {
   const sectionRefs = useRef<(HTMLElement | null)[]>([]);
-  const [showConfetti, setShowConfetti] = useState(false);
 
   useReadingNav(navSections, sectionRefs);
 
@@ -148,7 +80,7 @@ export default function LinuxDirectories() {
               </ul>
             </div>
           </Reveal>
-          <Reveal delay={0.1}>
+          <Reveal>
             <div className="p-6 rounded-2xl border-2 border-danger/15 bg-danger/5 h-full">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-10 h-10 rounded-xl bg-danger/15 flex items-center justify-center font-mono font-bold text-danger">/sbin</div>
@@ -190,8 +122,8 @@ export default function LinuxDirectories() {
               { file: "/etc/hosts", desc: "Local DNS overrides — map hostnames to IPs", icon: "clipboard-text" },
               { file: "/etc/crontab", desc: "System-wide scheduled tasks", icon: "clock" },
               { file: "/etc/fstab", desc: "Which disks to mount at boot and where", icon: "floppy-disk" },
-            ].map((item, i) => (
-              <Reveal key={item.file} delay={i * 0.07}>
+            ].map((item) => (
+              <Reveal key={item.file}>
                 <div className="p-4 rounded-xl border border-fg/8 bg-surface hover:border-accent/20 hover:shadow-md transition-all group">
                   <div className="text-xl mb-2">{iconFor(item.icon, { size: 22 })}</div>
                   <code className="font-mono text-xs text-accent block mb-1.5 break-all">{item.file}</code>
@@ -331,8 +263,8 @@ export default function LinuxDirectories() {
               { term: "PV", full: "Physical Volume", desc: "Your actual hard disk. The water source.", color: "border-danger/20 bg-danger/5" },
               { term: "VG", full: "Volume Group", desc: "The combined pool of storage. All disks merged together.", color: "border-accent/20 bg-accent/5" },
               { term: "LV", full: "Logical Volume", desc: "A bucket carved from the pool. What Linux mounts and uses.", color: "border-success/20 bg-success/5" },
-            ].map((item, i) => (
-              <Reveal key={item.term} delay={i * 0.1}>
+            ].map((item) => (
+              <Reveal key={item.term}>
                 <div className={`p-5 rounded-xl border-2 ${item.color} text-center`}>
                   <p className="text-2xl font-mono font-bold text-fg mb-1">{item.term}</p>
                   <p className="text-sm font-semibold text-fg mb-2">{item.full}</p>
@@ -386,9 +318,6 @@ export default function LinuxDirectories() {
           </Reveal>
         </div>
       </ArticleSection>
-
-      <Confetti isActive={showConfetti} />
-
     </article>
   );
 }

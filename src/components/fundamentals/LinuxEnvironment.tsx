@@ -1,7 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
-import { motion } from "framer-motion";
+import { useRef } from "react";
 import { useReadingNav } from "@/hooks/useReadingNav";
 import ArticleSection from "@/components/reading/ArticleSection";
 import KeyTakeaway from "@/components/ui/KeyTakeaway";
@@ -9,9 +8,7 @@ import AnalogyBox from "@/components/ui/AnalogyBox";
 import DidYouKnow from "@/components/ui/DidYouKnow";
 import WarningBox from "@/components/ui/WarningBox";
 import Terminal from "@/components/ui/Terminal";
-import Quiz from "@/components/ui/Quiz";
 import Flashcards from "@/components/ui/Flashcards";
-import Confetti from "@/components/ui/Confetti";
 import { iconFor } from "@/components/ui/icons";
 
 const sectionNames = [
@@ -24,64 +21,6 @@ const sectionNames = [
 ];
 const navSections = sectionNames.map((label, i) => ({ id: i, label }));
 
-const quizQuestions = [
-  {
-    question: "What is $PATH in Linux?",
-    options: [
-      "The location of your home folder",
-      "A list of folders where Linux looks for commands",
-      "A file that stores your password",
-      "The root directory of the filesystem",
-    ],
-    correctIndex: 1,
-    explanation: "$PATH is an environment variable — a list of directories separated by colons. When you type a command like 'ls', Linux searches each folder in $PATH to find the program. It's Linux's address book for commands.",
-  },
-  {
-    question: "What does the colon (:) do in $PATH?",
-    options: [
-      "It marks the end of the path",
-      "It separates folder names in the list",
-      "It means 'run as root'",
-      "It's a comment character",
-    ],
-    correctIndex: 1,
-    explanation: "In $PATH, colons are separators between directory names. For example: /usr/bin:/usr/sbin:/bin means three separate folders: /usr/bin, /usr/sbin, and /bin. Linux checks each one in order.",
-  },
-  {
-    question: "Why does typing './myscript.sh' work but 'myscript.sh' doesn't?",
-    options: [
-      "The ./ makes it executable",
-      "./  tells Linux 'look in the CURRENT folder' — your folder isn't in $PATH",
-      "You need sudo for both",
-      "The script has a bug",
-    ],
-    correctIndex: 1,
-    explanation: "./ means 'right here in the current directory'. Linux only looks in $PATH folders for commands. Since your personal folder usually isn't in $PATH, you must give the full path or use ./ to say 'it's right here'.",
-  },
-  {
-    question: "What's dangerous about: export PATH='~/my-scripts'",
-    options: [
-      "Nothing, it's perfectly safe",
-      "It replaces ALL of $PATH — ls, sudo, grep, everything stops working",
-      "It adds too many folders",
-      "It only works for root",
-    ],
-    correctIndex: 1,
-    explanation: "This replaces the entire $PATH with just your folder. Suddenly Linux can't find ls, sudo, grep, or anything else — they're all gone from the lookup list. Always use: export PATH=\"$PATH:~/my-scripts\" to APPEND, not replace.",
-  },
-  {
-    question: "How do you make a PATH change permanent across reboots?",
-    options: [
-      "Use sudo to save it",
-      "Run 'path save' command",
-      "Add it to ~/.bashrc — a file that runs every login",
-      "It's always automatic",
-    ],
-    correctIndex: 2,
-    explanation: "'export PATH=...' only lasts for the current terminal session. To make it permanent, add it to ~/.bashrc — a script that Bash runs every time you log in. Use: echo 'export PATH=\"$PATH:~/my-scripts\"' >> ~/.bashrc",
-  },
-];
-
 const flashcardsData = [
   { front: "What is $PATH?", back: "An environment variable — a colon-separated list of directories where Linux searches for commands when you type them. Run 'echo $PATH' to see yours." },
   { front: "Why can't Linux find my script?", back: "Your personal folder isn't in $PATH. Fix it with ./ (ex: ./myscript.sh), full path (/home/charith/scripts/myscript.sh), or add your folder to $PATH." },
@@ -92,37 +31,31 @@ const flashcardsData = [
   { front: "Why does /usr/bin exist separately from /bin?", back: "/bin has essential commands needed even when /usr isn't mounted (early boot). /usr/bin has most regular user programs. Modern systems often symlink them, but the distinction is historical." },
 ];
 
-const stagger = { visible: { transition: { staggerChildren: 0.08 } } };
-const fadeUp = {
-  hidden: { opacity: 0, y: 28 },
-  visible: (i: number) => ({ opacity: 1, y: 0, transition: { duration: 0.55, delay: i * 0.1, ease: "easeOut" as const } }),
-};
-
 const SectionTitle = ({ title }: { title: string }) => (
-  <motion.div className="mb-12" initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-80px" }} variants={stagger}>
-    <motion.div className="w-20 h-1.5 bg-accent mb-6 rounded-full" variants={fadeUp} custom={0} />
-    <motion.h2 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-display text-fg leading-tight" variants={fadeUp} custom={1}>{title}</motion.h2>
-  </motion.div>
+  <div className="mb-12">
+    <div className="w-20 h-1.5 bg-accent mb-6 rounded-full" />
+    <h2 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-display text-fg leading-tight">{title}</h2>
+  </div>
 );
 
 const H3 = ({ children }: { children: React.ReactNode }) => (
-  <motion.h3 className="text-xl md:text-2xl font-display text-fg mt-14 mb-5" initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, margin: "-40px" }} transition={{ duration: 0.5 }}>{children}</motion.h3>
+  <h3 className="text-xl md:text-2xl font-display text-fg mt-14 mb-5">{children}</h3>
 );
 
 const P = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (
-  <motion.p className={`text-fg-2 leading-relaxed ${className}`} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-40px" }} transition={{ duration: 0.5 }}>{children}</motion.p>
+  <p className={`text-fg-2 leading-relaxed ${className}`}>{children}</p>
 );
 
-const Reveal = ({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) => (
-  <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-40px" }} transition={{ duration: 0.5, delay }}>{children}</motion.div>
+const Reveal = ({ children }: { children: React.ReactNode }) => (
+  <div>{children}</div>
 );
 
 const Code = ({ children }: { children: React.ReactNode }) => (
   <code className="font-mono text-accent bg-accent/8 px-1.5 py-0.5 rounded text-[0.9em]">{children}</code>
 );
 
-const PathFolder = ({ path, desc, icon, delay }: { path: string; desc: string; icon: string; delay: number }) => (
-  <Reveal delay={delay}>
+const PathFolder = ({ path, desc, icon }: { path: string; desc: string; icon: string }) => (
+  <Reveal>
     <div className="flex items-center gap-4 p-4 rounded-xl border border-fg/8 bg-surface hover:border-accent/20 hover:shadow-lg transition-all duration-300 group">
       <div className="text-2xl w-10 text-center">{iconFor(icon, { size: 22 })}</div>
       <div className="flex-1">
@@ -138,7 +71,6 @@ const PathFolder = ({ path, desc, icon, delay }: { path: string; desc: string; i
 
 export default function LinuxEnvironment() {
   const sectionRefs = useRef<(HTMLElement | null)[]>([]);
-  const [showConfetti, setShowConfetti] = useState(false);
 
   useReadingNav(navSections, sectionRefs);
 
@@ -170,12 +102,12 @@ export default function LinuxEnvironment() {
         <SectionTitle title="Folders in $PATH" />
         <P className="text-lg mb-10">Each folder in $PATH has a specific purpose. Here&apos;s what you&apos;ll typically see on Ubuntu:</P>
         <div className="space-y-3 mb-10">
-          <PathFolder path="/bin" desc="Essential commands for all users — ls, cp, mv, cat. Required for system operation." icon="storefront" delay={0} />
-          <PathFolder path="/sbin" desc="System admin tools — reboot, fsck, ip. Mostly for root/admin use." icon="wrench" delay={0.05} />
-          <PathFolder path="/usr/bin" desc="Most installed programs live here — git, python3, nano, curl." icon="shopping-cart" delay={0.1} />
-          <PathFolder path="/usr/sbin" desc="System programs for administration — useradd, iptables, sshd." icon="gear" delay={0.15} />
-          <PathFolder path="/usr/local/bin" desc="Software YOU installed manually (not via apt). Your personal tools." icon="buildings" delay={0.2} />
-          <PathFolder path="/usr/local/sbin" desc="Your own custom system administration tools." icon="key" delay={0.25} />
+          <PathFolder path="/bin" desc="Essential commands for all users — ls, cp, mv, cat. Required for system operation." icon="storefront" />
+          <PathFolder path="/sbin" desc="System admin tools — reboot, fsck, ip. Mostly for root/admin use." icon="wrench" />
+          <PathFolder path="/usr/bin" desc="Most installed programs live here — git, python3, nano, curl." icon="shopping-cart" />
+          <PathFolder path="/usr/sbin" desc="System programs for administration — useradd, iptables, sshd." icon="gear" />
+          <PathFolder path="/usr/local/bin" desc="Software YOU installed manually (not via apt). Your personal tools." icon="buildings" />
+          <PathFolder path="/usr/local/sbin" desc="Your own custom system administration tools." icon="key" />
         </div>
         <AnalogyBox>
           <strong>/bin</strong> = Ground floor essentials (pharmacy, grocery — things everyone needs)<br />
@@ -201,14 +133,16 @@ export default function LinuxEnvironment() {
                 { path: "/usr/local/bin/ls", found: false },
                 { path: "/usr/sbin/ls", found: false },
                 { path: "/usr/bin/ls", found: true },
-              ].map((item, i) => (
-                <motion.div key={item.path} initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}
-                  className={`flex items-center justify-between p-3 rounded-lg font-mono text-sm ${item.found ? "bg-accent/10 border border-accent/20" : "bg-fg/3 border border-fg/5"}`}>
+              ].map((item) => (
+                <div
+                  key={item.path}
+                  className={`flex items-center justify-between p-3 rounded-lg font-mono text-sm ${item.found ? "bg-accent/10 border border-accent/20" : "bg-fg/3 border border-fg/5"}`}
+                >
                   <span className={item.found ? "text-accent font-semibold" : "text-fg-2"}>{item.path}</span>
                   <span className={item.found ? "text-accent font-bold" : "text-fg/30"}>
                     {item.found ? "✓ Found! Run it." : "✗ No"}
                   </span>
-                </motion.div>
+                </div>
               ))}
             </div>
           </div>
@@ -226,8 +160,8 @@ export default function LinuxEnvironment() {
             { num: "01", title: "Use ./ (it's right HERE)", cmd: "sudo ./my-script.sh", desc: "./ means 'in the current directory'. The explicit address Linux needs." },
             { num: "02", title: "Full path", cmd: "sudo /home/charith/scripts/my-script.sh", desc: "Give Linux the exact location of the file, like a street address." },
             { num: "03", title: "Add your folder to $PATH", cmd: 'export PATH="$PATH:~/scripts"', desc: "Now you can type my-script.sh directly — Linux will find it." },
-          ].map((opt, i) => (
-            <Reveal key={opt.num} delay={i * 0.1}>
+          ].map((opt) => (
+            <Reveal key={opt.num}>
               <div className="rounded-2xl border border-fg/10 bg-surface p-6 hover:border-accent/20 hover:shadow-lg transition-all">
                 <div className="flex items-start gap-5">
                   <span className="text-3xl font-bold text-accent/25">{opt.num}</span>
@@ -308,8 +242,8 @@ export default function LinuxEnvironment() {
               { name: "nano", desc: "Beginner friendly. Controls shown at bottom. Use this.", tag: "Recommended" },
               { name: "vim", desc: "Powerful but has a steep learning curve. Modal editing (insert mode, command mode).", tag: "Advanced" },
               { name: "emacs", desc: "Extremely powerful. More of an IDE than an editor. Massive learning curve.", tag: "Expert" },
-            ].map((e, i) => (
-              <Reveal key={e.name} delay={i * 0.1}>
+            ].map((e) => (
+              <Reveal key={e.name}>
                 <div className={`p-5 rounded-xl border ${e.tag === "Recommended" ? "border-accent/20 bg-accent/5" : "border-fg/10 bg-surface"}`}>
                   <div className="flex items-center justify-between mb-2">
                     <code className="font-mono font-bold text-fg">{e.name}</code>
@@ -322,8 +256,6 @@ export default function LinuxEnvironment() {
           </div>
         </Reveal>
 
-        {/* Quiz */}
-
         {/* Flashcards */}
         <div className="mt-16">
           <Reveal>
@@ -331,9 +263,6 @@ export default function LinuxEnvironment() {
           </Reveal>
         </div>
       </ArticleSection>
-
-      <Confetti isActive={showConfetti} />
-
     </article>
   );
 }

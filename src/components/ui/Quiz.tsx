@@ -22,6 +22,8 @@ interface QuizProps {
 const correctLines = ["Correct.", "Exactly right.", "You got it.", "Spot on."];
 const incorrectLines = ["Not quite.", "Close, but no.", "Not this one."];
 
+const pickLine = (pool: string[]) => pool[Math.floor(Math.random() * pool.length)];
+
 export default function Quiz({ title, questions, onComplete }: QuizProps) {
   const reduce = useReducedMotion();
   const [current, setCurrent] = useState(0);
@@ -40,7 +42,7 @@ export default function Quiz({ title, questions, onComplete }: QuizProps) {
     setSelected(index);
     const correct = index === question.correctIndex;
     const pool = correct ? correctLines : incorrectLines;
-    setFeedback({ text: pool[Math.floor(Math.random() * pool.length)], correct });
+    setFeedback({ text: pickLine(pool), correct });
     if (correct) {
       setScore((s) => s + 1);
       setStreak((s) => s + 1);

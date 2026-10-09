@@ -100,35 +100,43 @@ export default function Avatar({ pose = "master", width = 220, flip = false, cla
   const height = Math.round((width * h) / w);
 
   return (
-    <motion.div
-      ref={ref}
-      onClick={poke}
-      onKeyDown={pokeable ? onKeyDown : undefined}
-      role={pokeable ? "button" : undefined}
-      tabIndex={pokeable ? 0 : undefined}
-      style={track && !reduce ? { rotate, y: tiltY } : undefined}
-      whileTap={pokeable && !reduce ? { scale: 0.97 } : undefined}
-      className={cn("relative inline-block select-none", pokeable && "cursor-pointer", className)}
-      aria-live={pokeable ? "polite" : undefined}
-    >
-      {pokeLine && (
-        <span className="absolute -top-10 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-md border border-border bg-surface px-3 py-1.5 font-display text-small text-fg shadow-float">
+    <>
+      <motion.div
+        ref={ref}
+        onClick={poke}
+        onKeyDown={pokeable ? onKeyDown : undefined}
+        role={pokeable ? "button" : undefined}
+        aria-label={pokeable ? "Poke Charith" : undefined}
+        tabIndex={pokeable ? 0 : undefined}
+        style={track && !reduce ? { rotate, y: tiltY } : undefined}
+        whileTap={pokeable && !reduce ? { scale: 0.97 } : undefined}
+        className={cn("relative inline-block select-none", pokeable && "cursor-pointer", className)}
+      >
+        {pokeLine && (
+          <span aria-hidden className="absolute -top-10 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-md border border-border bg-surface px-3 py-1.5 font-display text-small text-fg shadow-float">
+            {pokeLine}
+          </span>
+        )}
+        {/* Plain img: images are unoptimized in static export, and explicit dimensions prevent layout shift. */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={`/world/poses/${pose}.webp`}
+          alt={POSE_ALT[pose]}
+          width={width}
+          height={height}
+          loading={priority ? "eager" : "lazy"}
+          fetchPriority={priority ? "high" : undefined}
+          decoding="async"
+          className={cn("h-auto", flip && "-scale-x-100")}
+          style={{ width, maxWidth: "100%" }}
+        />
+      </motion.div>
+      {/* The poke line is spoken from this live region; a live region on the button itself would re-read the whole control. */}
+      {pokeable && (
+        <span role="status" className="sr-only">
           {pokeLine}
         </span>
       )}
-      {/* Plain img: images are unoptimized in static export, and explicit dimensions prevent layout shift. */}
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={`/world/poses/${pose}.webp`}
-        alt={POSE_ALT[pose]}
-        width={width}
-        height={height}
-        loading={priority ? "eager" : "lazy"}
-        fetchPriority={priority ? "high" : undefined}
-        decoding="async"
-        className={cn("h-auto", flip && "-scale-x-100")}
-        style={{ width, maxWidth: "100%" }}
-      />
-    </motion.div>
+    </>
   );
 }

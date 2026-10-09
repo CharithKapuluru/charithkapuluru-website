@@ -8,7 +8,7 @@ interface DiagramStep {
   id: string;
   label: string;
   description: string;
-  icon?: string; // Can be icon name or emoji
+  icon?: string; // registry name from ./icons
 }
 
 interface AnimatedDiagramProps {
@@ -75,13 +75,10 @@ const AnimatedDiagram = ({ title, steps, type = "pipeline" }: AnimatedDiagramPro
               const isComplete = index < activeStep;
 
               return (
-                <motion.div
+                <div
                   key={step.id}
                   onClick={() => handleStepClick(index)}
-                  className={`relative flex flex-col items-center cursor-pointer group`}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
+                  className="relative flex flex-col items-center cursor-pointer group"
                 >
                   {/* Node */}
                   <motion.div
@@ -106,7 +103,7 @@ const AnimatedDiagram = ({ title, steps, type = "pipeline" }: AnimatedDiagramPro
                   >
                     {step.label}
                   </span>
-                </motion.div>
+                </div>
               );
             })}
           </div>
@@ -157,7 +154,7 @@ const AnimatedDiagram = ({ title, steps, type = "pipeline" }: AnimatedDiagramPro
       )}
 
       {/* Description Panel */}
-      <AnimatePresence mode="wait">
+      <AnimatePresence mode="wait" initial={false}>
         <motion.div
           key={activeStep}
           initial={{ opacity: 0, y: 10 }}

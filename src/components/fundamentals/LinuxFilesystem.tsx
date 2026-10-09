@@ -20,7 +20,7 @@ const sectionNames = [
   "What is Bash?",
   "Files & Directories",
   "The Filesystem",
-  "The Root Directory",
+  "The Root User",
   "Root User & su",
   "ls Commands",
 ];
@@ -99,29 +99,23 @@ const flashcardsData = [
 ];
 
 /* ── Shared layout primitives ── */
-const stagger = { visible: { transition: { staggerChildren: 0.08 } } };
-const fadeUp = {
-  hidden: { opacity: 0, y: 28 },
-  visible: (i: number) => ({ opacity: 1, y: 0, transition: { duration: 0.55, delay: i * 0.1, ease: "easeOut" as const } }),
-};
-
 const SectionTitle = ({ title }: { title: string }) => (
-  <motion.div className="mb-12" initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-80px" }} variants={stagger}>
-    <motion.div className="w-20 h-1.5 bg-accent mb-6 rounded-full" variants={fadeUp} custom={0} />
-    <motion.h2 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-display text-fg leading-tight" variants={fadeUp} custom={1}>{title}</motion.h2>
-  </motion.div>
+  <div className="mb-12">
+    <div className="w-20 h-1.5 bg-accent mb-6 rounded-full" />
+    <h2 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-display text-fg leading-tight">{title}</h2>
+  </div>
 );
 
 const H3 = ({ children }: { children: React.ReactNode }) => (
-  <motion.h3 className="text-xl md:text-2xl font-display text-fg mt-14 mb-5" initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, margin: "-40px" }} transition={{ duration: 0.5 }}>{children}</motion.h3>
+  <h3 className="text-xl md:text-2xl font-display text-fg mt-14 mb-5">{children}</h3>
 );
 
 const P = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (
-  <motion.p className={`text-fg-2 leading-relaxed ${className}`} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-40px" }} transition={{ duration: 0.5 }}>{children}</motion.p>
+  <p className={`text-fg-2 leading-relaxed ${className}`}>{children}</p>
 );
 
-const Reveal = ({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) => (
-  <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-40px" }} transition={{ duration: 0.5, delay }}>{children}</motion.div>
+const Reveal = ({ children }: { children: React.ReactNode }) => (
+  <div>{children}</div>
 );
 
 const Code = ({ children }: { children: React.ReactNode }) => (
@@ -130,13 +124,7 @@ const Code = ({ children }: { children: React.ReactNode }) => (
 
 /* ── File tree component ── */
 const FileTree = ({ items, title }: { items: string[]; title?: string }) => (
-  <motion.div
-    className="my-8 rounded-2xl border border-fg/8 bg-surface overflow-hidden"
-    initial={{ opacity: 0, y: 20 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    viewport={{ once: true }}
-    transition={{ duration: 0.5 }}
-  >
+  <div className="my-8 rounded-2xl border border-fg/8 bg-surface overflow-hidden">
     {title && (
       <div className="px-5 py-3 bg-fg/[0.03] border-b border-fg/8 flex items-center gap-2">
         <div className="w-3 h-3 rounded-full bg-danger/40" />
@@ -148,7 +136,7 @@ const FileTree = ({ items, title }: { items: string[]; title?: string }) => (
     <div className="p-5 md:p-8 overflow-x-auto">
       <pre className="font-mono text-xs md:text-sm text-fg leading-relaxed whitespace-pre">{items.join("\n")}</pre>
     </div>
-  </motion.div>
+  </div>
 );
 
 export default function LinuxFilesystem() {
@@ -191,21 +179,17 @@ export default function LinuxFilesystem() {
                 title: "It's powerful but simple",
                 body: "You can do everything with Bash — navigate folders, create files, manage users, install software, automate tasks, manage servers. All with short, simple commands.",
               },
-            ].map((item, i) => (
-              <motion.div
+            ].map((item) => (
+              <div
                 key={item.num}
                 className="flex gap-5 p-6 rounded-2xl border border-fg/8 bg-surface hover:border-success/20 hover:shadow-md transition-all"
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1, duration: 0.5 }}
               >
                 <span className="flex-shrink-0 w-10 h-10 rounded-full bg-success/15 text-accent font-bold text-lg flex items-center justify-center">{item.num}</span>
                 <div>
                   <p className="font-medium text-fg mb-2">{item.title}</p>
                   <p className="text-sm text-fg-2 leading-relaxed">{item.body}</p>
                 </div>
-              </motion.div>
+              </div>
             ))}
           </div>
         </Reveal>
@@ -300,20 +284,17 @@ export default function LinuxFilesystem() {
               { icon: "file-text", title: "File", desc: "A single piece of data. Has a name, contents, and metadata (size, owner, date).", example: "notes.txt, photo.jpg, script.sh" },
               { icon: "folder", title: "Directory", desc: "A folder that organizes files and other directories. Contains no data itself.", example: "/home/charith/, /projects/, .ssh/" },
               { icon: "hard-drives", title: "Filesystem", desc: "The entire system that manages storage. Rules for how 1s and 0s become files you can open.", example: "ext4 (Linux), APFS (macOS), NTFS (Windows)" },
-            ].map((c, i) => (
+            ].map((c) => (
               <motion.div
                 key={c.title}
                 className="p-6 rounded-2xl border border-fg/8 bg-surface hover:border-accent/20 hover:shadow-lg transition-all"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1, duration: 0.4 }}
                 whileHover={{ y: -4 }}
+                transition={{ duration: 0.2 }}
               >
                 <span className="text-3xl block mb-3">{iconFor(c.icon, { size: 22 })}</span>
                 <p className="font-semibold text-fg mb-2">{c.title}</p>
                 <p className="text-sm text-fg-2 leading-relaxed mb-3">{c.desc}</p>
-                <code className="text-xs font-mono text-fg-3 bg-bg px-2 py-1 rounded">{c.example}</code>
+                <code className="text-xs font-mono text-fg-3 bg-surface-2 px-2 py-1 rounded">{c.example}</code>
               </motion.div>
             ))}
           </div>
@@ -367,15 +348,12 @@ export default function LinuxFilesystem() {
               { path: "/usr", desc: "Programs and utilities installed on the system.", icon: "wrench" },
               { path: "/tmp", desc: "Temporary files. Cleared on reboot.", icon: "trash" },
               { path: "/bin", desc: "Essential commands: ls, cp, mv, bash etc.", icon: "lightning" },
-            ].map((d, i) => (
+            ].map((d) => (
               <motion.div
                 key={d.path}
                 className="p-4 rounded-xl border border-fg/8 bg-surface hover:border-success/20 transition-all"
-                initial={{ opacity: 0, y: 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.08, duration: 0.4 }}
                 whileHover={{ y: -3 }}
+                transition={{ duration: 0.2 }}
               >
                 <span className="text-2xl block mb-2">{iconFor(d.icon, { size: 22 })}</span>
                 <code className="font-mono text-sm text-success font-bold">{d.path}</code>
@@ -510,12 +488,12 @@ export default function LinuxFilesystem() {
         <Reveal>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
             <motion.div className="p-6 rounded-xl border border-danger/15 bg-danger/[0.03]" whileHover={{ y: -3 }} transition={{ duration: 0.2 }}>
-              <code className="font-mono text-danger bg-bg px-2 py-1 rounded text-sm">su testdev</code>
+              <code className="font-mono text-danger bg-surface-2 px-2 py-1 rounded text-sm">su testdev</code>
               <p className="font-medium text-fg mt-3 mb-2">Without <Code>-</Code></p>
               <p className="text-sm text-fg-2">Switches to testdev but <strong className="text-fg">stays in your current folder</strong> with your settings. You&apos;re the person but in the wrong house.</p>
             </motion.div>
             <motion.div className="p-6 rounded-xl border border-accent/15 bg-accent/[0.03]" whileHover={{ y: -3 }} transition={{ duration: 0.2 }}>
-              <code className="font-mono text-accent bg-bg px-2 py-1 rounded text-sm">su - testdev</code>
+              <code className="font-mono text-accent bg-surface-2 px-2 py-1 rounded text-sm">su - testdev</code>
               <p className="font-medium text-fg mt-3 mb-2">With <Code>-</Code> Recommended</p>
               <p className="text-sm text-fg-2">Switches to testdev AND <strong className="text-fg">takes you to their home folder</strong> with their settings loaded. Fully becomes that user.</p>
             </motion.div>
@@ -615,11 +593,11 @@ export default function LinuxFilesystem() {
               { file: ".bashrc", desc: "Your shell configuration — customizations, aliases, etc." },
               { file: ".ssh/", desc: "SSH keys and config — kept hidden for security" },
               { file: ".profile", desc: "Runs at login — sets environment variables" },
-            ].map((f, i) => (
-              <motion.div key={f.file} className="p-4 rounded-xl border border-fg/8 bg-surface" initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }}>
+            ].map((f) => (
+              <div key={f.file} className="p-4 rounded-xl border border-fg/8 bg-surface">
                 <code className="font-mono text-sm text-success font-bold">{f.file}</code>
                 <p className="text-sm text-fg-2 mt-2 leading-relaxed">{f.desc}</p>
-              </motion.div>
+              </div>
             ))}
           </div>
         </Reveal>

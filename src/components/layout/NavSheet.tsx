@@ -15,7 +15,7 @@ export default function NavSheet({ active }: { active?: NavKey }) {
   const close = () => ref.current?.close();
 
   useEffect(() => {
-    const mq = window.matchMedia("(min-width: 768px)");
+    const mq = window.matchMedia("(min-width: 48rem)");
     const onChange = () => ref.current?.close();
     mq.addEventListener("change", onChange);
     return () => mq.removeEventListener("change", onChange);

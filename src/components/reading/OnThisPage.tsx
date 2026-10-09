@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useState } from "react";
 import { useMotionValueEvent, useScroll } from "framer-motion";
 import { useReadingNavContext } from "./ReadingNavContext";
 import Skeleton from "@/components/ui/Skeleton";
@@ -16,7 +16,7 @@ function PercentRead() {
   return <span className="tabular">{pct}%</span>;
 }
 
-export default function OnThisPage({ children }: { children?: ReactNode }) {
+export default function OnThisPage() {
   const ctx = useReadingNavContext();
   return (
     <nav aria-label="On this page" className="text-small">
@@ -52,7 +52,6 @@ export default function OnThisPage({ children }: { children?: ReactNode }) {
       <p className="mt-4 text-caption text-fg-3">
         <PercentRead /> read
       </p>
-      {children}
     </nav>
   );
 }

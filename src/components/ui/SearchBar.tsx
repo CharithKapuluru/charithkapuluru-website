@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { MagnifyingGlass } from "@phosphor-icons/react/dist/ssr";
 import Button from "./Button";
 import Tag from "./Tag";
 import { prefersReducedMotion, scrollBehavior } from "@/lib/scroll";
 import { useReadingNavContext } from "@/components/reading/ReadingNavContext";
+import { useBackdropClose } from "@/hooks/useBackdropClose";
 
 interface SearchResult {
   phaseId: number;
@@ -14,51 +15,59 @@ interface SearchResult {
   context: string;
 }
 
-// Content index for searching - based on Project.docx content
+// Content index for searching - based on Project.docx content. Each entry belongs to one project walkthrough (matched by slug).
 const searchableContent = [
   {
+    slug: "devsecops-pipeline",
     phaseId: 0,
     phaseName: "Phase 0: Repository Setup",
     keywords: ["git", "github", "repository", "project structure", "folder", "commit", "gitignore", "readme", "version control", "branch", "main"],
     content: "Phase 0 is about setting up the foundation of your project before writing any code. We create the project folder structure, set up version control with Git, and connect it to GitHub. Git is a time machine for your code. GitHub is like Google Drive for code."
   },
   {
+    slug: "devsecops-pipeline",
     phaseId: 1,
     phaseName: "Phase 1: FastAPI MVP",
     keywords: ["fastapi", "api", "rest", "endpoint", "pydantic", "validation", "logging", "error handling", "python", "uvicorn"],
     content: "Phase 1 is where we actually start coding! We build a working REST API using FastAPI - a modern Python web framework. FastAPI is a Python framework that developers use to build an API that follows REST principles."
   },
   {
+    slug: "devsecops-pipeline",
     phaseId: 2,
     phaseName: "Phase 2: Automated Tests",
     keywords: ["pytest", "testing", "test", "automated", "unit test", "assert", "fixture"],
     content: "Phase 2 adds automated testing to your API. Pytest is Python's most popular testing framework. No tests = No job offer. Every professional software team requires tests before merging code."
   },
   {
+    slug: "devsecops-pipeline",
     phaseId: 3,
     phaseName: "Phase 3: Linting & Formatting",
     keywords: ["ruff", "linting", "formatting", "code quality", "style", "flake8", "black"],
     content: "Phase 3 adds automatic code quality checks. Ruff is a modern Python tool that does BOTH linting and formatting. Linting catches bugs BEFORE you run the code."
   },
   {
+    slug: "devsecops-pipeline",
     phaseId: 4,
     phaseName: "Phase 4: Docker",
     keywords: ["docker", "container", "image", "dockerfile", "kubernetes", "deployment", "scale"],
     content: "Phase 4 packages your application into a Docker container. A Docker image is a packaged template. A Docker container is a running instance. Kubernetes manages containers at scale."
   },
   {
+    slug: "devsecops-pipeline",
     phaseId: 5,
     phaseName: "Phase 5: CI/CD",
     keywords: ["ci", "cd", "github actions", "pipeline", "continuous integration", "continuous deployment", "automation", "workflow"],
     content: "Phase 5 sets up CI/CD - a system that automatically tests, checks, and builds your code every time you push to GitHub. CI means Continuous Integration. CD means Continuous Deployment."
   },
   {
+    slug: "devsecops-pipeline",
     phaseId: 6,
     phaseName: "Phase 6: SAST with Semgrep",
     keywords: ["sast", "semgrep", "security", "vulnerability", "scanning", "static analysis"],
     content: "Phase 6 adds security scanning. SAST means Static Application Security Testing. Semgrep scans source code for security vulnerabilities without running the application."
   },
   {
+    slug: "devsecops-pipeline",
     phaseId: 7,
     phaseName: "Phase 7: Trivy",
     keywords: ["trivy", "container scanning", "cve", "vulnerability", "dependencies", "security"],
@@ -66,11 +75,22 @@ const searchableContent = [
   },
 ];
 
-export default function SearchBar({ trigger = false }: { trigger?: boolean }) {
+// Nothing to subscribe to: the platform does not change while the page is open.
+const subscribeNever = () => () => {};
+
+function isApplePlatform(): boolean {
+  const nav = navigator as Navigator & { userAgentData?: { platform?: string } };
+  return /mac|iphone|ipad|ipod/i.test(nav.userAgentData?.platform ?? navigator.platform ?? "");
+}
+
+/** In-page search over one project's phases. Renders nothing for a project that has no index entries yet. */
+export default function SearchBar({ slug, trigger = false }: { slug: string; trigger?: boolean }) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const [query, setQuery] = useState("");
   const nav = useReadingNavContext();
+  const apple = useSyncExternalStore(subscribeNever, isApplePlatform, () => false);
+  const entries = useMemo(() => searchableContent.filter((item) => item.slug === slug), [slug]);
 
   const open = () => {
     dialogRef.current?.showModal();
@@ -80,6 +100,7 @@ export default function SearchBar({ trigger = false }: { trigger?: boolean }) {
     dialogRef.current?.close();
     setQuery("");
   };
+  const backdrop = useBackdropClose(dialogRef, close);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -101,7 +122,7 @@ export default function SearchBar({ trigger = false }: { trigger?: boolean }) {
     }
     const term = query.toLowerCase();
     const matches: SearchResult[] = [];
-    for (const item of searchableContent) {
+    for (const item of entries) {
       const keyword = item.keywords.find((kw) => kw.includes(term) || term.includes(kw));
       const contentIndex = item.content.toLowerCase().indexOf(term);
       if (!keyword && contentIndex === -1) continue;
@@ -114,7 +135,7 @@ export default function SearchBar({ trigger = false }: { trigger?: boolean }) {
       matches.push({ phaseId: item.phaseId, phaseName: item.phaseName, matchText: keyword ?? term, context });
     }
     return matches;
-  }, [query]);
+  }, [query, entries]);
 
   const go = (phaseId: number) => {
     close();
@@ -123,20 +144,22 @@ export default function SearchBar({ trigger = false }: { trigger?: boolean }) {
     else document.querySelector(`[data-phase="${phaseId}"]`)?.scrollIntoView({ behavior: scrollBehavior(prefersReducedMotion()), block: "start" });
   };
 
+  if (entries.length === 0) return null;
+
   return (
     <>
       {trigger && (
-        <Button variant="secondary" size="sm" onClick={open} aria-haspopup="dialog">
+        <Button variant="secondary" size="sm" onClick={open} aria-haspopup="dialog" aria-keyshortcuts={apple ? "Meta+K" : "Control+K"}>
           <MagnifyingGlass size={16} weight="regular" aria-hidden />
           Search
-          <kbd className="ml-1 rounded-sm border border-border bg-surface-2 px-1.5 font-mono text-[11px] text-fg-3">⌘K</kbd>
+          <kbd aria-hidden className="ml-1 rounded-sm border border-border bg-surface-2 px-1.5 font-mono text-[11px] text-fg-3">{apple ? "⌘K" : "Ctrl K"}</kbd>
         </Button>
       )}
       <dialog
         ref={dialogRef}
         aria-label="Search this project"
         className="m-auto mt-[10vh] w-[calc(100%-2rem)] max-w-xl rounded-lg border border-border bg-surface p-0 text-fg shadow-float"
-        onClick={(e) => e.target === dialogRef.current && close()}
+        {...backdrop}
         onClose={() => setQuery("")}
       >
         <div className="flex items-center gap-3 border-b border-border px-4 py-3">
@@ -174,9 +197,7 @@ export default function SearchBar({ trigger = false }: { trigger?: boolean }) {
           )}
         </div>
         <div className="flex items-center justify-between border-t border-border bg-surface-2 px-4 py-2 text-caption text-fg-3">
-          <span>
-            {results.length} result{results.length !== 1 ? "s" : ""}
-          </span>
+          <span role="status">{query.length >= 2 ? `${results.length} result${results.length !== 1 ? "s" : ""}` : ""}</span>
           <span>Esc to close</span>
         </div>
       </dialog>

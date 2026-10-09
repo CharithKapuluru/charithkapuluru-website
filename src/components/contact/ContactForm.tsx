@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import Button from "@/components/ui/Button";
@@ -11,13 +11,19 @@ import { cn } from "@/lib/utils";
 const TOPICS = ["Just saying hi", "A job opportunity", "A project or collaboration", "Something else"];
 const EMPTY: ContactValues = { name: "", email: "", projectType: TOPICS[0], message: "" };
 
-const inputClass = "w-full rounded-md border border-border bg-bg px-3.5 py-2.5 text-body text-fg outline-none placeholder:text-fg-3 focus:border-accent";
+const inputClass = "w-full rounded-md border border-border-strong bg-bg px-3.5 py-2.5 text-body text-fg placeholder:text-fg-3 focus-visible:outline-2 focus-visible:outline-accent";
 
 export default function ContactForm() {
   const [values, setValues] = useState<ContactValues>(EMPTY);
   const [errors, setErrors] = useState<ContactErrors>({});
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [sentTo, setSentTo] = useState("");
+  const sentHeading = useRef<HTMLHeadingElement>(null);
+
+  // Move focus to the confirmation so keyboard and screen reader users land on the result of the submit.
+  useEffect(() => {
+    if (status === "sent") sentHeading.current?.focus();
+  }, [status]);
 
   const set = (field: keyof ContactValues) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const next = { ...values, [field]: e.target.value };
@@ -60,7 +66,7 @@ export default function ContactForm() {
         {announce}
         <div className="flex flex-col items-center gap-4 rounded-lg border border-border bg-surface p-8 text-center">
           <Avatar pose="wave" width={140} pokeable={false} />
-          <p className="text-h3 font-display text-fg">Message sent.</p>
+          <h2 ref={sentHeading} tabIndex={-1} className="text-h3 font-display text-fg">Message sent.</h2>
           <p className="text-body text-fg-2">I&apos;ll reply to {sentTo} soon.</p>
         </div>
       </>
@@ -85,7 +91,7 @@ export default function ContactForm() {
     <>
     {announce}
     <form onSubmit={submit} noValidate className="flex flex-col gap-5 rounded-lg border border-border bg-surface p-6 md:p-8">
-      <div className="grid gap-5 lg:grid-cols-2">
+      <div className="grid gap-5 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2">
         {field("name", "Name", <input id="name" name="name" type="text" required autoComplete="name" value={values.name} onChange={set("name")} onBlur={validateField("name")} aria-invalid={!!errors.name} aria-describedby={errors.name ? "name-error" : undefined} className={cn(inputClass, errors.name && "border-danger")} />)}
         {field("email", "Email", <input id="email" name="email" type="email" required autoComplete="email" value={values.email} onChange={set("email")} onBlur={validateField("email")} aria-invalid={!!errors.email} aria-describedby={errors.email ? "email-error" : undefined} className={cn(inputClass, errors.email && "border-danger")} />)}
       </div>

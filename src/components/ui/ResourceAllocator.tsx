@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
 
 interface Segment {
   label: string;
@@ -36,13 +35,7 @@ const ResourceAllocator = ({
   const remaining = total - usedTotal;
 
   return (
-    <motion.div
-      className="my-8 p-5 md:p-6 bg-bg rounded-lg border border-fg/10"
-      initial={{ opacity: 0, y: 10 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-50px" }}
-      transition={{ duration: 0.4, ease: "easeOut" }}
-    >
+    <div className="my-8 p-5 md:p-6 bg-bg rounded-lg border border-fg/10">
       <h4 className="font-display font-semibold text-fg mb-4">
         {title}
       </h4>
@@ -53,14 +46,10 @@ const ResourceAllocator = ({
           const widthPercent = (segment.value / total) * 100;
           const color = colors[i % colors.length];
           return (
-            <motion.div
+            <div
               key={i}
               className={`${color.bg} ${color.text} flex items-center justify-center text-xs font-mono cursor-pointer relative`}
               style={{ width: `${widthPercent}%` }}
-              initial={{ scaleX: 0 }}
-              whileInView={{ scaleX: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: i * 0.1 }}
               onMouseEnter={() => setHoveredIndex(i)}
               onMouseLeave={() => setHoveredIndex(null)}
             >
@@ -76,7 +65,7 @@ const ResourceAllocator = ({
                   <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-primary" />
                 </div>
               )}
-            </motion.div>
+            </div>
           );
         })}
         {remaining > 0 && (
@@ -113,7 +102,7 @@ const ResourceAllocator = ({
         Total: {total}
         {unit}
       </p>
-    </motion.div>
+    </div>
   );
 };
 

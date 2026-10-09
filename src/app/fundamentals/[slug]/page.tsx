@@ -42,7 +42,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const topic = getTopicBySlug(slug);
   if (!topic) return { title: "Topic not found" };
-  return { title: `${topic.title} | Fundamentals | Charith Kapuluru`, description: topic.description };
+  return { title: `${topic.title} | Fundamentals | Charith Kapuluru`, description: topic.description, alternates: { canonical: `/fundamentals/${slug}/` } };
 }
 
 export default async function FundamentalsArticlePage({ params }: { params: Promise<{ slug: string }> }) {
@@ -71,9 +71,10 @@ export default async function FundamentalsArticlePage({ params }: { params: Prom
           />
         }
         rail={
-          <OnThisPage>
+          <>
+            <OnThisPage />
             <SignInControl className="mt-6" />
-          </OnThisPage>
+          </>
         }
         after={<NextUp label="Next guide" title={next.title} href={`/fundamentals/${next.slug}`} meta={next.readingTime} backHref="/fundamentals" backLabel="All guides" />}
       >

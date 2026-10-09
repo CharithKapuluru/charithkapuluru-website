@@ -1,16 +1,12 @@
 "use client";
 
-import { useState, useRef } from "react";
-import { motion } from "framer-motion";
+import { useRef } from "react";
 import { useReadingNav } from "@/hooks/useReadingNav";
 import ArticleSection from "@/components/reading/ArticleSection";
 import KeyTakeaway from "@/components/ui/KeyTakeaway";
 import AnalogyBox from "@/components/ui/AnalogyBox";
 import DidYouKnow from "@/components/ui/DidYouKnow";
-import Terminal from "@/components/ui/Terminal";
-import Quiz from "@/components/ui/Quiz";
 import Flashcards from "@/components/ui/Flashcards";
-import Confetti from "@/components/ui/Confetti";
 import { iconFor } from "@/components/ui/icons";
 
 const sectionNames = [
@@ -24,64 +20,6 @@ const sectionNames = [
 ];
 const navSections = sectionNames.map((label, i) => ({ id: i, label }));
 
-const quizQuestions = [
-  {
-    question: "What problem does Docker solve?",
-    options: [
-      "Makes code run faster",
-      "'It works on my machine' — packages app + all dependencies into one container that runs identically everywhere",
-      "Replaces the operating system",
-      "Provides network security",
-    ],
-    correctIndex: 1,
-    explanation: "The classic software problem: code works on your machine but crashes on the server. Docker packages your app AND everything it needs (Python version, libraries, config) into a container. The same container runs identically on your Mac, your friend's PC, Ubuntu server, and AWS.",
-  },
-  {
-    question: "What is the difference between a Docker image and a container?",
-    options: [
-      "They are the same thing",
-      "Image = recipe (blueprint), Container = running instance made from the recipe",
-      "Container = recipe, Image = running instance",
-      "Images are for Linux, containers are for Windows",
-    ],
-    correctIndex: 1,
-    explanation: "Image = the recipe. Container = the meal made from the recipe. Same image can create 100 identical containers. Images are static (stored on Docker Hub). Containers are live running instances.",
-  },
-  {
-    question: "How are containers different from virtual machines?",
-    options: [
-      "Containers have their own kernel, VMs share the host kernel",
-      "VMs have their own full OS kernel; containers share the host kernel — making containers lighter and faster to start",
-      "Containers are more secure than VMs",
-      "VMs are faster than containers",
-    ],
-    correctIndex: 1,
-    explanation: "VM = a full house (its own kitchen, bedroom, bathroom — full OS). Container = a hotel room (shared building infrastructure, your own private space). Containers share the host OS kernel, so they start in seconds and use far less RAM than VMs.",
-  },
-  {
-    question: "What is Docker Hub?",
-    options: [
-      "Docker's command-line tool",
-      "An online registry of pre-built images — like GitHub but for Docker images",
-      "Docker's paid subscription service",
-      "A tool for managing containers",
-    ],
-    correctIndex: 1,
-    explanation: "Docker Hub is an online registry where people publish Docker images. 'docker pull nginx' downloads the official nginx web server image. 'docker pull postgres' gets a full PostgreSQL database. Thousands of ready-made images available instantly.",
-  },
-  {
-    question: "What can nginx do that makes it essential for production servers?",
-    options: [
-      "Only serve static HTML files",
-      "Serve files, act as a reverse proxy in front of your app, load balance across multiple servers, handle HTTPS",
-      "Manage databases",
-      "Replace the Linux kernel",
-    ],
-    correctIndex: 1,
-    explanation: "nginx is far more than a web server. As a reverse proxy, it sits in front of your app and forwards requests — protecting it from direct internet exposure. As a load balancer, it distributes traffic across multiple servers. It handles SSL/HTTPS so your app doesn't have to.",
-  },
-];
-
 const flashcardsData = [
   { front: "What is Docker?", back: "A tool that packages your app + all its dependencies into a container. The container runs identically on any machine — solving 'it works on my machine'." },
   { front: "Image vs Container", back: "Image = the recipe/blueprint (static). Container = a running instance made from the image. Same image → 100 identical containers. Images stored on Docker Hub." },
@@ -92,33 +30,23 @@ const flashcardsData = [
   { front: "What is a reverse proxy?", back: "nginx sitting in front of your app — receives all requests, forwards to your app, sends response back. Protects your app from direct internet exposure. Also handles SSL termination." },
 ];
 
-const stagger = { visible: { transition: { staggerChildren: 0.08 } } };
-const fadeUp = {
-  hidden: { opacity: 0, y: 28 },
-  visible: (i: number) => ({ opacity: 1, y: 0, transition: { duration: 0.55, delay: i * 0.1, ease: "easeOut" as const } }),
-};
-
 const SectionTitle = ({ title }: { title: string }) => (
-  <motion.div className="mb-12" initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-80px" }} variants={stagger}>
-    <motion.div className="w-20 h-1.5 bg-accent mb-6 rounded-full" variants={fadeUp} custom={0} />
-    <motion.h2 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-display text-fg leading-tight" variants={fadeUp} custom={1}>{title}</motion.h2>
-  </motion.div>
+  <div className="mb-12">
+    <div className="w-20 h-1.5 bg-accent mb-6 rounded-full" />
+    <h2 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-display text-fg leading-tight">{title}</h2>
+  </div>
 );
 
 const H3 = ({ children }: { children: React.ReactNode }) => (
-  <motion.h3 className="text-xl md:text-2xl font-display text-fg mt-14 mb-5" initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, margin: "-40px" }} transition={{ duration: 0.5 }}>{children}</motion.h3>
+  <h3 className="text-xl md:text-2xl font-display text-fg mt-14 mb-5">{children}</h3>
 );
 
 const P = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (
-  <motion.p className={`text-fg-2 leading-relaxed ${className}`} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-40px" }} transition={{ duration: 0.5 }}>{children}</motion.p>
+  <p className={`text-fg-2 leading-relaxed ${className}`}>{children}</p>
 );
 
-const Reveal = ({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) => (
-  <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-40px" }} transition={{ duration: 0.5, delay }}>{children}</motion.div>
-);
-
-const Code = ({ children }: { children: React.ReactNode }) => (
-  <code className="font-mono text-accent bg-accent/8 px-1.5 py-0.5 rounded text-[0.9em]">{children}</code>
+const Reveal = ({ children }: { children: React.ReactNode }) => (
+  <div>{children}</div>
 );
 
 const DockerCmd = ({ cmd, desc }: { cmd: string; desc: string }) => (
@@ -130,7 +58,6 @@ const DockerCmd = ({ cmd, desc }: { cmd: string; desc: string }) => (
 
 export default function DockerAndNginx() {
   const sectionRefs = useRef<(HTMLElement | null)[]>([]);
-  const [showConfetti, setShowConfetti] = useState(false);
 
   useReadingNav(navSections, sectionRefs);
 
@@ -210,8 +137,8 @@ export default function DockerAndNginx() {
               { name: "redis", desc: "Cache DB" },
               { name: "mysql", desc: "MySQL database" },
               { name: "alpine", desc: "Tiny Linux base" },
-            ].map((img, i) => (
-              <Reveal key={img.name} delay={i * 0.06}>
+            ].map((img) => (
+              <Reveal key={img.name}>
                 <div className="p-3 rounded-lg border border-fg/8 bg-surface text-center hover:border-accent/20 transition-all">
                   <code className="font-mono text-sm font-bold text-accent block">{img.name}</code>
                   <p className="text-xs text-fg-2 mt-1">{img.desc}</p>
@@ -291,8 +218,8 @@ export default function DockerAndNginx() {
               desc: "A text file with instructions to build your OWN custom image. Define what OS to start from, what software to install, what files to copy in.",
               color: "border-danger/20 bg-danger/5",
             },
-          ].map((item, i) => (
-            <Reveal key={item.term} delay={i * 0.1}>
+          ].map((item) => (
+            <Reveal key={item.term}>
               <div className={`p-5 rounded-xl border-2 ${item.color} flex gap-5`}>
                 <span className="text-3xl flex-shrink-0">{iconFor(item.icon, { size: 22 })}</span>
                 <div>
@@ -392,11 +319,13 @@ export default function DockerAndNginx() {
         <H3>Who uses nginx?</H3>
         <Reveal>
           <div className="flex flex-wrap gap-3 mb-8">
-            {["Netflix", "Airbnb", "GitHub", "Dropbox", "WordPress", "Cloudflare", "GitLab", "Uber"].map((co, i) => (
-              <motion.span key={co} initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ delay: i * 0.06 }}
-                className="px-4 py-2 rounded-full border border-fg/8 bg-surface text-sm text-fg hover:border-accent/20 transition-all">
+            {["Netflix", "Airbnb", "GitHub", "Dropbox", "WordPress", "Cloudflare", "GitLab", "Uber"].map((co) => (
+              <span
+                key={co}
+                className="px-4 py-2 rounded-full border border-fg/8 bg-surface text-sm text-fg hover:border-accent/20 transition-all"
+              >
                 {co}
-              </motion.span>
+              </span>
             ))}
           </div>
         </Reveal>
@@ -452,8 +381,8 @@ export default function DockerAndNginx() {
               desc: "Handles HTTPS encryption. Your app communicates in plain HTTP internally. nginx handles the security layer — the padlock in the browser.",
               color: "border-accent/25 bg-accent/10",
             },
-          ].map((role, i) => (
-            <Reveal key={role.num} delay={i * 0.1}>
+          ].map((role) => (
+            <Reveal key={role.num}>
               <div className={`p-6 rounded-2xl border-2 ${role.color} h-full`}>
                 <div className="flex items-center gap-3 mb-3">
                   <span className="text-2xl">{iconFor(role.icon, { size: 22 })}</span>
@@ -474,9 +403,6 @@ export default function DockerAndNginx() {
           </Reveal>
         </div>
       </ArticleSection>
-
-      <Confetti isActive={showConfetti} />
-
     </article>
   );
 }

@@ -7,6 +7,7 @@ import ContactForm from "@/components/contact/ContactForm";
 export const metadata: Metadata = {
   title: "Contact",
   description: "Get in touch with Charith Kapuluru about Cloud and DevOps roles, collaborations, or the guides.",
+  alternates: { canonical: "/contact/" },
 };
 
 export default function ContactPage() {

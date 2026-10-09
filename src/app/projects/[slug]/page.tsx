@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const project = getProjectBySlug(slug);
   if (!project) return { title: "Project not found" };
-  return { title: project.title, description: project.description };
+  return { title: project.title, description: project.description, alternates: { canonical: `/projects/${slug}/` } };
 }
 
 export default async function ProjectPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -55,7 +55,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
             <ResumeNotice slug={project.slug} progressKey={progressKey} />
           </>
         }
-        rail={<PhaseRail progressKey={progressKey} actions={<ProjectTools />} />}
+        rail={<PhaseRail progressKey={progressKey} actions={<ProjectTools slug={project.slug} />} />}
         after={<NextUp label="Next project" title={next.title} href={`/projects/${next.slug}`} meta={`${next.phaseCount} phases`} backHref="/projects" backLabel="All projects" />}
       >
         {Content ? <Content /> : <p className="text-fg-2">Content coming soon.</p>}

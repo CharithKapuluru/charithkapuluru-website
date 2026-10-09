@@ -18,13 +18,7 @@ const LayerDiagram = ({ layers, title }: LayerDiagramProps) => {
   const [activeLayer, setActiveLayer] = useState<number | null>(null);
 
   return (
-    <motion.div
-      className="my-8 p-5 md:p-6 bg-bg rounded-lg border border-fg/10"
-      initial={{ opacity: 0, y: 10 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-50px" }}
-      transition={{ duration: 0.4, ease: "easeOut" }}
-    >
+    <div className="my-8 p-5 md:p-6 bg-bg rounded-lg border border-fg/10">
       {title && (
         <h4 className="font-display font-semibold text-fg mb-4">
           {title}
@@ -33,7 +27,7 @@ const LayerDiagram = ({ layers, title }: LayerDiagramProps) => {
 
       <div className="space-y-1.5">
         {layers.map((layer, i) => (
-          <motion.button
+          <button
             key={i}
             className={`w-full text-left rounded-lg px-5 py-4 border transition-all cursor-pointer ${
               activeLayer === i
@@ -41,10 +35,6 @@ const LayerDiagram = ({ layers, title }: LayerDiagramProps) => {
                 : "border-transparent hover:border-fg/10"
             }`}
             style={{ backgroundColor: layer.color }}
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.3, delay: i * 0.1 }}
             onClick={() => setActiveLayer(activeLayer === i ? null : i)}
           >
             <div className="flex items-center justify-between">
@@ -69,14 +59,14 @@ const LayerDiagram = ({ layers, title }: LayerDiagramProps) => {
                 </motion.p>
               )}
             </AnimatePresence>
-          </motion.button>
+          </button>
         ))}
       </div>
 
       <p className="text-xs text-fg-3 mt-4 text-center font-mono">
         Top = closest to user | Bottom = closest to hardware
       </p>
-    </motion.div>
+    </div>
   );
 };
 

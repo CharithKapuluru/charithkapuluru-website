@@ -138,12 +138,10 @@ const components: ComponentInfo[] = [
 
 interface ArchitectureDiagramProps {
   onComponentClick?: (componentId: string) => void;
-  highlightPhase?: string;
 }
 
 const ArchitectureDiagram = ({
   onComponentClick,
-  highlightPhase,
 }: ArchitectureDiagramProps) => {
   const [selectedComponent, setSelectedComponent] =
     useState<ComponentInfo | null>(null);
@@ -155,11 +153,6 @@ const ArchitectureDiagram = ({
       setSelectedComponent(component);
       onComponentClick?.(id);
     }
-  };
-
-  const isHighlighted = (component: ComponentInfo) => {
-    if (!highlightPhase) return true;
-    return component.phase === highlightPhase;
   };
 
   return (
@@ -217,7 +210,7 @@ const ArchitectureDiagram = ({
               x="400"
               y="45"
               textAnchor="middle"
-              className="fill-bg"
+              className="fill-fg dark:fill-bg"
               fontSize="12"
               fontWeight="bold"
             >

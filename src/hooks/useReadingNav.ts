@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, type RefObject } from "react";
-import { useReadingNavContext, type ReadingSection, type SectionRefs } from "@/components/reading/ReadingNavContext";
+import { useReadingNavActions, type ReadingSection, type SectionRefs } from "@/components/reading/ReadingNavContext";
 
 /**
  * Scroll-spy for tutorial sections. Replaces the old scroll-spy hook: same IntersectionObserver band,
@@ -13,9 +13,10 @@ export function useReadingNav<T extends HTMLElement>(
   refs: RefObject<(T | null)[]>,
   setCurrent?: (index: number) => void,
 ) {
-  const ctx = useReadingNavContext();
-  const register = ctx?.register;
-  const setActive = ctx?.setActive;
+  // Actions only: this hook runs inside every article and project, which must not re-render when the active section changes.
+  const actions = useReadingNavActions();
+  const register = actions?.register;
+  const setActive = actions?.setActive;
 
   useEffect(() => {
     register?.(sections, refs as unknown as SectionRefs);

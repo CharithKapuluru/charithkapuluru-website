@@ -1,16 +1,13 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { motion } from "framer-motion";
 import { useReadingNav } from "@/hooks/useReadingNav";
 import ArticleSection from "@/components/reading/ArticleSection";
 import KeyTakeaway from "@/components/ui/KeyTakeaway";
 import AnalogyBox from "@/components/ui/AnalogyBox";
 import DidYouKnow from "@/components/ui/DidYouKnow";
 import Terminal from "@/components/ui/Terminal";
-import Quiz from "@/components/ui/Quiz";
 import Flashcards from "@/components/ui/Flashcards";
-import Confetti from "@/components/ui/Confetti";
 
 const sectionNames = [
   "What is a Cron Job?",
@@ -20,64 +17,6 @@ const sectionNames = [
   "Real Examples",
 ];
 const navSections = sectionNames.map((label, i) => ({ id: i, label }));
-
-const quizQuestions = [
-  {
-    question: "What is a cron job?",
-    options: [
-      "A Linux process manager",
-      "A scheduled task — a command that runs automatically at a time you specify",
-      "A type of background daemon",
-      "A user account for automated tasks",
-    ],
-    correctIndex: 1,
-    explanation: "A cron job is Linux's task scheduler. Like setting an alarm: alarm = wakes you at 7am every day. Cron job = runs your backup script at 2am every day. Used by every production server for maintenance, monitoring, and automation.",
-  },
-  {
-    question: "What does '*/5 * * * *' mean in a cron schedule?",
-    options: [
-      "Every 5 hours",
-      "Every 5 days",
-      "Every 5 minutes",
-      "5 times per second",
-    ],
-    correctIndex: 2,
-    explanation: "*/5 in the minute field means 'every 5 minutes' — i.e., at minute 0, 5, 10, 15, 20... The */ syntax means 'every N'. So */5 * * * * = every 5 minutes, every hour, every day, every month, every day of week.",
-  },
-  {
-    question: "What does '0 9 * * 1' mean?",
-    options: [
-      "Every 9 minutes on Mondays",
-      "Every Monday at 9am",
-      "9am on the first of every month",
-      "Every hour at minute 9, only on Mondays",
-    ],
-    correctIndex: 1,
-    explanation: "0 = minute 0 (on the hour), 9 = 9am, * = any day of month, * = any month, 1 = Monday (0=Sunday, 1=Monday... 6=Saturday). So: every Monday at 9:00am.",
-  },
-  {
-    question: "What command do you use to edit your cron jobs?",
-    options: [
-      "sudo cron edit",
-      "crontab -e",
-      "nano /etc/cron",
-      "systemctl edit cron",
-    ],
-    correctIndex: 1,
-    explanation: "crontab -e opens your personal crontab file in a text editor. Each user has their own crontab. crontab -l lists your current jobs. crontab -r removes ALL your jobs (be careful with this one!).",
-  },
-  {
-    question: "Why do production servers use cron jobs?",
-    options: [
-      "They don't — cron is only for personal use",
-      "For automating recurring tasks: backups, log cleanup, metric collection, report generation",
-      "To replace systemd services",
-      "For security monitoring only",
-    ],
-    correctIndex: 1,
-    explanation: "Every production server uses cron extensively: run backups at 2am (off-peak), collect metrics every minute, clean old log files every Sunday, generate billing reports monthly. Automation that runs reliably without human intervention.",
-  },
-];
 
 const flashcardsData = [
   { front: "What is a cron job?", back: "A scheduled task — a command that runs automatically at a time you specify. Like setting an alarm, but for scripts." },
@@ -89,29 +28,23 @@ const flashcardsData = [
   { front: "Where do production cron outputs go?", back: "By default, cron emails output to the local user. Better practice: redirect to a log file: */5 * * * * /path/script.sh >> /var/log/myscript.log 2>&1" },
 ];
 
-const stagger = { visible: { transition: { staggerChildren: 0.08 } } };
-const fadeUp = {
-  hidden: { opacity: 0, y: 28 },
-  visible: (i: number) => ({ opacity: 1, y: 0, transition: { duration: 0.55, delay: i * 0.1, ease: "easeOut" as const } }),
-};
-
 const SectionTitle = ({ title }: { title: string }) => (
-  <motion.div className="mb-12" initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-80px" }} variants={stagger}>
-    <motion.div className="w-20 h-1.5 bg-accent mb-6 rounded-full" variants={fadeUp} custom={0} />
-    <motion.h2 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-display text-fg leading-tight" variants={fadeUp} custom={1}>{title}</motion.h2>
-  </motion.div>
+  <div className="mb-12">
+    <div className="w-20 h-1.5 bg-accent mb-6 rounded-full" />
+    <h2 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-display text-fg leading-tight">{title}</h2>
+  </div>
 );
 
 const H3 = ({ children }: { children: React.ReactNode }) => (
-  <motion.h3 className="text-xl md:text-2xl font-display text-fg mt-14 mb-5" initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, margin: "-40px" }} transition={{ duration: 0.5 }}>{children}</motion.h3>
+  <h3 className="text-xl md:text-2xl font-display text-fg mt-14 mb-5">{children}</h3>
 );
 
 const P = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (
-  <motion.p className={`text-fg-2 leading-relaxed ${className}`} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-40px" }} transition={{ duration: 0.5 }}>{children}</motion.p>
+  <p className={`text-fg-2 leading-relaxed ${className}`}>{children}</p>
 );
 
-const Reveal = ({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) => (
-  <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-40px" }} transition={{ duration: 0.5, delay }}>{children}</motion.div>
+const Reveal = ({ children }: { children: React.ReactNode }) => (
+  <div>{children}</div>
 );
 
 const Code = ({ children }: { children: React.ReactNode }) => (
@@ -128,7 +61,6 @@ const CronField = ({ value, label, desc, active }: { value: string; label: strin
 
 export default function CronJobs() {
   const sectionRefs = useRef<(HTMLElement | null)[]>([]);
-  const [showConfetti, setShowConfetti] = useState(false);
   const [activeExample, setActiveExample] = useState(0);
 
   useReadingNav(navSections, sectionRefs);
@@ -166,8 +98,8 @@ export default function CronJobs() {
               { interval: "Every Sunday midnight", task: "Clean up old log files, rotate archives" },
               { interval: "Every Monday 9am", task: "Send weekly performance reports to stakeholders" },
               { interval: "Every month 1st", task: "Generate billing reports, renew SSL certificates" },
-            ].map((item, i) => (
-              <Reveal key={item.interval} delay={i * 0.07}>
+            ].map((item) => (
+              <Reveal key={item.interval}>
                 <div className="flex gap-3 p-3 rounded-lg border border-fg/8 bg-surface hover:border-accent/15 transition-all">
                   <span className="text-xs font-mono font-semibold text-accent bg-accent/8 px-2 py-1 rounded flex-shrink-0 self-start">{item.interval}</span>
                   <span className="text-sm text-fg-2">{item.task}</span>
@@ -248,8 +180,8 @@ export default function CronJobs() {
               { sym: "0", meaning: "at exactly 0 (midnight, top of hour)" },
               { sym: "1-5", meaning: "a range (Monday through Friday)" },
               { sym: "1,3,5", meaning: "specific values (Mon, Wed, Fri)" },
-            ].map((s, i) => (
-              <Reveal key={s.sym} delay={i * 0.07}>
+            ].map((s) => (
+              <Reveal key={s.sym}>
                 <div className="p-3 rounded-lg border border-fg/8 bg-surface">
                   <code className="font-mono font-bold text-accent text-sm block mb-1">{s.sym}</code>
                   <p className="text-xs text-fg-2">{s.meaning}</p>
@@ -295,11 +227,11 @@ export default function CronJobs() {
               { schedule: "0 0 * * 0", cmd: "/home/charith/scripts/clean-logs.sh", note: "Sunday midnight" },
               { schedule: "0 9 * * 1-5", cmd: "/home/charith/scripts/send-report.sh", note: "9am weekdays" },
             ].map((job, i) => (
-              <motion.div key={i} initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="py-1.5 border-b border-white/5 last:border-0">
+              <div key={i} className="py-1.5 border-b border-white/5 last:border-0">
                 <span className="text-terminal-accent">{job.schedule}</span>
                 <span className="text-terminal-ok ml-3">{job.cmd}</span>
                 <span className="text-terminal-fg/50 ml-3 text-xs">← {job.note}</span>
-              </motion.div>
+              </div>
             ))}
           </div>
         </Reveal>
@@ -318,9 +250,6 @@ export default function CronJobs() {
           </Reveal>
         </div>
       </ArticleSection>
-
-      <Confetti isActive={showConfetti} />
-
     </article>
   );
 }
