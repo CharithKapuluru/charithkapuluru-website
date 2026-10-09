@@ -5,7 +5,7 @@ import sharp from "sharp";
 import { mkdir } from "node:fs/promises";
 
 const POSES = ["master", "wave", "laptop", "peek", "point", "read", "bored", "lost", "head"];
-const SCENES = ["hill", "workshop", "library", "mailbox", "woods"];
+const SCENES = ["woods"];
 const SCENE_WIDTHS = [1920, 1280, 768];
 
 await mkdir("public/world/poses", { recursive: true });

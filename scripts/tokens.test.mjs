@@ -27,9 +27,9 @@ test("no pure black or pure white literals", () => {
   assert.doesNotMatch(css, /#000000\b|#000\b|#ffffff\b|#fff\b/i);
 });
 
-test("migration aliases exist until the cleanup task removes them", () => {
+test("migration aliases are gone", () => {
   const theme = block("@theme inline");
   for (const alias of ["--color-bg-paper", "--color-text-charcoal", "--color-accent-moss", "--font-serif"]) {
-    assert.match(theme, new RegExp(alias), `${alias} alias missing`);
+    assert.doesNotMatch(theme, new RegExp(alias), `${alias} alias still present`);
   }
 });

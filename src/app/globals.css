@@ -35,19 +35,6 @@
   --color-terminal-info: #8fb0ee;
   --color-terminal-danger: #ef8a83;
 
-  /* MIGRATION ALIASES: removed in the cleanup task */
-  --color-bg-paper: var(--surface);
-  --color-bg-cream: var(--bg);
-  --color-bg-stone: var(--surface-2);
-  --color-text-charcoal: var(--fg);
-  --color-text-taupe: var(--fg-2);
-  --color-text-olive: var(--fg-3);
-  --color-accent-moss: var(--accent);
-  --color-accent-terracotta: var(--danger);
-  --color-accent-sand: var(--accent);
-  --color-accent-sage: var(--success);
-  --font-serif: var(--font-bricolage);
-
   --font-display: var(--font-bricolage);
   --font-sans: var(--font-geist);
   --font-mono: var(--font-geist-mono);

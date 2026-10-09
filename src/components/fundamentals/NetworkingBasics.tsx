@@ -701,9 +701,7 @@ You type on your Mac, but everything runs on the VM.`}
               className="inline-flex items-center gap-2 rounded-md bg-primary px-6 py-3 font-medium text-primary-fg transition-opacity hover:opacity-90 text-lg"
               whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
+              {iconFor("arrow-left")}
               Back to Fundamentals
             </motion.a>
           </div>

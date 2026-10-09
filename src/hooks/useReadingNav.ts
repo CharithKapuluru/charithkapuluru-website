@@ -4,7 +4,7 @@ import { useEffect, type RefObject } from "react";
 import { useReadingNavContext, type ReadingSection, type SectionRefs } from "@/components/reading/ReadingNavContext";
 
 /**
- * Scroll-spy for tutorial sections. Replaces useActivePhase: same IntersectionObserver band,
+ * Scroll-spy for tutorial sections. Replaces the old scroll-spy hook: same IntersectionObserver band,
  * plus it publishes sections and the active index to the reading rails when a provider exists.
  * `sections` must be a module-level constant so the effect does not re-run every render.
  */

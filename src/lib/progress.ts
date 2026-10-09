@@ -1,4 +1,4 @@
-/** Auto-completion rule carried over from the old ProgressSidebar: everything before the current phase is done; the last phase completes itself. */
+/** Auto-completion rule carried over from the old sidebar: everything before the current phase is done; the last phase completes itself. */
 export function completeThrough(prev: number[], current: number, total: number): number[] {
   const set = new Set(prev);
   for (let i = 0; i < current; i++) set.add(i);

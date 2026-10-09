@@ -59,6 +59,3 @@ export default function BookmarkButton({ phaseId, phaseName, projectSlug = "devs
     </>
   );
 }
-
-/** @deprecated Replaced by reading/ResumeNotice. Kept as a no-op until the codemod removes its usages (Task 10); deleted in Task 16. */
-export const ReadingPositionTracker = (_props: { projectSlug?: string; onClearProgress?: () => void }) => null;
