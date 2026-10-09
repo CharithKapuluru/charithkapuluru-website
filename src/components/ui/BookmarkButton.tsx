@@ -50,7 +50,7 @@ export default function BookmarkButton({ phaseId, phaseName, projectSlug = "devs
 
   return (
     <>
-      <Button variant="secondary" size="sm" onClick={toggle} aria-pressed={bookmarked} title="Bookmark this phase">
+      <Button variant="secondary" size="sm" data-print-hide onClick={toggle} aria-pressed={bookmarked} title="Bookmark this phase">
         <BookmarkSimple size={16} weight={bookmarked ? "fill" : "regular"} aria-hidden className={bookmarked ? "text-accent" : undefined} />
         Bookmark
       </Button>

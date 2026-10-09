@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 
 export default function SiteNav({ active }: { active?: NavKey }) {
   return (
-    <header className="sticky top-0 z-20 border-b border-border bg-bg/85 backdrop-blur-md">
+    <header data-print-hide className="sticky top-0 z-20 border-b border-border bg-bg/85 backdrop-blur-md">
       <nav aria-label="Main" className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
         <Wordmark />
         <ul className="hidden items-center gap-1 md:flex">

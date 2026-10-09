@@ -154,7 +154,7 @@ const TerraformECSProject = () => {
         <div
           ref={(el) => { phaseRefs.current[0] = el; }}
           data-phase="0" id="phase-0"
-          className="scroll-mt-24 border-t border-border py-12 first:border-t-0 first:pt-0"
+          className="border-t border-border py-12 first:border-t-0 first:pt-0"
         >
           <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
             <PhaseHeader phaseNumber="0" title="Introduction" accentColor="moss" />
@@ -201,7 +201,7 @@ const TerraformECSProject = () => {
         <div
           ref={(el) => { phaseRefs.current[1] = el; }}
           data-phase="1" id="phase-1"
-          className="scroll-mt-24 border-t border-border py-12 first:border-t-0 first:pt-0"
+          className="border-t border-border py-12 first:border-t-0 first:pt-0"
         >
           <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
             <PhaseHeader phaseNumber="1" title="Fundamentals" accentColor="sage" />
@@ -478,7 +478,7 @@ const TerraformECSProject = () => {
         <div
           ref={(el) => { phaseRefs.current[2] = el; }}
           data-phase="2" id="phase-2"
-          className="scroll-mt-24 border-t border-border py-12 first:border-t-0 first:pt-0"
+          className="border-t border-border py-12 first:border-t-0 first:pt-0"
         >
           <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
             <PhaseHeader phaseNumber="A" title="Create Flask Application and Docker Image" accentColor="terracotta" />
@@ -592,7 +592,7 @@ const TerraformECSProject = () => {
         <div
           ref={(el) => { phaseRefs.current[3] = el; }}
           data-phase="3" id="phase-3"
-          className="scroll-mt-24 border-t border-border py-12 first:border-t-0 first:pt-0"
+          className="border-t border-border py-12 first:border-t-0 first:pt-0"
         >
           <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
             <PhaseHeader phaseNumber="B" title="AWS CLI Setup + IAM + Budget Alert" accentColor="sand" />
@@ -648,7 +648,7 @@ const TerraformECSProject = () => {
         <div
           ref={(el) => { phaseRefs.current[4] = el; }}
           data-phase="4" id="phase-4"
-          className="scroll-mt-24 border-t border-border py-12 first:border-t-0 first:pt-0"
+          className="border-t border-border py-12 first:border-t-0 first:pt-0"
         >
           <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
             <PhaseHeader phaseNumber="C" title="ECR Repository + Push Image" accentColor="olive" />
@@ -747,7 +747,7 @@ const TerraformECSProject = () => {
         <div
           ref={(el) => { phaseRefs.current[5] = el; }}
           data-phase="5" id="phase-5"
-          className="scroll-mt-24 border-t border-border py-12 first:border-t-0 first:pt-0"
+          className="border-t border-border py-12 first:border-t-0 first:pt-0"
         >
           <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
             <PhaseHeader phaseNumber="D" title="Terraform VPC + ALB Infrastructure" accentColor="moss" />
@@ -875,7 +875,7 @@ const TerraformECSProject = () => {
         <div
           ref={(el) => { phaseRefs.current[6] = el; }}
           data-phase="6" id="phase-6"
-          className="scroll-mt-24 border-t border-border py-12 first:border-t-0 first:pt-0"
+          className="border-t border-border py-12 first:border-t-0 first:pt-0"
         >
           <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
             <PhaseHeader phaseNumber="E" title="ECS Fargate Deployment" accentColor="terracotta" />
@@ -1005,7 +1005,7 @@ const TerraformECSProject = () => {
         <div
           ref={(el) => { phaseRefs.current[7] = el; }}
           data-phase="7" id="phase-7"
-          className="scroll-mt-24 border-t border-border py-12 first:border-t-0 first:pt-0"
+          className="border-t border-border py-12 first:border-t-0 first:pt-0"
         >
           <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
             <PhaseHeader phaseNumber="F" title="Monitoring & Alerting" accentColor="sage" />
@@ -1063,7 +1063,7 @@ const TerraformECSProject = () => {
         <div
           ref={(el) => { phaseRefs.current[8] = el; }}
           data-phase="8" id="phase-8"
-          className="scroll-mt-24 border-t border-border py-12 first:border-t-0 first:pt-0"
+          className="border-t border-border py-12 first:border-t-0 first:pt-0"
         >
           <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
             <PhaseHeader phaseNumber="G" title="CI/CD Pipeline with AWS CodePipeline" accentColor="sand" />
@@ -1138,7 +1138,7 @@ const TerraformECSProject = () => {
         <div
           ref={(el) => { phaseRefs.current[9] = el; }}
           data-phase="9" id="phase-9"
-          className="scroll-mt-24 border-t border-border py-12 first:border-t-0 first:pt-0"
+          className="border-t border-border py-12 first:border-t-0 first:pt-0"
         >
           <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
             <PhaseHeader phaseNumber="H" title="Auto-Scaling with Fargate Spot" accentColor="sage" />

@@ -83,11 +83,11 @@ export default function Terminal({ title = "Terminal", lines, autoPlay = false }
       <div className="flex items-center justify-between gap-3 border-b border-white/10 px-4 py-2">
         <span className="font-mono text-caption text-terminal-fg/70">{title}</span>
         {playing ? (
-          <button type="button" onClick={skip} className="inline-flex h-8 items-center gap-1.5 rounded-sm px-2 font-mono text-caption text-terminal-fg/80 hover:bg-white/10 hover:text-terminal-fg">
+          <button type="button" data-print-hide onClick={skip} className="inline-flex h-8 items-center gap-1.5 rounded-sm px-2 font-mono text-caption text-terminal-fg/80 hover:bg-white/10 hover:text-terminal-fg">
             <SkipForward size={14} aria-hidden /> Skip
           </button>
         ) : (
-          <button type="button" onClick={replay} className="inline-flex h-8 items-center gap-1.5 rounded-sm px-2 font-mono text-caption text-terminal-fg/80 hover:bg-white/10 hover:text-terminal-fg">
+          <button type="button" data-print-hide onClick={replay} className="inline-flex h-8 items-center gap-1.5 rounded-sm px-2 font-mono text-caption text-terminal-fg/80 hover:bg-white/10 hover:text-terminal-fg">
             <ArrowCounterClockwise size={14} aria-hidden /> {complete ? "Replay" : "Play"}
           </button>
         )}

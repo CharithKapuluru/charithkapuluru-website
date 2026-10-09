@@ -22,6 +22,7 @@ export default function ThemeToggle() {
   return (
     <button
       type="button"
+      data-print-hide
       onClick={() => setTheme(next)}
       aria-label={`Theme: ${current}, switch to ${next}`}
       title={`Theme: ${current}`}

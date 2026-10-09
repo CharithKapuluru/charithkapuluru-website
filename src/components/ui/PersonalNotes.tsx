@@ -83,7 +83,7 @@ export default function PersonalNotes({ phaseId, phaseName, projectSlug = "devse
 
   return (
     <>
-      <Button variant="secondary" size="sm" onClick={() => dialogRef.current?.showModal()} aria-haspopup="dialog">
+      <Button variant="secondary" size="sm" data-print-hide onClick={() => dialogRef.current?.showModal()} aria-haspopup="dialog">
         <NoteIcon size={16} weight="regular" aria-hidden />
         Notes{notes.length > 0 ? ` (${notes.length})` : ""}
       </Button>

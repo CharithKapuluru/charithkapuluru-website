@@ -69,7 +69,7 @@ export default function ShareButtons({ title, phaseId }: ShareButtonsProps) {
   ];
 
   return (
-    <div ref={wrap} className="relative inline-block">
+    <div ref={wrap} data-print-hide className="relative inline-block">
       <Button ref={triggerRef} variant="secondary" size="sm" onClick={() => setOpen((o) => !o)} aria-expanded={open}>
         <ShareNetwork size={16} weight="regular" aria-hidden />
         {copied ? "Copied" : "Share"}

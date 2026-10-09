@@ -34,11 +34,11 @@ export default function BeforeAfterComparison({
         {rows.map((row, i) => (
           <div key={i} className="contents">
             <div className="flex items-start gap-2 border-b border-border px-5 py-3 text-small text-fg-2 md:border-r">
-              <X size={16} aria-label={beforeLabel} className="mt-0.5 shrink-0 text-danger" />
+              <X size={16} role="img" aria-label={beforeLabel} className="mt-0.5 shrink-0 text-danger" />
               {row.before}
             </div>
             <div className="flex items-start gap-2 border-b border-border px-5 py-3 text-small text-fg-2">
-              <Check size={16} aria-label={afterLabel} className="mt-0.5 shrink-0 text-success" />
+              <Check size={16} role="img" aria-label={afterLabel} className="mt-0.5 shrink-0 text-success" />
               {row.after}
             </div>
           </div>

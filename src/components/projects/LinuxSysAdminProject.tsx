@@ -76,7 +76,7 @@ const LinuxSysAdminProject = () => {
             phaseRefs.current[0] = el;
           }}
           data-phase="0" id="phase-0"
-          className="scroll-mt-24 border-t border-border py-12 first:border-t-0 first:pt-0"
+          className="border-t border-border py-12 first:border-t-0 first:pt-0"
         >
           <div>
             {/* Hero Section */}
@@ -279,7 +279,7 @@ const LinuxSysAdminProject = () => {
             phaseRefs.current[1] = el;
           }}
           data-phase="1" id="phase-1"
-          className="scroll-mt-24 border-t border-border py-12 first:border-t-0 first:pt-0"
+          className="border-t border-border py-12 first:border-t-0 first:pt-0"
         >
           <div className="bg-gradient-to-br from-success/[0.07] via-surface to-accent/[0.05] p-8 rounded-xl">
             <h2 className="text-3xl font-display text-fg mb-4">
@@ -706,7 +706,7 @@ echo "Log saved to: $LOG"
             phaseRefs.current[2] = el;
           }}
           data-phase="2" id="phase-2"
-          className="scroll-mt-24 border-t border-border py-12 first:border-t-0 first:pt-0"
+          className="border-t border-border py-12 first:border-t-0 first:pt-0"
         >
           <div className="bg-gradient-to-br from-bg via-surface to-accent/[0.05] p-8 rounded-xl">
             <h2 className="text-3xl font-display text-fg mb-4">
@@ -1065,7 +1065,7 @@ done
             phaseRefs.current[3] = el;
           }}
           data-phase="3" id="phase-3"
-          className="scroll-mt-24 border-t border-border py-12 first:border-t-0 first:pt-0"
+          className="border-t border-border py-12 first:border-t-0 first:pt-0"
         >
           <div className="bg-gradient-to-br from-success/[0.07] via-surface to-accent/[0.05] p-8 rounded-xl">
             <h2 className="text-3xl font-display text-fg mb-4">
@@ -1419,7 +1419,7 @@ systemctl status $SERVICE_NAME --no-pager
             phaseRefs.current[4] = el;
           }}
           data-phase="4" id="phase-4"
-          className="scroll-mt-24 border-t border-border py-12 first:border-t-0 first:pt-0"
+          className="border-t border-border py-12 first:border-t-0 first:pt-0"
         >
           <div className="bg-gradient-to-br from-bg via-surface to-accent/[0.05] p-8 rounded-xl">
             <h2 className="text-3xl font-display text-fg mb-4">
@@ -1741,7 +1741,7 @@ echo "=== SCORE: $SCORE / $TOTAL ==="
             phaseRefs.current[5] = el;
           }}
           data-phase="5" id="phase-5"
-          className="scroll-mt-24 border-t border-border py-12 first:border-t-0 first:pt-0"
+          className="border-t border-border py-12 first:border-t-0 first:pt-0"
         >
           <div className="bg-gradient-to-br from-success/[0.07] via-surface to-accent/[0.05] p-8 rounded-xl">
             <h2 className="text-3xl font-display text-fg mb-4">
@@ -2015,7 +2015,7 @@ du -sh /var/log/* 2>/dev/null | sort -rh | head -5
             phaseRefs.current[6] = el;
           }}
           data-phase="6" id="phase-6"
-          className="scroll-mt-24 border-t border-border py-12 first:border-t-0 first:pt-0"
+          className="border-t border-border py-12 first:border-t-0 first:pt-0"
         >
           <div className="bg-gradient-to-br from-bg via-surface to-accent/[0.05] p-8 rounded-xl">
             <h2 className="text-3xl font-display text-fg mb-4">

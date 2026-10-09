@@ -134,18 +134,20 @@ export default function Flashcards({ cards, title }: FlashcardsProps = {}) {
               key={card.id}
               type="button"
               aria-pressed={isFlipped}
+              aria-label={isFlipped ? card.back : card.front}
               onClick={() => toggle(card.id)}
-              className="h-[200px] text-left [perspective:1000px]"
+              className="h-[200px] text-left [perspective:1000px] print:break-inside-avoid print:[perspective:none]"
             >
               <div
-                className="relative h-full w-full transition-transform duration-300 ease-out-quint motion-reduce:transition-none [transform-style:preserve-3d]"
+                className="relative h-full w-full transition-transform duration-300 ease-out-quint motion-reduce:transition-none [transform-style:preserve-3d] print:transform-none! print:transition-none"
                 style={{ transform: isFlipped ? "rotateY(180deg)" : "rotateY(0deg)" }}
               >
-                <div className="absolute inset-0 flex items-center justify-center rounded-lg border border-border bg-surface p-5 [backface-visibility:hidden]">
+                <div aria-hidden={isFlipped} className="absolute inset-0 flex items-center justify-center rounded-lg border border-border bg-surface p-5 [backface-visibility:hidden]">
                   <p className="text-center font-display text-body font-medium text-fg">{card.front}</p>
                 </div>
                 <div
-                  className="absolute inset-0 flex items-center justify-center overflow-y-auto rounded-lg border border-accent/30 bg-accent-soft p-4 [backface-visibility:hidden]"
+                  aria-hidden={!isFlipped}
+                  className="absolute inset-0 flex items-center justify-center overflow-y-auto rounded-lg border border-accent/30 bg-accent-soft p-4 [backface-visibility:hidden] print:hidden"
                   style={{ transform: "rotateY(180deg)" }}
                 >
                   <p className="text-center text-caption leading-relaxed text-fg-2">{card.back}</p>

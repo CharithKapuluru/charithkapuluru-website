@@ -83,7 +83,7 @@ export default function Quiz({ title, questions, onComplete }: QuizProps) {
         <p className="mt-2 text-body text-fg-2">
           {score} of {questions.length} correct. {line}
         </p>
-        <Button variant="secondary" size="sm" onClick={restart} className="mt-6">
+        <Button variant="secondary" size="sm" data-print-hide onClick={restart} className="mt-6">
           Try again
         </Button>
       </section>
@@ -144,20 +144,22 @@ export default function Quiz({ title, questions, onComplete }: QuizProps) {
         })}
       </div>
 
-      <AnimatePresence>
-        {feedback && (
-          <motion.p
-            role="status"
-            initial={reduce ? false : { opacity: 0, y: -4 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className={cn("mt-4 text-small font-medium", feedback.correct ? "text-success" : "text-danger")}
-          >
-            {feedback.text}
-          </motion.p>
-        )}
-      </AnimatePresence>
+      {/* Always mounted, so the verdict is announced when it appears; a live region that arrives together with its text is often missed. */}
+      <div role="status">
+        <AnimatePresence>
+          {feedback && (
+            <motion.p
+              initial={reduce ? false : { opacity: 0, y: -4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className={cn("mt-4 text-small font-medium", feedback.correct ? "text-success" : "text-danger")}
+            >
+              {feedback.text}
+            </motion.p>
+          )}
+        </AnimatePresence>
+      </div>
 
       {isAnswered && (
         <p className="mt-3 rounded-md border border-border bg-bg p-4 text-small leading-relaxed text-fg-2">
@@ -166,7 +168,7 @@ export default function Quiz({ title, questions, onComplete }: QuizProps) {
         </p>
       )}
 
-      <div className="mt-5 flex justify-end">
+      <div data-print-hide className="mt-5 flex justify-end">
         <Button size="sm" onClick={next} disabled={!isAnswered}>
           {current < questions.length - 1 ? "Next question" : "See results"}
         </Button>

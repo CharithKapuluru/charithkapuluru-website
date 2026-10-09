@@ -29,7 +29,7 @@ export default function ConceptCards({ onCardClick }: { onCardClick?: (phase: nu
             key={c.name}
             type="button"
             onClick={() => onCardClick?.(c.phase)}
-            className="flex flex-col items-center justify-center gap-2 rounded-md border border-border bg-surface p-4 text-fg-2 transition-colors duration-150 hover:border-fg-3 hover:text-fg"
+            className="flex flex-col items-center justify-center gap-2 rounded-md border border-border bg-surface p-4 text-fg-2 transition-colors duration-150 hover:border-fg-3 hover:text-fg print:break-inside-avoid print:cursor-auto print:transition-none"
           >
             {iconFor(c.icon, { size: 24 })}
             <span className="font-mono text-caption text-fg">{c.name}</span>

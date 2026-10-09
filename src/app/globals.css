@@ -235,7 +235,8 @@
     --danger-soft: #fbe7e5;
   }
 
-  button, .fixed, nav, header, aside, dialog, [data-print-hide] { display: none !important; }
+  /* Chrome only: bare header/aside/button selectors also hid the page H1, its lede and every callout. Mark what should not print with data-print-hide. */
+  .fixed, nav, dialog, [data-print-hide] { display: none !important; }
   body { background: #f7f7f8 !important; color: #18181b !important; }
   a[href]::after { content: " (" attr(href) ")"; font-size: 0.8em; color: #52525b; }
   h2, h3 { page-break-after: avoid; }

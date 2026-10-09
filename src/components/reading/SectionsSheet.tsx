@@ -35,7 +35,7 @@ export default function SectionsSheet({ label, className, content }: { label: "S
   };
 
   return (
-    <div className={className}>
+    <div data-print-hide className={className}>
       <button
         type="button"
         onClick={open}

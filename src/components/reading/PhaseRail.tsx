@@ -42,8 +42,8 @@ export default function PhaseRail({ progressKey, actions }: { progressKey: strin
               const active = i === activeIndex;
               const done = progress.completed.includes(i);
               return (
-                <li key={String(s.id)} className="flex items-center gap-2">
-                  <label className="flex h-6 w-6 cursor-pointer items-center justify-center has-[:disabled]:cursor-default">
+                <li key={String(s.id)} className="flex min-h-11 items-center gap-2 xl:min-h-8">
+                  <label className="flex h-11 w-6 cursor-pointer items-center justify-center has-[:disabled]:cursor-default xl:h-6">
                     <input
                       type="checkbox"
                       checked={done}
@@ -58,7 +58,7 @@ export default function PhaseRail({ progressKey, actions }: { progressKey: strin
                     onClick={() => ctx.scrollTo(i)}
                     aria-current={active ? "true" : undefined}
                     className={cn(
-                      "flex h-8 min-w-0 flex-1 items-center rounded-md px-2 text-left text-fg-3 hover:text-fg",
+                      "flex min-h-11 min-w-0 flex-1 items-center rounded-md px-2 text-left text-fg-3 hover:text-fg xl:min-h-8",
                       active && "bg-accent-soft font-medium text-accent",
                       done && !active && "line-through",
                     )}

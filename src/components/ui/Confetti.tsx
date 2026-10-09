@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Confetti as ConfettiIcon } from "@phosphor-icons/react/dist/ssr";
 import Button from "./Button";
+import { useBackdropClose } from "@/hooks/useBackdropClose";
 
 interface ConfettiPiece {
   id: number;
@@ -98,46 +99,37 @@ const Confetti = ({ isActive, onComplete }: ConfettiProps) => {
 };
 
 export const CelebrationMessage = ({ isVisible, phaseName, onClose }: { isVisible: boolean; phaseName: string; onClose: () => void }) => {
-  const reduce = useReducedMotion();
+  const ref = useRef<HTMLDialogElement>(null);
+  const backdrop = useBackdropClose(ref, () => ref.current?.close());
+
+  // A modal <dialog> keeps focus inside while it is open, closes on Escape, and hands focus back to whatever had it before it opened.
   useEffect(() => {
-    if (!isVisible) return;
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [isVisible, onClose]);
+    const dialog = ref.current;
+    if (!dialog) return;
+    if (isVisible && !dialog.open) dialog.showModal();
+    else if (!isVisible && dialog.open) dialog.close();
+  }, [isVisible]);
 
   return (
-    <AnimatePresence>
-      {isVisible && (
-        <motion.div
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="celebration-title"
-          initial={reduce ? false : { opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 z-40 flex items-center justify-center bg-terminal/50 p-4"
-          onClick={onClose}
-        >
-          <motion.div
-            initial={reduce ? false : { y: 16, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-            className="w-full max-w-md rounded-lg border border-border bg-surface p-8 text-center shadow-float"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <ConfettiIcon size={40} aria-hidden className="mx-auto text-accent" />
-            <h3 id="celebration-title" className="mt-4 text-h3 text-fg">Phase complete</h3>
-            <p className="mt-2 text-body text-fg-2">
-              You finished <strong className="text-fg">{phaseName}</strong>.
-            </p>
-            <Button onClick={onClose} className="mt-6" autoFocus>
-              Continue
-            </Button>
-          </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+    <dialog
+      ref={ref}
+      aria-labelledby="celebration-title"
+      {...backdrop}
+      // Escape, the Continue button and a click on the backdrop all end in a close event; the parent's flag follows it.
+      onClose={onClose}
+      className="m-auto w-[calc(100%-2rem)] max-w-md rounded-lg border border-border bg-surface p-0 text-fg shadow-float motion-safe:animate-rise"
+    >
+      <div className="p-8 text-center">
+        <ConfettiIcon size={40} aria-hidden className="mx-auto text-accent" />
+        <h3 id="celebration-title" className="mt-4 text-h3 text-fg">Phase complete</h3>
+        <p className="mt-2 text-body text-fg-2">
+          You finished <strong className="text-fg">{phaseName}</strong>.
+        </p>
+        <Button onClick={() => ref.current?.close()} className="mt-6">
+          Continue
+        </Button>
+      </div>
+    </dialog>
   );
 };
 

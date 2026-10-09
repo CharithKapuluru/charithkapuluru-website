@@ -356,7 +356,7 @@ const DevSecOpsProject = () => {
             phaseRefs.current[0] = el;
           }}
           data-phase="0" id="phase-0"
-          className="scroll-mt-24 border-t border-border py-12 first:border-t-0 first:pt-0"
+          className="border-t border-border py-12 first:border-t-0 first:pt-0"
         >
           <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
             <h2 className="text-3xl font-display text-fg">
@@ -503,7 +503,7 @@ const DevSecOpsProject = () => {
             phaseRefs.current[1] = el;
           }}
           data-phase="1" id="phase-1"
-          className="scroll-mt-24 border-t border-border py-12 first:border-t-0 first:pt-0"
+          className="border-t border-border py-12 first:border-t-0 first:pt-0"
         >
           <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
             <h2 className="text-3xl font-display text-fg">
@@ -620,7 +620,7 @@ const DevSecOpsProject = () => {
             phaseRefs.current[2] = el;
           }}
           data-phase="2" id="phase-2"
-          className="scroll-mt-24 border-t border-border py-12 first:border-t-0 first:pt-0"
+          className="border-t border-border py-12 first:border-t-0 first:pt-0"
         >
           <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
             <h2 className="text-3xl font-display text-fg">
@@ -763,7 +763,7 @@ const DevSecOpsProject = () => {
             phaseRefs.current[3] = el;
           }}
           data-phase="3" id="phase-3"
-          className="scroll-mt-24 border-t border-border py-12 first:border-t-0 first:pt-0"
+          className="border-t border-border py-12 first:border-t-0 first:pt-0"
         >
           <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
             <h2 className="text-3xl font-display text-fg">
@@ -861,7 +861,7 @@ const DevSecOpsProject = () => {
             phaseRefs.current[4] = el;
           }}
           data-phase="4" id="phase-4"
-          className="scroll-mt-24 border-t border-border py-12 first:border-t-0 first:pt-0"
+          className="border-t border-border py-12 first:border-t-0 first:pt-0"
         >
           <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
             <h2 className="text-3xl font-display text-fg">
@@ -1006,7 +1006,7 @@ CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]`}
             phaseRefs.current[5] = el;
           }}
           data-phase="5" id="phase-5"
-          className="scroll-mt-24 border-t border-border py-12 first:border-t-0 first:pt-0"
+          className="border-t border-border py-12 first:border-t-0 first:pt-0"
         >
           <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
             <h2 className="text-3xl font-display text-fg">
@@ -1163,7 +1163,7 @@ CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]`}
             phaseRefs.current[6] = el;
           }}
           data-phase="6" id="phase-6"
-          className="scroll-mt-24 border-t border-border py-12 first:border-t-0 first:pt-0"
+          className="border-t border-border py-12 first:border-t-0 first:pt-0"
         >
           <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
             <h2 className="text-3xl font-display text-fg">
@@ -1270,7 +1270,7 @@ CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]`}
             phaseRefs.current[7] = el;
           }}
           data-phase="7" id="phase-7"
-          className="scroll-mt-24 border-t border-border py-12 first:border-t-0 first:pt-0"
+          className="border-t border-border py-12 first:border-t-0 first:pt-0"
         >
           <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
             <h2 className="text-3xl font-display text-fg">

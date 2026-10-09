@@ -1,6 +1,14 @@
+import type { Metadata } from "next";
 import SiteNav from "@/components/layout/SiteNav";
 import Button from "@/components/ui/Button";
 import Avatar from "@/components/brand/Avatar";
+
+// A missing page must not be indexed. The root layout's title template does not apply to a page at the same level as that layout
+// (the home page uses title.default for the same reason), so the site name is written out; `absolute` also keeps it from being doubled.
+export const metadata: Metadata = {
+  title: { absolute: "Page not found | Charith Kapuluru" },
+  robots: { index: false, follow: false },
+};
 
 export default function NotFound() {
   return (

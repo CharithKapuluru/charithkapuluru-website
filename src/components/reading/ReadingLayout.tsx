@@ -16,8 +16,8 @@ interface ReadingLayoutProps {
 
 /**
  * Contextual nav + three-column reading grid (gutter, 44rem column, 272px rail) that collapses to one column below xl.
- * Also carries the reduced-motion guard for the framer diagrams and dialogs inside the content. Auth is provided by the projects and
- * fundamentals segment layouts (so it persists between reading pages), not here.
+ * Also carries the reduced-motion guard for the framer diagrams and dialogs inside the content. Auth is provided by the (reading)
+ * route-group layouts of projects and fundamentals (so it persists between reading pages), not here.
  */
 export default function ReadingLayout({ crumbs, sheetLabel, header, rail, after, children }: ReadingLayoutProps) {
   return (
@@ -32,7 +32,7 @@ export default function ReadingLayout({ crumbs, sheetLabel, header, rail, after,
               <div className="reading-body">{children}</div>
               {after}
             </div>
-            <aside className="hidden xl:block">
+            <aside data-print-hide className="hidden xl:block">
               <div className="sticky top-24">{rail}</div>
             </aside>
           </div>

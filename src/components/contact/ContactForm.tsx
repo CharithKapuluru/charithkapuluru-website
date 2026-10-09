@@ -113,7 +113,7 @@ export default function ContactForm() {
       {(status === "error" || status === "load-error") && (
         <p role="alert" className="rounded-md border border-danger/40 bg-danger-soft px-3.5 py-2.5 text-small text-fg">
           {status === "load-error"
-            ? "Could not load the form's sender. Reload the page and try again, or email me directly."
+            ? "Could not load the form's sender. Copy your message, reload the page and try again, or email me directly."
             : "Sending failed. Try again or email me directly."}
         </p>
       )}

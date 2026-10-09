@@ -32,7 +32,7 @@ export default function OnThisPage() {
                   onClick={() => ctx.scrollTo(i)}
                   aria-current={active ? "true" : undefined}
                   className={cn(
-                    "-ml-px block w-full border-l-2 py-1.5 pl-3 text-left text-fg-3 transition-colors duration-150 hover:text-fg",
+                    "-ml-px flex min-h-11 w-full items-center border-l-2 py-1.5 pl-3 text-left text-fg-3 transition-colors duration-150 hover:text-fg xl:min-h-0",
                     active ? "border-accent text-fg" : "border-transparent",
                   )}
                 >

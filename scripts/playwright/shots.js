@@ -13,6 +13,13 @@ async (page) => {
         await page.waitForTimeout(500);
         const long = route.startsWith("/projects/") && route !== "/projects/";
         const name = `${theme}-${width}${route === "/" ? "-home" : route.replace(/\/$/, "").replace(/\//g, "-")}`;
+        if (!long) {
+          // Lazy images only load once they are scrolled near, so pass down the page and back before a full-page capture.
+          await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+          await page.waitForTimeout(400);
+          await page.evaluate(() => window.scrollTo(0, 0));
+          await page.waitForTimeout(200);
+        }
         await page.screenshot({ path: `.playwright-mcp/final/${name}.jpg`, type: "jpeg", quality: 70, fullPage: !long });
         if (long) {
           await page.evaluate(() => window.scrollTo(0, 2200));
