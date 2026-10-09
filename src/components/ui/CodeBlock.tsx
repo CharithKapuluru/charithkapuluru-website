@@ -34,7 +34,7 @@ export default function CodeBlock({ code, language = "bash", filename }: CodeBlo
     <figure className="my-6 overflow-hidden rounded-md border border-border bg-surface-2">
       <figcaption className="flex items-center justify-between gap-3 border-b border-border px-4 py-2">
         <span className="font-mono text-caption text-fg-3">{filename ?? language}</span>
-        <button
+        <button data-print-hide
           type="button"
           onClick={copy}
           aria-live="polite"

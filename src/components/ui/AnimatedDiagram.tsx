@@ -51,7 +51,7 @@ const AnimatedDiagram = ({ title, steps, type = "pipeline" }: AnimatedDiagramPro
     <div className="my-8 p-6 bg-bg rounded-lg border border-fg/10">
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-xl font-display text-fg">{title}</h3>
-        <button
+        <button data-print-hide
           onClick={handlePlay}
           className="px-4 py-1 text-sm font-mono text-accent border border-accent rounded hover:bg-accent hover:text-bg transition-colors"
         >
@@ -174,7 +174,7 @@ const AnimatedDiagram = ({ title, steps, type = "pipeline" }: AnimatedDiagramPro
       {/* Progress Dots */}
       <div className="flex justify-center gap-2 mt-4">
         {steps.map((_, index) => (
-          <button
+          <button data-print-hide
             key={index}
             onClick={() => handleStepClick(index)}
             className={`w-2 h-2 rounded-full transition-all ${

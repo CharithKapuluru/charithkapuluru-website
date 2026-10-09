@@ -96,7 +96,7 @@ export default function ResumeNotice({ slug, progressKey }: { slug: string; prog
 
   // The live region stays mounted so the notice is announced when it appears.
   return (
-    <div role="status">
+    <div role="status" data-print-hide>
       {position && (
         <div className="mb-8 rounded-md border border-border bg-surface-2 px-4 py-3">
           <div className="flex flex-wrap items-center justify-between gap-3">
@@ -110,7 +110,7 @@ export default function ResumeNotice({ slug, progressKey }: { slug: string; prog
               </Button>
             </div>
           </div>
-          <p className="mt-2 text-caption text-fg-3">Start fresh clears the saved progress for this project on every device.</p>
+          <p className="mt-2 text-caption text-fg-3">{user ? "Start fresh clears the saved progress for this project on every device." : "Start fresh clears the saved reading position for this project."}</p>
         </div>
       )}
     </div>

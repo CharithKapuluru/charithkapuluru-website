@@ -41,11 +41,11 @@ export default function ContextualNav({ crumbs, sheetLabel, sheetContent }: { cr
           <a
             href="/ck.pdf"
             download="Charith_Kapuluru_Resume.pdf"
-            aria-label="Resume"
+            aria-label="Download resume (PDF)"
             className="inline-flex h-10 w-10 items-center justify-center rounded-md text-fg-2 hover:bg-surface-2 hover:text-fg md:hidden"
           >
             <FileText size={20} weight="regular" aria-hidden />
-            <span className="sr-only">Resume</span>
+            <span className="sr-only">Download resume (PDF)</span>
           </a>
           <Button href="/ck.pdf" download="Charith_Kapuluru_Resume.pdf" size="sm" className="hidden md:inline-flex">
             Resume
