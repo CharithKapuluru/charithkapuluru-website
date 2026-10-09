@@ -1,37 +1,43 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { motion, useMotionValue, useReducedMotion, useSpring, useTransform } from "framer-motion";
+import { useState, type PointerEvent } from "react";
 import { cn } from "@/lib/utils";
 
-/** Head-only sprite that leans toward the cursor. Used as the wordmark mark. Intrinsic size: 800x945. */
+/**
+ * Head-only sprite that leans toward the cursor while it is hovered. Used as the wordmark mark. Intrinsic size: 800x945.
+ * The slot is 36 px, so it loads head-96.webp (head-192.webp for dense screens) instead of the 100 KB original.
+ */
 export default function AvatarHead({ width = 36, className }: { width?: number; className?: string }) {
-  const reduce = useReducedMotion();
-  const ref = useRef<HTMLDivElement>(null);
-  const mx = useMotionValue(0);
-  const my = useMotionValue(0);
-  const rotate = useSpring(useTransform(mx, [-1, 1], [-12, 12]), { stiffness: 150, damping: 12 });
-  const ty = useSpring(useTransform(my, [-1, 1], [-3, 3]), { stiffness: 150, damping: 12 });
+  const [tilt, setTilt] = useState({ r: 0, y: 0 });
 
-  useEffect(() => {
-    if (reduce) return;
-    const onMove = (e: PointerEvent) => {
-      const el = ref.current;
-      if (!el) return;
-      const rect = el.getBoundingClientRect();
-      mx.set(Math.max(-1, Math.min(1, (e.clientX - (rect.left + rect.width / 2)) / 500)));
-      my.set(Math.max(-1, Math.min(1, (e.clientY - (rect.top + rect.height / 2)) / 500)));
-    };
-    window.addEventListener("pointermove", onMove, { passive: true });
-    return () => window.removeEventListener("pointermove", onMove);
-  }, [reduce, mx, my]);
+  const lean = (e: PointerEvent<HTMLDivElement>) => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const nx = Math.max(-1, Math.min(1, (e.clientX - (rect.left + rect.width / 2)) / (rect.width / 2)));
+    const ny = Math.max(-1, Math.min(1, (e.clientY - (rect.top + rect.height / 2)) / (rect.height / 2)));
+    const r = Math.round(nx * 12);
+    const y = Math.round(ny * 3);
+    setTilt((prev) => (prev.r === r && prev.y === y ? prev : { r, y }));
+  };
 
   const height = Math.round((width * 945) / 800);
 
   return (
-    <motion.div ref={ref} style={reduce ? undefined : { rotate, y: ty }} className={cn("inline-block shrink-0", className)}>
+    // The wrapper takes the pointer and stays still; only the image tilts, so the hit area does not move under the cursor.
+    <div onPointerMove={lean} onPointerLeave={() => setTilt({ r: 0, y: 0 })} className={cn("inline-block shrink-0", className)}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src="/world/poses/head.webp" alt="" aria-hidden width={width} height={height} decoding="async" style={{ width, height }} />
-    </motion.div>
+      <img
+        src="/world/poses/head-96.webp"
+        srcSet="/world/poses/head-96.webp 96w, /world/poses/head-192.webp 192w"
+        sizes={`${width}px`}
+        alt=""
+        aria-hidden
+        width={width}
+        height={height}
+        decoding="async"
+        className="transition-transform duration-200"
+        style={{ width, height, transform: `rotate(${tilt.r}deg) translateY(${tilt.y}px)` }}
+      />
+    </div>
   );
 }

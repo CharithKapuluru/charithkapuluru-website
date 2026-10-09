@@ -18,7 +18,7 @@ export default function FundamentalsIndex() {
                 <ul className="mt-3 divide-y divide-border border-t border-border">
                   {items.map((t) => (
                     <li key={t.slug}>
-                      <Link href={`/fundamentals/${t.slug}`} className="flex items-baseline justify-between gap-4 py-3 text-body text-fg-2 hover:text-fg">
+                      <Link href={`/fundamentals/${t.slug}`} prefetch={false} className="flex items-baseline justify-between gap-4 py-3 text-body text-fg-2 hover:text-fg">
                         <span>{t.title}</span>
                         <span className="shrink-0 text-caption text-fg-3 tabular">{t.readingTime}</span>
                       </Link>

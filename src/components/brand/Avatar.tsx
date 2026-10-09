@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from "react";
-import { motion, useMotionValue, useReducedMotion, useSpring, useTransform } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 export type PoseName = "master" | "wave" | "laptop" | "peek" | "point" | "read" | "bored" | "lost";
@@ -31,45 +30,32 @@ const POSE_SIZE: Record<PoseName, { w: number; h: number }> = {
   lost: { w: 572, h: 1211 },
 };
 
+/**
+ * Smaller copies that scripts/process-art.mjs writes next to each full-size pose (<pose>-240.webp, <pose>-480.webp), so a 110 px slot does not
+ * download a 600 px sprite. A copy exists only when it is at least 10% narrower than the full-size file: keep this rule in step with the script.
+ */
+const VARIANT_WIDTHS = [240, 480];
+
+function poseSrcSet(pose: PoseName, fullWidth: number): string {
+  const smaller = VARIANT_WIDTHS.filter((v) => v <= Math.floor(fullWidth * 0.9)).map((v) => `/world/poses/${pose}-${v}.webp ${v}w`);
+  return [...smaller, `/world/poses/${pose}.webp ${fullWidth}w`].join(", ");
+}
+
 interface AvatarProps {
   pose?: PoseName;
   width?: number;
   flip?: boolean;
   className?: string;
-  /** Tilt the sprite toward the cursor (hero only). */
-  track?: boolean;
   /** Show the poke lines when clicked. */
   pokeable?: boolean;
   /** Eager-load for the LCP candidate in the hero. */
   priority?: boolean;
 }
 
-export default function Avatar({ pose = "master", width = 220, flip = false, className, track = false, pokeable = true, priority = false }: AvatarProps) {
-  const reduce = useReducedMotion();
-  const ref = useRef<HTMLDivElement>(null);
+export default function Avatar({ pose = "master", width = 220, flip = false, className, pokeable = true, priority = false }: AvatarProps) {
   const pokeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const [pokeCount, setPokeCount] = useState(0);
   const [pokeLine, setPokeLine] = useState<string | null>(null);
-
-  const mx = useMotionValue(0);
-  const my = useMotionValue(0);
-  const rotate = useSpring(useTransform(mx, [-1, 1], [-6, 6]), { stiffness: 120, damping: 14 });
-  const tiltY = useSpring(useTransform(my, [-1, 1], [-3, 5]), { stiffness: 120, damping: 14 });
-
-  useEffect(() => {
-    if (!track || reduce) return;
-    const onMove = (e: PointerEvent) => {
-      const el = ref.current;
-      if (!el) return;
-      const rect = el.getBoundingClientRect();
-      const cx = rect.left + rect.width / 2;
-      const cy = rect.top + rect.height / 2;
-      mx.set(Math.max(-1, Math.min(1, (e.clientX - cx) / (window.innerWidth / 2))));
-      my.set(Math.max(-1, Math.min(1, (e.clientY - cy) / (window.innerHeight / 2))));
-    };
-    window.addEventListener("pointermove", onMove, { passive: true });
-    return () => window.removeEventListener("pointermove", onMove);
-  }, [track, reduce, mx, my]);
 
   useEffect(() => {
     return () => {
@@ -101,16 +87,13 @@ export default function Avatar({ pose = "master", width = 220, flip = false, cla
 
   return (
     <>
-      <motion.div
-        ref={ref}
+      <div
         onClick={poke}
         onKeyDown={pokeable ? onKeyDown : undefined}
         role={pokeable ? "button" : undefined}
         aria-label={pokeable ? "Poke Charith" : undefined}
         tabIndex={pokeable ? 0 : undefined}
-        style={track && !reduce ? { rotate, y: tiltY } : undefined}
-        whileTap={pokeable && !reduce ? { scale: 0.97 } : undefined}
-        className={cn("relative inline-block select-none", pokeable && "cursor-pointer", className)}
+        className={cn("relative inline-block select-none", pokeable && "cursor-pointer transition-transform duration-150 motion-safe:active:scale-[0.97]", className)}
       >
         {pokeLine && (
           <span aria-hidden className="absolute -top-10 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-md border border-border bg-surface px-3 py-1.5 font-display text-small text-fg shadow-float">
@@ -121,6 +104,8 @@ export default function Avatar({ pose = "master", width = 220, flip = false, cla
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={`/world/poses/${pose}.webp`}
+          srcSet={poseSrcSet(pose, w)}
+          sizes={`${width}px`}
           alt={POSE_ALT[pose]}
           width={width}
           height={height}
@@ -130,7 +115,7 @@ export default function Avatar({ pose = "master", width = 220, flip = false, cla
           className={cn("h-auto", flip && "-scale-x-100")}
           style={{ width, maxWidth: "100%" }}
         />
-      </motion.div>
+      </div>
       {/* The poke line is spoken from this live region; a live region on the button itself would re-read the whole control. */}
       {pokeable && (
         <span role="status" className="sr-only">

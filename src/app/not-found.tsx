@@ -12,6 +12,7 @@ export default function NotFound() {
           src="/world/scenes/woods-1920.webp"
           srcSet="/world/scenes/woods-768.webp 768w, /world/scenes/woods-1280.webp 1280w, /world/scenes/woods-1920.webp 1920w"
           sizes="100vw"
+          fetchPriority="low"
           alt=""
           aria-hidden
           className="absolute inset-0 h-full w-full object-cover"

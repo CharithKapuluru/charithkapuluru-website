@@ -24,7 +24,17 @@ export default function AboutSection() {
         <div className="relative mx-auto max-w-[360px]">
           {/* Plain img: images are unoptimized in static export, and explicit dimensions prevent layout shift. */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/world/charith-photo.webp" alt="Charith Kapuluru" width={800} height={1200} loading="lazy" decoding="async" className="aspect-[4/5] w-full rounded-xl object-cover" />
+          <img
+            src="/world/charith-photo-720.webp"
+            srcSet="/world/charith-photo-720.webp 720w, /world/charith-photo.webp 800w"
+            sizes="(min-width: 768px) 360px, 100vw"
+            alt="Charith Kapuluru"
+            width={800}
+            height={1200}
+            loading="lazy"
+            decoding="async"
+            className="aspect-[4/5] w-full rounded-xl object-cover"
+          />
           <div className="absolute -bottom-4 -right-6 hidden sm:block" aria-hidden>
             <Avatar pose="peek" width={110} pokeable={false} />
           </div>

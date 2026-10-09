@@ -10,7 +10,7 @@ export default function ProjectRows({ detailed = false, headingLevel: Heading = 
     <ol className={cn("divide-y divide-border border-y border-border", className)}>
       {projects.map((p) => (
         <li key={p.slug}>
-          <Link href={`/projects/${p.slug}`} aria-labelledby={`project-title-${p.slug}`} className="group grid gap-4 py-6 transition-colors duration-150 hover:bg-surface md:grid-cols-12 md:gap-8 md:py-8">
+          <Link href={`/projects/${p.slug}`} prefetch={false} aria-labelledby={`project-title-${p.slug}`} className="group grid gap-4 py-6 transition-colors duration-150 hover:bg-surface md:grid-cols-12 md:gap-8 md:py-8">
             <div className="flex items-center gap-3 text-fg-3 md:col-span-3 md:flex-col md:items-start md:gap-2">
               <span className="text-fg-2">{iconFor(p.icon, { size: 24 })}</span>
               <span className="text-caption tabular">{p.phaseCount} phases</span>

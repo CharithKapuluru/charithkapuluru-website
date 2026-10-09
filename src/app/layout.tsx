@@ -9,7 +9,7 @@ const display = Bricolage_Grotesque({
   subsets: ["latin"],
   variable: "--font-bricolage",
   display: "swap",
-  axes: ["opsz", "wdth"],
+  axes: ["opsz"],
 });
 
 const sans = Geist({ subsets: ["latin"], variable: "--font-geist", display: "swap" });

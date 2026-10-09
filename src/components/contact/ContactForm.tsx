@@ -1,8 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { addDoc, collection, serverTimestamp } from "firebase/firestore";
-import { db } from "@/lib/firebase";
 import Button from "@/components/ui/Button";
 import Avatar from "@/components/brand/Avatar";
 import { validateContact, isValid, MESSAGE_MAX, type ContactErrors, type ContactValues } from "@/lib/contact-validation";
@@ -44,6 +42,8 @@ export default function ContactForm() {
     }
     setStatus("sending");
     try {
+      // Loaded on submit so the contact page does not ship Firebase until someone actually sends a message.
+      const [{ db }, { addDoc, collection, serverTimestamp }] = await Promise.all([import("@/lib/firebase"), import("firebase/firestore")]);
       await addDoc(collection(db, "contacts"), { ...values, createdAt: serverTimestamp(), read: false });
       setSentTo(values.email);
       setStatus("sent");
