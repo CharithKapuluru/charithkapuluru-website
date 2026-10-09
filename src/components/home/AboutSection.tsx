@@ -22,7 +22,9 @@ export default function AboutSection() {
     <section id="about" className="mx-auto grid max-w-6xl gap-12 px-4 py-20 sm:px-6 md:grid-cols-12 md:py-28">
       <div className="md:col-span-5">
         <div className="relative mx-auto max-w-[360px]">
-          <img src="/world/charith-photo.webp" alt="Charith Kapuluru" width={800} height={1000} loading="lazy" decoding="async" className="aspect-[4/5] w-full rounded-xl object-cover" />
+          {/* Plain img: images are unoptimized in static export, and explicit dimensions prevent layout shift. */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/world/charith-photo.webp" alt="Charith Kapuluru" width={800} height={1200} loading="lazy" decoding="async" className="aspect-[4/5] w-full rounded-xl object-cover" />
           <div className="absolute -bottom-4 -right-6 hidden sm:block" aria-hidden>
             <Avatar pose="peek" width={110} pokeable={false} />
           </div>

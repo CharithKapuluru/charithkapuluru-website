@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from "react";
 import { motion, useMotionValue, useReducedMotion, useSpring, useTransform } from "framer-motion";
 import { cn } from "@/lib/utils";
 
@@ -90,6 +90,12 @@ export default function Avatar({ pose = "master", width = 220, flip = false, cla
     pokeTimeoutRef.current = setTimeout(() => setPokeLine(null), 1800);
   };
 
+  const onKeyDown = (e: ReactKeyboardEvent<HTMLDivElement>) => {
+    if (e.key !== "Enter" && e.key !== " ") return;
+    if (e.key === " ") e.preventDefault();
+    poke();
+  };
+
   const { w, h } = POSE_SIZE[pose];
   const height = Math.round((width * h) / w);
 
@@ -97,6 +103,9 @@ export default function Avatar({ pose = "master", width = 220, flip = false, cla
     <motion.div
       ref={ref}
       onClick={poke}
+      onKeyDown={pokeable ? onKeyDown : undefined}
+      role={pokeable ? "button" : undefined}
+      tabIndex={pokeable ? 0 : undefined}
       style={track && !reduce ? { rotate, y: tiltY } : undefined}
       whileTap={pokeable && !reduce ? { scale: 0.97 } : undefined}
       className={cn("relative inline-block select-none", pokeable && "cursor-pointer", className)}

@@ -1,7 +1,7 @@
 const FIGURES = [
   { value: "3", label: "client migrations led from on-prem monoliths to AWS microservices, cutting hosting costs 35%" },
   { value: "~70%", label: "lower compute cost on ECS with Fargate Spot and autoscaling" },
-  { value: "30%", label: "faster API responses after query and data-layer optimisation" },
+  { value: "30%", label: "faster API responses after query and data-layer optimization" },
   { value: "1st", label: "place, UNT Cybersecurity Hackathon 2024" },
 ];
 
