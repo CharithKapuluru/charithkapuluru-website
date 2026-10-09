@@ -42,7 +42,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const topic = getTopicBySlug(slug);
   if (!topic) return { title: "Topic not found" };
-  return { title: `${topic.title} | Fundamentals`, description: topic.description };
+  return { title: `${topic.title} | Fundamentals | Charith Kapuluru`, description: topic.description };
 }
 
 export default async function FundamentalsArticlePage({ params }: { params: Promise<{ slug: string }> }) {

@@ -33,7 +33,7 @@ export default function GuidesGrid({ topics, categories }: { topics: Fundamental
           <li key={t.slug}>
             <Link
               href={`/fundamentals/${t.slug}`}
-              className="group flex h-full flex-col rounded-lg border border-border bg-surface p-6 transition-[border-color,transform] duration-150 hover:-translate-y-px hover:border-accent/50"
+              className="group flex h-full flex-col rounded-lg border border-border bg-surface p-6 transition-[border-color,translate] duration-150 hover:-translate-y-px hover:border-accent/50"
             >
               <span className="text-caption text-fg-3">{labelById[t.category]}</span>
               <h2 className="mt-2 font-display text-h3 text-fg group-hover:text-accent">{t.title}</h2>
