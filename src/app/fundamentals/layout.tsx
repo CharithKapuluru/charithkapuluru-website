@@ -1,9 +1,9 @@
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Fundamentals | Charith Kapuluru",
+  title: "Fundamentals",
   description:
-    "Learn the fundamentals of computing — virtual machines, Linux, operating systems, servers, SSH, and more. Built for beginners and professionals refreshing their basics.",
+    "Plain-language guides to computing fundamentals: virtual machines, Linux, operating systems, servers, SSH and more. Built for beginners and for professionals refreshing the basics.",
 };
 
 export default function FundamentalsLayout({

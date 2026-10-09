@@ -1,6 +1,8 @@
-import { Metadata } from "next";
+import type { ComponentType } from "react";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { topics, getTopicBySlug } from "@/lib/fundamentalsData";
+import { topics, categories, getTopicBySlug, getNextTopic } from "@/lib/fundamentalsData";
+import { avatarLines } from "@/lib/avatarLines";
 import ComputingBasics from "@/components/fundamentals/ComputingBasics";
 import NetworkingBasics from "@/components/fundamentals/NetworkingBasics";
 import LinuxFilesystem from "@/components/fundamentals/LinuxFilesystem";
@@ -11,64 +13,73 @@ import LinuxDirectories from "@/components/fundamentals/LinuxDirectories";
 import PortsFirewallsSecurity from "@/components/fundamentals/PortsFirewallsSecurity";
 import CronJobs from "@/components/fundamentals/CronJobs";
 import DockerAndNginx from "@/components/fundamentals/DockerAndNginx";
-import WorldNav from "@/components/world/WorldNav";
-import LibraryHeader from "@/components/world/scenes/LibraryHeader";
-import { avatarLines } from "@/lib/avatarLines";
+import ReadingLayout from "@/components/reading/ReadingLayout";
+import ReadingHeader from "@/components/reading/ReadingHeader";
+import OnThisPage from "@/components/reading/OnThisPage";
+import SignInControl from "@/components/reading/SignInControl";
+import AvatarNote from "@/components/reading/AvatarNote";
+import NextUp from "@/components/reading/NextUp";
+import Footer from "@/components/layout/Footer";
+
+const CONTENT: Record<string, ComponentType> = {
+  "computing-basics": ComputingBasics,
+  "networking-basics": NetworkingBasics,
+  "linux-filesystem": LinuxFilesystem,
+  "file-permissions": FilePermissions,
+  "linux-environment": LinuxEnvironment,
+  "systemd-and-boot": SystemdAndBoot,
+  "linux-directories": LinuxDirectories,
+  "ports-firewalls-security": PortsFirewallsSecurity,
+  "cron-jobs": CronJobs,
+  "docker-and-nginx": DockerAndNginx,
+};
 
 export function generateStaticParams() {
-  return topics.map((topic) => ({
-    slug: topic.slug,
-  }));
+  return topics.map((topic) => ({ slug: topic.slug }));
 }
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const topic = getTopicBySlug(slug);
-
-  if (!topic) {
-    return { title: "Topic Not Found" };
-  }
-
-  return {
-    title: `${topic.title} | Fundamentals | Charith Kapuluru`,
-    description: topic.description,
-  };
+  if (!topic) return { title: "Topic not found" };
+  return { title: `${topic.title} | Fundamentals`, description: topic.description };
 }
 
-export default async function FundamentalsArticlePage({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
+export default async function FundamentalsArticlePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const topic = getTopicBySlug(slug);
-
-  if (!topic) {
-    notFound();
-  }
+  if (!topic) notFound();
+  const Content = CONTENT[slug];
+  const category = categories.find((c) => c.id === topic.category)?.label;
+  const next = getNextTopic(slug);
 
   return (
-    <main className="min-h-screen bg-bg-cream">
-      <WorldNav />
-      <LibraryHeader title={topic.title} subtitle={topic.subtitle} avatarLine={avatarLines[slug]} />
-      <div className="relative mx-auto max-w-5xl px-0 py-8 md:px-8">
-        <div className="rounded-none bg-bg-paper paper-shadow md:rounded-2xl">
-          {slug === "computing-basics" && <ComputingBasics />}
-          {slug === "networking-basics" && <NetworkingBasics />}
-          {slug === "linux-filesystem" && <LinuxFilesystem />}
-          {slug === "file-permissions" && <FilePermissions />}
-          {slug === "linux-environment" && <LinuxEnvironment />}
-          {slug === "systemd-and-boot" && <SystemdAndBoot />}
-          {slug === "linux-directories" && <LinuxDirectories />}
-          {slug === "ports-firewalls-security" && <PortsFirewallsSecurity />}
-          {slug === "cron-jobs" && <CronJobs />}
-          {slug === "docker-and-nginx" && <DockerAndNginx />}
-        </div>
-      </div>
-    </main>
+    <>
+      <ReadingLayout
+        crumbs={[{ label: "Fundamentals", href: "/fundamentals" }, { label: topic.title }]}
+        sheetLabel="Sections"
+        header={
+          <ReadingHeader
+            eyebrow={category}
+            title={topic.title}
+            lede={topic.lede}
+            meta={[
+              { label: "Reading time", value: topic.readingTime },
+              { label: "Sections", value: String(topic.sectionCount) },
+            ]}
+            aside={<AvatarNote pose="read" line={avatarLines[slug]} />}
+          />
+        }
+        rail={
+          <OnThisPage>
+            <SignInControl className="mt-6" />
+          </OnThisPage>
+        }
+        after={<NextUp label="Next guide" title={next.title} href={`/fundamentals/${next.slug}`} meta={next.readingTime} backHref="/fundamentals" backLabel="All guides" />}
+      >
+        {Content ? <Content /> : null}
+      </ReadingLayout>
+      <Footer />
+    </>
   );
 }
