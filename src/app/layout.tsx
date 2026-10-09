@@ -3,7 +3,7 @@ import { Bricolage_Grotesque, Geist, Geist_Mono } from "next/font/google";
 import { Providers } from "./providers";
 import SkipLink from "@/components/layout/SkipLink";
 import Konami from "@/components/brand/Konami";
-import { OG_IMAGES, SITE_NAME } from "@/lib/seo";
+import { OG_IMAGES, SITE_NAME, TWITTER_IMAGES } from "@/lib/seo";
 import "./globals.css";
 
 const display = Bricolage_Grotesque({
@@ -41,7 +41,7 @@ export const metadata: Metadata = {
     title: "Charith Kapuluru | Cloud & DevOps Engineer",
     description:
       "Cloud and DevOps engineer. Project walkthroughs and plain-language guides to how servers actually work.",
-    images: ["/og.png"],
+    images: TWITTER_IMAGES,
   },
   robots: { index: true, follow: true },
 };

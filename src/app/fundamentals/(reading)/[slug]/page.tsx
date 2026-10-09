@@ -20,7 +20,7 @@ import SignInControl from "@/components/reading/SignInControl";
 import AvatarNote from "@/components/reading/AvatarNote";
 import NextUp from "@/components/reading/NextUp";
 import Footer from "@/components/layout/Footer";
-import { pageOpenGraph } from "@/lib/seo";
+import { pageOpenGraph, pageTwitter } from "@/lib/seo";
 
 const CONTENT: Record<string, ComponentType> = {
   "computing-basics": ComputingBasics,
@@ -50,6 +50,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     description: topic.description,
     alternates: { canonical },
     openGraph: pageOpenGraph({ title, description: topic.description, path: canonical }),
+    twitter: pageTwitter({ title, description: topic.description }),
   };
 }
 

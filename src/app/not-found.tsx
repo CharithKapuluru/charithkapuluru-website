@@ -10,7 +10,7 @@ export default function NotFound() {
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/world/scenes/woods-1920.webp"
-          srcSet="/world/scenes/woods-768.webp 768w, /world/scenes/woods-1280.webp 1280w, /world/scenes/woods-1920.webp 1920w"
+          srcSet="/world/scenes/woods-768.webp 768w, /world/scenes/woods-1280.webp 1280w, /world/scenes/woods-1920.webp 1672w"
           sizes="100vw"
           fetchPriority="low"
           alt=""

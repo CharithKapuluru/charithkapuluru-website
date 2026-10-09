@@ -14,7 +14,7 @@ const inputClass = "w-full rounded-md border border-border-strong bg-bg px-3.5 p
 export default function ContactForm() {
   const [values, setValues] = useState<ContactValues>(EMPTY);
   const [errors, setErrors] = useState<ContactErrors>({});
-  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error" | "load-error">("idle");
   const [sentTo, setSentTo] = useState("");
   const sentHeading = useRef<HTMLHeadingElement>(null);
 
@@ -50,7 +50,8 @@ export default function ContactForm() {
       setValues(EMPTY);
     } catch (error) {
       console.error("Error submitting form:", error);
-      setStatus("error");
+      // A dynamic import that failed to load stays failed until the page is reloaded, so retrying the send cannot work. The typed message stays in the form.
+      setStatus(error instanceof Error && error.message.startsWith("Failed to load chunk") ? "load-error" : "error");
     }
   };
 
@@ -109,9 +110,11 @@ export default function ContactForm() {
         "Message",
         <textarea id="message" name="message" required rows={5} maxLength={MESSAGE_MAX} value={values.message} onChange={set("message")} onBlur={validateField("message")} aria-invalid={!!errors.message} aria-describedby={errors.message ? "message-error" : undefined} className={cn(inputClass, "resize-y", errors.message && "border-danger")} />,
       )}
-      {status === "error" && (
+      {(status === "error" || status === "load-error") && (
         <p role="alert" className="rounded-md border border-danger/40 bg-danger-soft px-3.5 py-2.5 text-small text-fg">
-          Sending failed. Try again or email me directly.
+          {status === "load-error"
+            ? "Could not load the form's sender. Reload the page and try again, or email me directly."
+            : "Sending failed. Try again or email me directly."}
         </p>
       )}
       <Button type="submit" size="lg" disabled={status === "sending"} className="w-full sm:w-auto sm:self-start">

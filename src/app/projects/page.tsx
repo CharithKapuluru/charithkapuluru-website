@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import SiteNav from "@/components/layout/SiteNav";
 import Footer from "@/components/layout/Footer";
 import ProjectRows from "@/components/home/ProjectRows";
-import { pageOpenGraph } from "@/lib/seo";
+import { pageOpenGraph, pageTwitter } from "@/lib/seo";
 
 const TITLE = "Projects";
 const DESCRIPTION = "Three production-style walkthroughs: a DevSecOps pipeline, AWS ECS Fargate with Terraform, and a Linux server built from scratch.";
@@ -13,6 +13,7 @@ export const metadata: Metadata = {
   description: DESCRIPTION,
   alternates: { canonical: CANONICAL },
   openGraph: pageOpenGraph({ title: TITLE, description: DESCRIPTION, path: CANONICAL }),
+  twitter: pageTwitter({ title: TITLE, description: DESCRIPTION }),
 };
 
 export default function ProjectsPage() {

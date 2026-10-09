@@ -3,7 +3,7 @@ import SiteNav from "@/components/layout/SiteNav";
 import Footer from "@/components/layout/Footer";
 import CopyEmailButton from "@/components/home/CopyEmailButton";
 import ContactForm from "@/components/contact/ContactForm";
-import { pageOpenGraph } from "@/lib/seo";
+import { pageOpenGraph, pageTwitter } from "@/lib/seo";
 
 const TITLE = "Contact";
 const DESCRIPTION = "Get in touch with Charith Kapuluru about Cloud and DevOps roles, collaborations, or the guides.";
@@ -14,6 +14,7 @@ export const metadata: Metadata = {
   description: DESCRIPTION,
   alternates: { canonical: CANONICAL },
   openGraph: pageOpenGraph({ title: TITLE, description: DESCRIPTION, path: CANONICAL }),
+  twitter: pageTwitter({ title: TITLE, description: DESCRIPTION }),
 };
 
 export default function ContactPage() {
