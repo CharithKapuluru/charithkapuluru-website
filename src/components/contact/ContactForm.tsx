@@ -19,8 +19,11 @@ export default function ContactForm() {
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [sentTo, setSentTo] = useState("");
 
-  const set = (field: keyof ContactValues) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
-    setValues((v) => ({ ...v, [field]: e.target.value }));
+  const set = (field: keyof ContactValues) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const next = { ...values, [field]: e.target.value };
+    setValues(next);
+    if (errors[field]) setErrors((prev) => ({ ...prev, [field]: validateContact(next)[field] }));
+  };
 
   const validateField = (field: keyof ContactValues) => () => setErrors((prev) => ({ ...prev, [field]: validateContact(values)[field] }));
 
@@ -28,7 +31,11 @@ export default function ContactForm() {
     e.preventDefault();
     const nextErrors = validateContact(values);
     setErrors(nextErrors);
-    if (!isValid(nextErrors)) return;
+    if (!isValid(nextErrors)) {
+      const first = (["name", "email", "message"] as const).find((k) => nextErrors[k]);
+      if (first) requestAnimationFrame(() => document.getElementById(first)?.focus());
+      return;
+    }
     setStatus("sending");
     try {
       await addDoc(collection(db, "contacts"), { ...values, createdAt: serverTimestamp(), read: false });
@@ -41,13 +48,22 @@ export default function ContactForm() {
     }
   };
 
+  const announce = (
+    <span className="sr-only" aria-live="polite">
+      {status === "sent" ? `Message sent. I'll reply to ${sentTo} soon.` : ""}
+    </span>
+  );
+
   if (status === "sent") {
     return (
-      <div role="status" className="flex flex-col items-center gap-4 rounded-lg border border-border bg-surface p-8 text-center">
-        <Avatar pose="wave" width={140} pokeable={false} />
-        <p className="text-h3 font-display text-fg">Message sent.</p>
-        <p className="text-body text-fg-2">I&apos;ll reply to {sentTo} soon.</p>
-      </div>
+      <>
+        {announce}
+        <div className="flex flex-col items-center gap-4 rounded-lg border border-border bg-surface p-8 text-center">
+          <Avatar pose="wave" width={140} pokeable={false} />
+          <p className="text-h3 font-display text-fg">Message sent.</p>
+          <p className="text-body text-fg-2">I&apos;ll reply to {sentTo} soon.</p>
+        </div>
+      </>
     );
   }
 
@@ -66,10 +82,12 @@ export default function ContactForm() {
   );
 
   return (
+    <>
+    {announce}
     <form onSubmit={submit} noValidate className="flex flex-col gap-5 rounded-lg border border-border bg-surface p-6 md:p-8">
-      <div className="grid gap-5 sm:grid-cols-2">
-        {field("name", "Name", <input id="name" name="name" type="text" autoComplete="name" value={values.name} onChange={set("name")} onBlur={validateField("name")} aria-invalid={!!errors.name} aria-describedby={errors.name ? "name-error" : undefined} className={cn(inputClass, errors.name && "border-danger")} />)}
-        {field("email", "Email", <input id="email" name="email" type="email" autoComplete="email" value={values.email} onChange={set("email")} onBlur={validateField("email")} aria-invalid={!!errors.email} aria-describedby={errors.email ? "email-error" : undefined} className={cn(inputClass, errors.email && "border-danger")} />)}
+      <div className="grid gap-5 lg:grid-cols-2">
+        {field("name", "Name", <input id="name" name="name" type="text" required autoComplete="name" value={values.name} onChange={set("name")} onBlur={validateField("name")} aria-invalid={!!errors.name} aria-describedby={errors.name ? "name-error" : undefined} className={cn(inputClass, errors.name && "border-danger")} />)}
+        {field("email", "Email", <input id="email" name="email" type="email" required autoComplete="email" value={values.email} onChange={set("email")} onBlur={validateField("email")} aria-invalid={!!errors.email} aria-describedby={errors.email ? "email-error" : undefined} className={cn(inputClass, errors.email && "border-danger")} />)}
       </div>
       {field(
         "projectType",
@@ -83,7 +101,7 @@ export default function ContactForm() {
       {field(
         "message",
         "Message",
-        <textarea id="message" name="message" rows={5} maxLength={MESSAGE_MAX} value={values.message} onChange={set("message")} onBlur={validateField("message")} aria-invalid={!!errors.message} aria-describedby={errors.message ? "message-error" : undefined} className={cn(inputClass, "resize-y", errors.message && "border-danger")} />,
+        <textarea id="message" name="message" required rows={5} maxLength={MESSAGE_MAX} value={values.message} onChange={set("message")} onBlur={validateField("message")} aria-invalid={!!errors.message} aria-describedby={errors.message ? "message-error" : undefined} className={cn(inputClass, "resize-y", errors.message && "border-danger")} />,
       )}
       {status === "error" && (
         <p role="alert" className="rounded-md border border-danger/40 bg-danger-soft px-3.5 py-2.5 text-small text-fg">
@@ -94,5 +112,6 @@ export default function ContactForm() {
         {status === "sending" ? "Sending" : "Send message"}
       </Button>
     </form>
+    </>
   );
 }

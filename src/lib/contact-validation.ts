@@ -16,7 +16,7 @@ export function validateContact(v: ContactValues): ContactErrors {
   if (!v.email.trim()) errors.email = "Enter your email address.";
   else if (!EMAIL_RE.test(v.email.trim())) errors.email = "Enter a valid email address.";
   if (!v.message.trim()) errors.message = "Write a message.";
-  else if (v.message.length > MESSAGE_MAX) errors.message = `Keep the message under ${MESSAGE_MAX} characters.`;
+  else if (v.message.length > MESSAGE_MAX) errors.message = `Keep the message to ${MESSAGE_MAX} characters or fewer.`;
   return errors;
 }
 
