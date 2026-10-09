@@ -48,7 +48,8 @@ export default function SectionsSheet({ label, className, content }: { label: "S
         aria-label={label}
         className="m-0 mt-auto max-h-[80dvh] w-full max-w-none rounded-t-lg border border-border bg-surface p-0 text-fg sm:m-auto sm:max-w-md sm:rounded-lg"
         onClick={(e) => e.target === ref.current && close()}
-        onClose={() => setIsOpen(false)}
+        // React re-dispatches a nested dialog's close up the tree, so only react to this dialog's own close.
+        onClose={(e) => { if (e.target === e.currentTarget) setIsOpen(false); }}
       >
         <div className="flex items-center justify-between border-b border-border px-4 py-3">
           <span className="font-display text-body font-semibold">{label}</span>

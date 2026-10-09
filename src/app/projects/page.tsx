@@ -15,7 +15,7 @@ export default function ProjectsPage() {
       <main id="main" className="mx-auto max-w-6xl px-4 py-14 sm:px-6 md:py-20">
         <h1 className="text-display-lg text-fg">Projects</h1>
         <p className="mt-4 max-w-[60ch] text-lede text-fg-2">Three production-style walkthroughs. Each one is a real repository, documented phase by phase.</p>
-        <ProjectRows detailed className="mt-12" />
+        <ProjectRows detailed headingLevel="h2" className="mt-12" />
       </main>
       <Footer />
     </>

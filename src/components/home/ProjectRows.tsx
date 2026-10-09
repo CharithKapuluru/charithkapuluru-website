@@ -5,7 +5,7 @@ import { iconFor } from "@/components/ui/icons";
 import Tag from "@/components/ui/Tag";
 import { cn } from "@/lib/utils";
 
-export default function ProjectRows({ detailed = false, className }: { detailed?: boolean; className?: string }) {
+export default function ProjectRows({ detailed = false, headingLevel: Heading = "h3", className }: { detailed?: boolean; headingLevel?: "h2" | "h3"; className?: string }) {
   return (
     <ol className={cn("divide-y divide-border border-y border-border", className)}>
       {projects.map((p) => (
@@ -17,7 +17,7 @@ export default function ProjectRows({ detailed = false, className }: { detailed?
               {detailed && <span className="text-caption">{p.estimatedTime}</span>}
             </div>
             <div className="md:col-span-9">
-              <h3 className="font-display text-h3 text-fg group-hover:text-accent">{p.title}</h3>
+              <Heading className="font-display text-h3 text-fg group-hover:text-accent">{p.title}</Heading>
               <p className="mt-2 max-w-[60ch] text-body text-fg-2">{detailed ? p.lede : p.outcome}</p>
               {detailed && (
                 <p className="mt-2 max-w-[60ch] text-small text-fg-3">

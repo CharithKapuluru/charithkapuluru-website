@@ -50,10 +50,6 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
               eyebrow="Project walkthrough"
               title={project.title}
               lede={project.lede}
-              meta={[
-                { label: "Phases", value: String(project.phaseCount) },
-                { label: "Time", value: project.estimatedTime },
-              ]}
             />
             <FactsPanel repo={project.repo} stack={project.technologies} phaseCount={project.phaseCount} estimatedTime={project.estimatedTime} outcome={project.outcome} />
             <ResumeNotice slug={project.slug} progressKey={progressKey} />

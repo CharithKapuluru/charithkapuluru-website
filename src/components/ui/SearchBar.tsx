@@ -5,6 +5,7 @@ import { MagnifyingGlass } from "@phosphor-icons/react/dist/ssr";
 import Button from "./Button";
 import Tag from "./Tag";
 import { prefersReducedMotion, scrollBehavior } from "@/lib/scroll";
+import { useReadingNavContext } from "@/components/reading/ReadingNavContext";
 
 interface SearchResult {
   phaseId: number;
@@ -69,6 +70,7 @@ export default function SearchBar({ trigger = false }: { trigger?: boolean }) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const [query, setQuery] = useState("");
+  const nav = useReadingNavContext();
 
   const open = () => {
     dialogRef.current?.showModal();
@@ -116,7 +118,9 @@ export default function SearchBar({ trigger = false }: { trigger?: boolean }) {
 
   const go = (phaseId: number) => {
     close();
-    document.querySelector(`[data-phase="${phaseId}"]`)?.scrollIntoView({ behavior: scrollBehavior(prefersReducedMotion()), block: "start" });
+    // Phase ids are section indices in the reading context, which also dismisses the Phases sheet when it is open.
+    if (nav && nav.sections.length > 0) nav.scrollTo(phaseId);
+    else document.querySelector(`[data-phase="${phaseId}"]`)?.scrollIntoView({ behavior: scrollBehavior(prefersReducedMotion()), block: "start" });
   };
 
   return (
