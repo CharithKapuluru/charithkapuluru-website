@@ -1,15 +1,14 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { useActivePhase } from "@/hooks/useActivePhase";
-import PhaseTimeline from "@/components/ui/PhaseTimeline";
+import { useReadingNav } from "@/hooks/useReadingNav";
+import { prefersReducedMotion, scrollBehavior } from "@/lib/scroll";
 import Flashcards from "@/components/ui/Flashcards";
 import KeyTakeaway from "@/components/ui/KeyTakeaway";
 import BeforeAfterComparison from "@/components/ui/BeforeAfterComparison";
 import DifficultyIndicator from "@/components/ui/DifficultyIndicator";
 import ConceptCards from "@/components/ui/ConceptCards";
 import Collapsible from "@/components/ui/Collapsible";
-import ProgressSidebar from "@/components/ui/ProgressSidebar";
 import Quiz from "@/components/ui/Quiz";
 import Terminal from "@/components/ui/Terminal";
 import AnimatedDiagram, {
@@ -20,9 +19,7 @@ import Confetti, { CelebrationMessage } from "@/components/ui/Confetti";
 import BookmarkButton from "@/components/ui/BookmarkButton";
 import ShareButtons from "@/components/ui/ShareButtons";
 import PersonalNotes from "@/components/ui/PersonalNotes";
-import SearchBar from "@/components/ui/SearchBar";
-import { ReadingPositionTracker } from "@/components/ui/BookmarkButton";
-import { AllNotesViewer as NotesViewer } from "@/components/ui/PersonalNotes";
+import { iconFor } from "@/components/ui/icons";
 
 const phaseNames = [
   "Repository Setup",
@@ -35,21 +32,22 @@ const phaseNames = [
   "Trivy Container Scanning",
 ];
 
+const phases = ["Setup", "API", "Tests", "Lint", "Docker", "CI/CD", "SAST", "Trivy"].map((label, id) => ({ id, label }));
+
 const DevSecOpsProject = () => {
-  const [currentPhase, setCurrentPhase] = useState(0);
-  const phaseRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const phaseRefs = useRef<(HTMLElement | null)[]>([]);
   const [showConfetti, setShowConfetti] = useState(false);
   const [showCelebration, setShowCelebration] = useState(false);
   const [celebratedPhase, setCelebratedPhase] = useState<number | null>(null);
 
   const scrollToPhase = (phaseId: number) => {
     phaseRefs.current[phaseId]?.scrollIntoView({
-      behavior: "smooth",
+      behavior: scrollBehavior(prefersReducedMotion()),
       block: "start",
     });
   };
 
-  useActivePhase(phaseRefs, setCurrentPhase);
+  useReadingNav(phases, phaseRefs);
 
   const triggerCelebration = (phaseId: number) => {
     if (celebratedPhase !== phaseId) {
@@ -60,11 +58,8 @@ const DevSecOpsProject = () => {
   };
 
   return (
-    <div className="bg-bg-paper">
+    <article>
       {/* Global Components */}
-      <SearchBar />
-      <NotesViewer />
-      <ReadingPositionTracker />
       <Confetti
         isActive={showConfetti}
         onComplete={() => setShowConfetti(false)}
@@ -79,25 +74,11 @@ const DevSecOpsProject = () => {
         onClose={() => setShowCelebration(false)}
       />
 
-      {/* Phase Timeline - Sticky at top */}
-      <PhaseTimeline currentPhase={currentPhase} onPhaseClick={scrollToPhase} />
-
-      {/* Progress Sidebar - Desktop only */}
-      <ProgressSidebar
-        currentPhase={currentPhase}
-        onPhaseClick={scrollToPhase}
-      />
-
-      <div className="container mx-auto px-6 md:px-12 lg:px-16 max-w-6xl py-16 lg:mr-64">
-        {/* Title */}
-        <h1 className="text-4xl md:text-5xl font-serif text-text-charcoal mb-8">
-          FastAPI DevSecOps Demo: A Production-Ready Microservice from Zero to
-          Deployment
-        </h1>
-
+      <div className="min-w-0">
         {/* Main Before/After Comparison */}
         <BeforeAfterComparison
           title="What Makes This Project Different?"
+          headingLevel="h2"
           rows={[
             {
               before: "No project structure",
@@ -126,20 +107,14 @@ const DevSecOpsProject = () => {
         />
 
         {/* GitHub Repository Link */}
-        <div className="my-16 p-8 bg-bg-cream/50 border border-text-charcoal/10 rounded-lg">
+        <div className="my-16 p-8 bg-bg/50 border border-fg/10 rounded-lg">
           <div className="flex items-center gap-4 mb-4">
-            <svg
-              className="w-8 h-8 text-text-charcoal"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
-            </svg>
-            <h3 className="text-2xl font-serif text-text-charcoal">
+            {iconFor("github", { size: 18 })}
+            <h3 className="text-2xl font-display text-fg">
               View Source Code
             </h3>
           </div>
-          <p className="text-text-taupe mb-4">
+          <p className="text-fg-2 mb-4">
             Explore the complete source code, documentation, and implementation
             details on GitHub.
           </p>
@@ -147,29 +122,12 @@ const DevSecOpsProject = () => {
             href="https://github.com/CharithKapuluru/fastapi-devsecops-demo"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-text-charcoal text-bg-paper rounded-lg hover:bg-accent-moss transition-colors font-mono text-sm"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-fg rounded-lg hover:opacity-90 transition-opacity font-mono text-sm"
           >
-            <svg
-              className="w-5 h-5"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
-            </svg>
+            {iconFor("github", { size: 18 })}
             View on GitHub
-            <svg
-              className="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-              />
-            </svg>
+            <span className="sr-only"> (opens in a new tab)</span>
+            {iconFor("arrow-up-right", { size: 16 })}
           </a>
         </div>
 
@@ -181,13 +139,13 @@ const DevSecOpsProject = () => {
 
         {/* Key Concepts Section */}
         <div className="mb-16">
-          <h2 className="text-3xl font-serif text-text-charcoal mb-6">
+          <h2 className="text-3xl font-display text-fg mb-6">
             Key Concepts in this Project
           </h2>
 
           {/* What is DevOps */}
           <Collapsible title="What is DevOps?" defaultOpen={true}>
-            <p className="text-lg text-text-taupe leading-relaxed mb-4">
+            <p className="text-lg text-fg-2 leading-relaxed mb-4">
               DevOps is a way of working where software developers (Dev) and
               IT/operations teams (Ops) work together to build, test, release,
               and run software faster and more reliably. DevOps bridges the gap
@@ -197,24 +155,24 @@ const DevSecOpsProject = () => {
               stable and reliable in production.
             </p>
 
-            <h4 className="text-xl font-serif text-text-charcoal mb-3">
+            <h4 className="text-xl font-display text-fg mb-3">
               Real-life example (Instagram-style app)
             </h4>
             <div className="mb-4">
-              <p className="text-lg text-text-taupe mb-2">
+              <p className="text-lg text-fg-2 mb-2">
                 <strong>Who are Developers:</strong>
               </p>
-              <ul className="list-disc list-inside text-text-taupe ml-4">
+              <ul className="list-disc list-inside text-fg-2 ml-4">
                 <li>Build login page</li>
                 <li>Create photo upload feature</li>
                 <li>Write recommendation logic</li>
               </ul>
             </div>
             <div className="mb-4">
-              <p className="text-lg text-text-taupe mb-2">
+              <p className="text-lg text-fg-2 mb-2">
                 <strong>What does it mean by Operations:</strong>
               </p>
-              <ul className="list-disc list-inside text-text-taupe ml-4">
+              <ul className="list-disc list-inside text-fg-2 ml-4">
                 <li>Deploy app on cloud</li>
                 <li>Ensure app works 24/7</li>
                 <li>Scale servers when traffic increases</li>
@@ -222,12 +180,12 @@ const DevSecOpsProject = () => {
                 <li>Secure user data</li>
               </ul>
             </div>
-            <p className="text-lg text-text-taupe">Both are equally important.</p>
+            <p className="text-lg text-fg-2">Both are equally important.</p>
           </Collapsible>
 
           {/* REST API */}
           <Collapsible title="REST API">
-            <p className="text-lg text-text-taupe leading-relaxed mb-4">
+            <p className="text-lg text-fg-2 leading-relaxed mb-4">
               A REST API (Representational State Transfer Application
               Programming Interface) is a way for applications to communicate
               with servers over the internet using standard HTTP methods. In a
@@ -240,7 +198,7 @@ const DevSecOpsProject = () => {
               simple, scalable, language-independent, and work efficiently over
               the web.
             </p>
-            <p className="text-lg text-text-taupe leading-relaxed mb-4">
+            <p className="text-lg text-fg-2 leading-relaxed mb-4">
               When I open an app like Instagram and view a user&apos;s profile,
               the app sends a request to Instagram&apos;s backend using an API
               (REST-style). This API is part of Instagram&apos;s server and is
@@ -251,7 +209,7 @@ const DevSecOpsProject = () => {
               show anything to the user; it only transfers data between the app
               and the server.
             </p>
-            <p className="text-lg text-text-taupe leading-relaxed mb-4">
+            <p className="text-lg text-fg-2 leading-relaxed mb-4">
               When I open a food delivery app like Uber Eats and search for a
               restaurant, the app sends a request to the backend using a REST
               API. This API is part of the server and handles the request using
@@ -262,7 +220,7 @@ const DevSecOpsProject = () => {
               simply acts as a communication layer that transfers data between
               the app and the server.
             </p>
-            <p className="text-lg text-text-taupe leading-relaxed">
+            <p className="text-lg text-fg-2 leading-relaxed">
               A REST API is a server-side interface that receives requests from
               an app, fetches or updates data, and sends the data back for the
               app to display.
@@ -271,7 +229,7 @@ const DevSecOpsProject = () => {
 
           {/* FastAPI */}
           <Collapsible title="FastAPI">
-            <p className="text-lg text-text-taupe leading-relaxed mb-4">
+            <p className="text-lg text-fg-2 leading-relaxed mb-4">
               A REST API is not a separate program or service that fetches data
               on its own; instead, it is an architectural style that defines
               rules and best practices for how communication between a client
@@ -280,7 +238,7 @@ const DevSecOpsProject = () => {
               data, PUT for updating data, and DELETE for removing data, along
               with structured URLs and data formats like JSON.
             </p>
-            <p className="text-lg text-text-taupe leading-relaxed mb-4">
+            <p className="text-lg text-fg-2 leading-relaxed mb-4">
               FastAPI is a Python framework that developers use to build an API
               that follows these REST principles. When a client application,
               such as a mobile or web app, sends a request (for example,
@@ -294,7 +252,7 @@ const DevSecOpsProject = () => {
               performs the real work of handling requests, processing data, and
               returning responses.
             </p>
-            <p className="text-lg text-text-taupe leading-relaxed mb-4">
+            <p className="text-lg text-fg-2 leading-relaxed mb-4">
               REST API should be understood as an architectural blueprint or a
               set of rules rather than something that actually runs or executes
               code. REST defines how communication between an application and a
@@ -305,7 +263,7 @@ const DevSecOpsProject = () => {
               execute logic, and does not exist as a software component; it is
               simply a set of guidelines.
             </p>
-            <p className="text-lg text-text-taupe leading-relaxed mb-4">
+            <p className="text-lg text-fg-2 leading-relaxed mb-4">
               FastAPI, on the other hand, is a real Python framework that runs
               on a server and is responsible for implementing these REST
               principles. When a user searches for something like
@@ -318,7 +276,7 @@ const DevSecOpsProject = () => {
               following REST rules such as stateless communication and clear
               resource-based responses.
             </p>
-            <p className="text-lg text-text-taupe leading-relaxed">
+            <p className="text-lg text-fg-2 leading-relaxed">
               Therefore, the correct mental model is that FastAPI is the actual
               API that performs all the work, while REST simply describes how
               that API should behave. In real-world usage, when people say terms
@@ -330,7 +288,7 @@ const DevSecOpsProject = () => {
 
           {/* Docker */}
           <Collapsible title="Docker Image, Container and Kubernetes">
-            <p className="text-lg text-text-taupe leading-relaxed mb-4">
+            <p className="text-lg text-fg-2 leading-relaxed mb-4">
               Consider a real-world food delivery application where the backend
               order service is built using FastAPI and needs to run reliably on
               different machines such as developer laptops, testing servers, and
@@ -342,7 +300,7 @@ const DevSecOpsProject = () => {
               does not run; it simply represents the standardized version of the
               application.
             </p>
-            <p className="text-lg text-text-taupe leading-relaxed mb-4">
+            <p className="text-lg text-fg-2 leading-relaxed mb-4">
               When this image is executed on a server, it creates a Docker
               container, which is a running instance of the application capable
               of handling real user requests. During peak usage, such as a busy
@@ -355,7 +313,7 @@ const DevSecOpsProject = () => {
               containers are the actual running copies that keep the service
               responsive and stable in real-world production environments.
             </p>
-            <p className="text-lg text-text-taupe leading-relaxed mb-4">
+            <p className="text-lg text-fg-2 leading-relaxed mb-4">
               Traditionally, applications handled increased traffic by adding
               more servers, which is known as horizontal scaling, or by
               upgrading a single server&apos;s resources, which is called
@@ -370,7 +328,7 @@ const DevSecOpsProject = () => {
               are only added when existing servers reach their capacity, making
               container-based scaling more efficient, faster, and cost-effective.
             </p>
-            <p className="text-lg text-text-taupe leading-relaxed">
+            <p className="text-lg text-fg-2 leading-relaxed">
               Kubernetes is a container orchestration platform that manages how
               containerized applications run at scale across multiple servers.
               While Docker is responsible for packaging an application into an
@@ -397,11 +355,11 @@ const DevSecOpsProject = () => {
           ref={(el) => {
             phaseRefs.current[0] = el;
           }}
-          data-phase="0"
-          className="mb-16 scroll-mt-32"
+          data-phase="0" id="phase-0"
+          className="border-t border-border py-12 first:border-t-0 first:pt-0"
         >
           <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
-            <h2 className="text-3xl font-serif text-text-charcoal">
+            <h2 className="text-3xl font-display text-fg">
               Phase 0: Repository Setup and Project Structure
             </h2>
             <div className="flex flex-wrap gap-2">
@@ -418,10 +376,10 @@ const DevSecOpsProject = () => {
             prerequisites="Git installed"
           />
 
-          <h3 className="text-xl font-serif text-text-charcoal mb-4">
+          <h3 className="text-xl font-display text-fg mb-4">
             What is Phase 0 About?
           </h3>
-          <p className="text-lg text-text-taupe leading-relaxed mb-6">
+          <p className="text-lg text-fg-2 leading-relaxed mb-6">
             Phase 0 is about setting up the foundation of your project before
             writing any code. In this phase, we create the project folder
             structure, set up version control with Git, and connect it to
@@ -429,10 +387,10 @@ const DevSecOpsProject = () => {
             what separates professional projects from beginner projects.
           </p>
 
-          <h3 className="text-xl font-serif text-text-charcoal mb-4">
+          <h3 className="text-xl font-display text-fg mb-4">
             Why is This Important?
           </h3>
-          <p className="text-lg text-text-taupe leading-relaxed mb-4">
+          <p className="text-lg text-fg-2 leading-relaxed mb-4">
             <strong>For Your Career:</strong> When recruiters look at your
             GitHub, the first thing they notice is project organization. A messy
             project with no structure screams &quot;beginner.&quot; A
@@ -440,10 +398,10 @@ const DevSecOpsProject = () => {
             professionalism.
           </p>
 
-          <h3 className="text-xl font-serif text-text-charcoal mb-4">
+          <h3 className="text-xl font-display text-fg mb-4">
             Project Structure
           </h3>
-          <pre className="bg-bg-cream p-4 rounded-sm text-sm font-mono mb-4 overflow-x-auto">
+          <pre className="bg-surface-2 border border-border p-4 rounded-sm text-sm font-mono mb-4 overflow-x-auto">
             {`fastapi-devsecops-demo/
 ├── app/                    # Your application code will go here
 ├── tests/                  # Your test code will go here
@@ -544,11 +502,11 @@ const DevSecOpsProject = () => {
           ref={(el) => {
             phaseRefs.current[1] = el;
           }}
-          data-phase="1"
-          className="mb-16 scroll-mt-32"
+          data-phase="1" id="phase-1"
+          className="border-t border-border py-12 first:border-t-0 first:pt-0"
         >
           <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
-            <h2 className="text-3xl font-serif text-text-charcoal">
+            <h2 className="text-3xl font-display text-fg">
               Phase 1: Build FastAPI Microservice MVP
             </h2>
             <div className="flex flex-wrap gap-2">
@@ -565,10 +523,10 @@ const DevSecOpsProject = () => {
             prerequisites="Phase 0, Python basics"
           />
 
-          <h3 className="text-xl font-serif text-text-charcoal mb-4">
+          <h3 className="text-xl font-display text-fg mb-4">
             What is Phase 1 About?
           </h3>
-          <p className="text-lg text-text-taupe leading-relaxed mb-4">
+          <p className="text-lg text-fg-2 leading-relaxed mb-4">
             Phase 1 is where we actually start coding! We build a working REST
             API using FastAPI - a modern Python web framework. But we&apos;re
             not just building &quot;any&quot; API. We&apos;re building it the
@@ -592,10 +550,10 @@ const DevSecOpsProject = () => {
             ]}
           />
 
-          <h3 className="text-xl font-serif text-text-charcoal mb-4">
+          <h3 className="text-xl font-display text-fg mb-4">
             What We Built
           </h3>
-          <ol className="list-decimal list-inside text-text-taupe ml-4 mb-6">
+          <ol className="list-decimal list-inside text-fg-2 ml-4 mb-6">
             <li>app/__init__.py - Package Marker</li>
             <li>app/config.py - Configuration &amp; Logging</li>
             <li>app/models.py - Data Models</li>
@@ -661,11 +619,11 @@ const DevSecOpsProject = () => {
           ref={(el) => {
             phaseRefs.current[2] = el;
           }}
-          data-phase="2"
-          className="mb-16 scroll-mt-32"
+          data-phase="2" id="phase-2"
+          className="border-t border-border py-12 first:border-t-0 first:pt-0"
         >
           <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
-            <h2 className="text-3xl font-serif text-text-charcoal">
+            <h2 className="text-3xl font-display text-fg">
               Phase 2: Add Automated Tests with Pytest
             </h2>
             <div className="flex flex-wrap gap-2">
@@ -685,10 +643,10 @@ const DevSecOpsProject = () => {
             prerequisites="Phase 1"
           />
 
-          <h3 className="text-xl font-serif text-text-charcoal mb-4">
+          <h3 className="text-xl font-display text-fg mb-4">
             What is Phase 2 About?
           </h3>
-          <p className="text-lg text-text-taupe leading-relaxed mb-6">
+          <p className="text-lg text-fg-2 leading-relaxed mb-6">
             Phase 2 adds automated testing to your API. Instead of manually
             testing your endpoints by running curl commands, you write code that
             tests your code automatically.
@@ -716,13 +674,13 @@ const DevSecOpsProject = () => {
             ]}
           />
 
-          <h3 className="text-xl font-serif text-text-charcoal mb-4">
+          <h3 className="text-xl font-display text-fg mb-4">
             What is Pytest?
           </h3>
-          <p className="text-lg text-text-taupe leading-relaxed mb-4">
+          <p className="text-lg text-fg-2 leading-relaxed mb-4">
             Pytest is Python&apos;s most popular testing framework. It&apos;s:
           </p>
-          <ul className="list-disc list-inside text-text-taupe ml-4 mb-4">
+          <ul className="list-disc list-inside text-fg-2 ml-4 mb-4">
             <li>
               <strong>Simple</strong> - Write tests as regular functions
             </li>
@@ -735,7 +693,7 @@ const DevSecOpsProject = () => {
             </li>
           </ul>
 
-          <pre className="bg-bg-cream p-4 rounded-sm text-sm font-mono mb-4 overflow-x-auto">
+          <pre className="bg-surface-2 border border-border p-4 rounded-sm text-sm font-mono mb-4 overflow-x-auto">
             {`def test_addition():
     result = 1 + 1
     assert result == 2  # If true, test passes. If false, test fails.`}
@@ -804,11 +762,11 @@ const DevSecOpsProject = () => {
           ref={(el) => {
             phaseRefs.current[3] = el;
           }}
-          data-phase="3"
-          className="mb-16 scroll-mt-32"
+          data-phase="3" id="phase-3"
+          className="border-t border-border py-12 first:border-t-0 first:pt-0"
         >
           <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
-            <h2 className="text-3xl font-serif text-text-charcoal">
+            <h2 className="text-3xl font-display text-fg">
               Phase 3: Add Linting and Code Formatting
             </h2>
             <div className="flex flex-wrap gap-2">
@@ -828,22 +786,22 @@ const DevSecOpsProject = () => {
             prerequisites="Phase 2"
           />
 
-          <h3 className="text-xl font-serif text-text-charcoal mb-4">
+          <h3 className="text-xl font-display text-fg mb-4">
             What is Phase 3 About?
           </h3>
-          <p className="text-lg text-text-taupe leading-relaxed mb-6">
+          <p className="text-lg text-fg-2 leading-relaxed mb-6">
             Phase 3 adds automatic code quality checks. Linting finds bugs and
             bad practices. Formatting ensures consistent code style across the
             team.
           </p>
 
-          <h3 className="text-xl font-serif text-text-charcoal mb-4">
+          <h3 className="text-xl font-display text-fg mb-4">
             What is Ruff?
           </h3>
-          <p className="text-lg text-text-taupe leading-relaxed mb-4">
+          <p className="text-lg text-fg-2 leading-relaxed mb-4">
             Ruff is a modern Python tool that does BOTH linting and formatting:
           </p>
-          <ul className="list-disc list-inside text-text-taupe ml-4 mb-4">
+          <ul className="list-disc list-inside text-fg-2 ml-4 mb-4">
             <li>
               <strong>Fast</strong> - Written in Rust, 10-100x faster than older
               tools
@@ -902,11 +860,11 @@ const DevSecOpsProject = () => {
           ref={(el) => {
             phaseRefs.current[4] = el;
           }}
-          data-phase="4"
-          className="mb-16 scroll-mt-32"
+          data-phase="4" id="phase-4"
+          className="border-t border-border py-12 first:border-t-0 first:pt-0"
         >
           <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
-            <h2 className="text-3xl font-serif text-text-charcoal">
+            <h2 className="text-3xl font-display text-fg">
               Phase 4: Dockerize the Application
             </h2>
             <div className="flex flex-wrap gap-2">
@@ -923,10 +881,10 @@ const DevSecOpsProject = () => {
             prerequisites="Phase 3, Docker installed"
           />
 
-          <h3 className="text-xl font-serif text-text-charcoal mb-4">
+          <h3 className="text-xl font-display text-fg mb-4">
             What is Phase 4 About?
           </h3>
-          <p className="text-lg text-text-taupe leading-relaxed mb-6">
+          <p className="text-lg text-fg-2 leading-relaxed mb-6">
             Phase 4 packages your application into a Docker container - a
             portable box that includes your app and everything it needs to run.
           </p>
@@ -950,10 +908,10 @@ const DevSecOpsProject = () => {
             ]}
           />
 
-          <h3 className="text-xl font-serif text-text-charcoal mb-4">
+          <h3 className="text-xl font-display text-fg mb-4">
             Dockerfile
           </h3>
-          <pre className="bg-bg-cream p-4 rounded-sm text-sm font-mono mb-6 overflow-x-auto">
+          <pre className="bg-surface-2 border border-border p-4 rounded-sm text-sm font-mono mb-6 overflow-x-auto">
             {`FROM python:3.12-slim
 WORKDIR /app
 COPY requirements.txt .
@@ -1047,11 +1005,11 @@ CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]`}
           ref={(el) => {
             phaseRefs.current[5] = el;
           }}
-          data-phase="5"
-          className="mb-16 scroll-mt-32"
+          data-phase="5" id="phase-5"
+          className="border-t border-border py-12 first:border-t-0 first:pt-0"
         >
           <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
-            <h2 className="text-3xl font-serif text-text-charcoal">
+            <h2 className="text-3xl font-display text-fg">
               Phase 5: CI/CD with GitHub Actions
             </h2>
             <div className="flex flex-wrap gap-2">
@@ -1068,10 +1026,10 @@ CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]`}
             prerequisites="Phase 4, GitHub account"
           />
 
-          <h3 className="text-xl font-serif text-text-charcoal mb-4">
+          <h3 className="text-xl font-display text-fg mb-4">
             What is Phase 5 About?
           </h3>
-          <p className="text-lg text-text-taupe leading-relaxed mb-6">
+          <p className="text-lg text-fg-2 leading-relaxed mb-6">
             Phase 5 sets up CI/CD - a system that automatically tests, checks,
             and builds your code every time you push to GitHub. No more manual
             checking.
@@ -1096,10 +1054,10 @@ CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]`}
             ]}
           />
 
-          <h3 className="text-xl font-serif text-text-charcoal mb-4">
+          <h3 className="text-xl font-display text-fg mb-4">
             CI/CD in One Line
           </h3>
-          <ul className="list-disc list-inside text-text-taupe ml-4 mb-4">
+          <ul className="list-disc list-inside text-fg-2 ml-4 mb-4">
             <li>
               <strong>CI (Continuous Integration)</strong> → Automatically test
               code when it changes
@@ -1204,11 +1162,11 @@ CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]`}
           ref={(el) => {
             phaseRefs.current[6] = el;
           }}
-          data-phase="6"
-          className="mb-16 scroll-mt-32"
+          data-phase="6" id="phase-6"
+          className="border-t border-border py-12 first:border-t-0 first:pt-0"
         >
           <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
-            <h2 className="text-3xl font-serif text-text-charcoal">
+            <h2 className="text-3xl font-display text-fg">
               Phase 6: SAST Security Scanning with Semgrep
             </h2>
             <div className="flex flex-wrap gap-2">
@@ -1225,36 +1183,36 @@ CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]`}
             prerequisites="Phase 5"
           />
 
-          <h3 className="text-xl font-serif text-text-charcoal mb-4">
+          <h3 className="text-xl font-display text-fg mb-4">
             What is SAST?
           </h3>
-          <p className="text-lg text-text-taupe leading-relaxed mb-4">
+          <p className="text-lg text-fg-2 leading-relaxed mb-4">
             <strong>SAST = Static Application Security Testing</strong> -
             analyzes your source code for security vulnerabilities without
             running the application. Think of it like a spell checker, but for
             security flaws.
           </p>
 
-          <h3 className="text-xl font-serif text-text-charcoal mb-4">
+          <h3 className="text-xl font-display text-fg mb-4">
             The Cost of Security Bugs
           </h3>
-          <table className="w-full mb-6 text-text-taupe">
+          <table className="w-full mb-6 text-fg-2">
             <thead>
-              <tr className="border-b border-text-charcoal/20">
+              <tr className="border-b border-fg/20">
                 <th className="text-left py-2">When Found</th>
                 <th className="text-left py-2">Cost to Fix</th>
               </tr>
             </thead>
             <tbody>
-              <tr className="border-b border-text-charcoal/10">
+              <tr className="border-b border-fg/10">
                 <td className="py-2">During coding</td>
                 <td className="py-2">$100</td>
               </tr>
-              <tr className="border-b border-text-charcoal/10">
+              <tr className="border-b border-fg/10">
                 <td className="py-2">During code review</td>
                 <td className="py-2">$1,000</td>
               </tr>
-              <tr className="border-b border-text-charcoal/10">
+              <tr className="border-b border-fg/10">
                 <td className="py-2">During testing</td>
                 <td className="py-2">$10,000</td>
               </tr>
@@ -1311,11 +1269,11 @@ CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]`}
           ref={(el) => {
             phaseRefs.current[7] = el;
           }}
-          data-phase="7"
-          className="mb-16 scroll-mt-32"
+          data-phase="7" id="phase-7"
+          className="border-t border-border py-12 first:border-t-0 first:pt-0"
         >
           <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
-            <h2 className="text-3xl font-serif text-text-charcoal">
+            <h2 className="text-3xl font-display text-fg">
               Phase 7: Container Scanning with Trivy
             </h2>
             <div className="flex flex-wrap gap-2">
@@ -1332,18 +1290,18 @@ CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]`}
             prerequisites="Phase 6"
           />
 
-          <h3 className="text-xl font-serif text-text-charcoal mb-4">
+          <h3 className="text-xl font-display text-fg mb-4">
             Semgrep vs Trivy
           </h3>
-          <table className="w-full mb-6 text-text-taupe">
+          <table className="w-full mb-6 text-fg-2">
             <thead>
-              <tr className="border-b border-text-charcoal/20">
+              <tr className="border-b border-fg/20">
                 <th className="text-left py-2">Semgrep (Phase 6)</th>
                 <th className="text-left py-2">Trivy (Phase 7)</th>
               </tr>
             </thead>
             <tbody>
-              <tr className="border-b border-text-charcoal/10">
+              <tr className="border-b border-fg/10">
                 <td className="py-2">
                   Scans your <strong>source code</strong>
                 </td>
@@ -1351,7 +1309,7 @@ CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]`}
                   Scans your <strong>Docker image</strong>
                 </td>
               </tr>
-              <tr className="border-b border-text-charcoal/10">
+              <tr className="border-b border-fg/10">
                 <td className="py-2">Finds bugs you wrote</td>
                 <td className="py-2">Finds vulnerabilities in dependencies</td>
               </tr>
@@ -1362,10 +1320,10 @@ CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]`}
             </tbody>
           </table>
 
-          <h3 className="text-xl font-serif text-text-charcoal mb-4">
+          <h3 className="text-xl font-display text-fg mb-4">
             Your Code Can Be Perfect, But Still Vulnerable
           </h3>
-          <p className="text-lg text-text-taupe leading-relaxed mb-4">
+          <p className="text-lg text-fg-2 leading-relaxed mb-4">
             You write perfect code, but use an old version of FastAPI with a
             security bug, or a Python library that got hacked. Your app is now
             vulnerable - even though YOUR code is fine.
@@ -1443,7 +1401,7 @@ CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]`}
           />
         </div>
       </div>
-    </div>
+    </article>
   );
 };
 

@@ -63,7 +63,6 @@ const CIDRCalculator = () => {
 
     const network = numToIP(networkNum >>> 0);
     const broadcastNum = networkNum + totalIPs - 1;
-    const lastIP = numToIP(broadcastNum >>> 0);
 
     // AWS reserved IPs (first 4 + last 1)
     const awsReserved = [
@@ -108,11 +107,11 @@ const CIDRCalculator = () => {
   ];
 
   return (
-    <div className="my-8 p-6 bg-bg-cream/50 border border-text-charcoal/10 rounded-xl">
+    <div className="my-8 p-6 bg-bg/50 border border-fg/10 rounded-xl">
       <div className="flex items-center gap-3 mb-4">
-        <div className="w-10 h-10 rounded-lg bg-amber-500/20 flex items-center justify-center">
+        <div className="w-10 h-10 rounded-lg bg-tip/20 flex items-center justify-center">
           <svg
-            className="w-5 h-5 text-amber-600"
+            className="w-5 h-5 text-tip"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -126,10 +125,10 @@ const CIDRCalculator = () => {
           </svg>
         </div>
         <div>
-          <h3 className="text-xl font-serif text-text-charcoal">
+          <h3 className="text-xl font-display text-fg">
             CIDR Calculator
           </h3>
-          <p className="text-sm text-text-olive">
+          <p className="text-sm text-fg-3">
             Calculate IP ranges and AWS-usable addresses
           </p>
         </div>
@@ -137,7 +136,7 @@ const CIDRCalculator = () => {
 
       {/* Quick Select */}
       <div className="mb-4">
-        <p className="text-xs text-text-olive mb-2 uppercase tracking-wider font-serif">
+        <p className="text-xs text-fg-3 mb-2 uppercase tracking-wider">
           Quick Select
         </p>
         <div className="flex flex-wrap gap-2">
@@ -154,8 +153,8 @@ const CIDRCalculator = () => {
               }}
               className={`px-3 py-1.5 text-sm rounded-lg border transition-all ${
                 cidr === item.value
-                  ? "bg-amber-500/20 border-amber-500/40 text-amber-700"
-                  : "bg-bg-paper border-text-charcoal/10 text-text-taupe hover:border-amber-500/30"
+                  ? "bg-tip/20 border-tip/40 text-accent-strong"
+                  : "bg-surface border-fg/10 text-fg-2 hover:border-tip/30"
               }`}
             >
               {item.label}
@@ -173,13 +172,13 @@ const CIDRCalculator = () => {
           onChange={(e) => setCidr(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleCalculate()}
           placeholder="e.g., 10.0.0.0/16"
-          className="flex-1 px-4 py-2 rounded-lg border border-text-charcoal/10 bg-bg-paper
-                     font-mono text-sm focus:outline-none focus:border-amber-500/50
-                     focus:ring-2 focus:ring-amber-500/20"
+          className="flex-1 px-4 py-2 rounded-lg border border-fg/10 bg-surface
+                     font-mono text-sm focus:outline-none focus:border-tip/50
+                     focus:ring-2 focus:ring-tip/20"
         />
         <button
           onClick={handleCalculate}
-          className="px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600
+          className="px-4 py-2 bg-tip text-bg rounded-lg hover:bg-accent-strong
                      transition-colors font-medium text-sm"
         >
           Calculate
@@ -193,8 +192,8 @@ const CIDRCalculator = () => {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="mb-4 p-3 bg-accent-terracotta/10 border border-accent-terracotta/20
-                       rounded-lg text-accent-terracotta text-sm"
+            className="mb-4 p-3 bg-danger/10 border border-danger/20
+                       rounded-lg text-danger text-sm"
           >
             {error}
           </motion.div>
@@ -214,58 +213,58 @@ const CIDRCalculator = () => {
           >
             {/* Main Stats */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              <div className="p-3 bg-bg-paper rounded-lg border border-text-charcoal/10">
-                <p className="text-xs text-text-olive mb-1">Total IPs</p>
-                <p className="text-xl font-mono text-text-charcoal">
+              <div className="p-3 bg-surface rounded-lg border border-fg/10">
+                <p className="text-xs text-fg-3 mb-1">Total IPs</p>
+                <p className="text-xl font-mono text-fg">
                   {result.totalIPs.toLocaleString()}
                 </p>
               </div>
-              <div className="p-3 bg-accent-moss/10 rounded-lg border border-accent-moss/20">
-                <p className="text-xs text-accent-moss mb-1">Usable in AWS</p>
-                <p className="text-xl font-mono text-accent-moss font-bold">
+              <div className="p-3 bg-accent/10 rounded-lg border border-accent/20">
+                <p className="text-xs text-accent mb-1">Usable in AWS</p>
+                <p className="text-xl font-mono text-accent font-bold">
                   {result.usableIPs.toLocaleString()}
                 </p>
               </div>
-              <div className="p-3 bg-bg-paper rounded-lg border border-text-charcoal/10">
-                <p className="text-xs text-text-olive mb-1">Subnet Mask</p>
-                <p className="text-sm font-mono text-text-charcoal">
+              <div className="p-3 bg-surface rounded-lg border border-fg/10">
+                <p className="text-xs text-fg-3 mb-1">Subnet Mask</p>
+                <p className="text-sm font-mono text-fg">
                   {result.subnetMask}
                 </p>
               </div>
-              <div className="p-3 bg-bg-paper rounded-lg border border-text-charcoal/10">
-                <p className="text-xs text-text-olive mb-1">Wildcard Mask</p>
-                <p className="text-sm font-mono text-text-charcoal">
+              <div className="p-3 bg-surface rounded-lg border border-fg/10">
+                <p className="text-xs text-fg-3 mb-1">Wildcard Mask</p>
+                <p className="text-sm font-mono text-fg">
                   {result.wildcardMask}
                 </p>
               </div>
             </div>
 
             {/* IP Range */}
-            <div className="p-4 bg-bg-paper rounded-lg border border-text-charcoal/10">
-              <p className="text-xs text-text-olive mb-2 uppercase tracking-wider font-serif">
+            <div className="p-4 bg-surface rounded-lg border border-fg/10">
+              <p className="text-xs text-fg-3 mb-2 uppercase tracking-wider">
                 Usable IP Range
               </p>
               <div className="flex items-center gap-2 font-mono text-sm">
-                <span className="px-2 py-1 bg-accent-sage/20 rounded text-accent-moss">
+                <span className="px-2 py-1 bg-success/20 rounded text-fg">
                   {result.firstIP}
                 </span>
-                <span className="text-text-olive">to</span>
-                <span className="px-2 py-1 bg-accent-sage/20 rounded text-accent-moss">
+                <span className="text-fg-3">to</span>
+                <span className="px-2 py-1 bg-success/20 rounded text-fg">
                   {result.lastIP}
                 </span>
               </div>
             </div>
 
             {/* AWS Reserved IPs */}
-            <div className="p-4 bg-amber-50 rounded-lg border border-amber-200">
-              <p className="text-xs text-amber-700 mb-2 uppercase tracking-wider font-serif">
+            <div className="p-4 bg-tip-soft rounded-lg border border-tip/30">
+              <p className="text-xs text-tip mb-2 uppercase tracking-wider">
                 AWS Reserved IPs (5 per subnet)
               </p>
               <div className="space-y-1">
                 {result.awsReserved.map((reserved, index) => (
                   <div key={index} className="flex items-center gap-2 text-sm">
-                    <span className="w-2 h-2 rounded-full bg-amber-400" />
-                    <code className="text-amber-800">{reserved}</code>
+                    <span className="w-2 h-2 rounded-full bg-tip" />
+                    <code className="text-tip">{reserved}</code>
                   </div>
                 ))}
               </div>
@@ -273,27 +272,27 @@ const CIDRCalculator = () => {
 
             {/* Visual Subnet Division (for /16) */}
             {cidr.endsWith("/16") && (
-              <div className="p-4 bg-bg-paper rounded-lg border border-text-charcoal/10">
-                <p className="text-xs text-text-olive mb-3 uppercase tracking-wider font-serif">
+              <div className="p-4 bg-surface rounded-lg border border-fg/10">
+                <p className="text-xs text-fg-3 mb-3 uppercase tracking-wider">
                   Subnet Division Example
                 </p>
                 <div className="grid grid-cols-4 gap-2">
                   {[
-                    { label: "Public 1", cidr: "/24", color: "bg-blue-100 border-blue-300" },
-                    { label: "Public 2", cidr: "/24", color: "bg-blue-100 border-blue-300" },
-                    { label: "Private 1", cidr: "/24", color: "bg-purple-100 border-purple-300" },
-                    { label: "Private 2", cidr: "/24", color: "bg-purple-100 border-purple-300" },
+                    { label: "Public 1", cidr: "/24", color: "bg-info-soft border-info" },
+                    { label: "Public 2", cidr: "/24", color: "bg-info-soft border-info" },
+                    { label: "Private 1", cidr: "/24", color: "bg-accent-soft border-accent" },
+                    { label: "Private 2", cidr: "/24", color: "bg-accent-soft border-accent" },
                   ].map((subnet, i) => (
                     <div
                       key={i}
                       className={`p-2 rounded border ${subnet.color} text-center`}
                     >
                       <p className="text-xs font-medium">{subnet.label}</p>
-                      <p className="text-xs text-text-olive">{subnet.cidr}</p>
+                      <p className="text-xs text-fg-3">{subnet.cidr}</p>
                     </div>
                   ))}
                 </div>
-                <p className="mt-2 text-xs text-text-olive">
+                <p className="mt-2 text-xs text-fg-3">
                   A /16 VPC can contain 256 /24 subnets, each with 251 usable IPs
                 </p>
               </div>

@@ -1,4 +1,4 @@
-"use client";
+import { Check, X } from "@phosphor-icons/react/dist/ssr";
 
 interface ComparisonRow {
   before: string;
@@ -7,85 +7,43 @@ interface ComparisonRow {
 
 interface BeforeAfterComparisonProps {
   title?: string;
+  /** Heading element for the title, so the walkthrough outline does not skip a level. */
+  headingLevel?: "h2" | "h3" | "h4";
   rows: ComparisonRow[];
+  beforeLabel?: string;
+  afterLabel?: string;
 }
 
-const BeforeAfterComparison = ({ title, rows }: BeforeAfterComparisonProps) => {
+export default function BeforeAfterComparison({
+  title,
+  headingLevel: Heading = "h3",
+  rows,
+  beforeLabel = "Basic student project",
+  afterLabel = "Production-ready project",
+}: BeforeAfterComparisonProps) {
   return (
-    <div className="my-8 overflow-hidden rounded-lg border border-text-charcoal/10">
-      {title && (
-        <div className="bg-bg-cream px-6 py-3 border-b border-text-charcoal/10">
-          <h4 className="font-serif text-lg text-text-charcoal">{title}</h4>
+    <div className="my-8 overflow-hidden rounded-lg border border-border">
+      {title && <Heading className="border-b border-border bg-surface-2 px-5 py-3 text-body font-medium text-fg">{title}</Heading>}
+      <div className="grid md:grid-cols-2">
+        <div className="hidden items-center gap-2 border-b border-border px-5 py-3 text-caption font-medium text-danger md:flex md:border-r">
+          <X size={14} aria-hidden /> {beforeLabel}
         </div>
-      )}
-
-      {/* Desktop view */}
-      <div className="hidden md:block">
-        <div className="grid grid-cols-2">
-          {/* Headers */}
-          <div className="bg-red-50 px-6 py-4 border-b border-r border-text-charcoal/10">
-            <h5 className="font-mono text-sm uppercase tracking-wider text-red-700 font-medium">
-              ❌ Basic Student Project
-            </h5>
-          </div>
-          <div className="bg-green-50 px-6 py-4 border-b border-text-charcoal/10">
-            <h5 className="font-mono text-sm uppercase tracking-wider text-green-700 font-medium">
-              ✅ Production-Ready Project
-            </h5>
-          </div>
-
-          {/* Rows */}
-          {rows.map((row, index) => (
-            <div key={index} className="contents">
-              <div
-                className={`px-6 py-4 border-r border-text-charcoal/10 ${
-                  index % 2 === 0 ? "bg-white" : "bg-bg-paper"
-                } ${index < rows.length - 1 ? "border-b border-text-charcoal/5" : ""}`}
-              >
-                <p className="text-text-taupe flex items-start gap-2">
-                  <span className="text-red-500 flex-shrink-0">✗</span>
-                  {row.before}
-                </p>
-              </div>
-              <div
-                className={`px-6 py-4 ${
-                  index % 2 === 0 ? "bg-white" : "bg-bg-paper"
-                } ${index < rows.length - 1 ? "border-b border-text-charcoal/5" : ""}`}
-              >
-                <p className="text-text-taupe flex items-start gap-2">
-                  <span className="text-green-500 flex-shrink-0">✓</span>
-                  {row.after}
-                </p>
-              </div>
-            </div>
-          ))}
+        <div className="hidden items-center gap-2 border-b border-border px-5 py-3 text-caption font-medium text-success md:flex">
+          <Check size={14} aria-hidden /> {afterLabel}
         </div>
-      </div>
-
-      {/* Mobile view - stacked */}
-      <div className="md:hidden">
-        {rows.map((row, index) => (
-          <div
-            key={index}
-            className={`${index < rows.length - 1 ? "border-b border-text-charcoal/10" : ""}`}
-          >
-            <div className="bg-red-50 px-4 py-3">
-              <p className="text-sm text-text-taupe flex items-start gap-2">
-                <span className="text-red-500 flex-shrink-0">✗</span>
-                {row.before}
-              </p>
+        {rows.map((row, i) => (
+          <div key={i} className="contents">
+            <div className="flex items-start gap-2 border-b border-border px-5 py-3 text-small text-fg-2 md:border-r">
+              <X size={16} role="img" aria-label={beforeLabel} className="mt-0.5 shrink-0 text-danger" />
+              {row.before}
             </div>
-            <div className="bg-green-50 px-4 py-3">
-              <p className="text-sm text-text-taupe flex items-start gap-2">
-                <span className="text-green-500 flex-shrink-0">✓</span>
-                {row.after}
-              </p>
+            <div className="flex items-start gap-2 border-b border-border px-5 py-3 text-small text-fg-2">
+              <Check size={16} role="img" aria-label={afterLabel} className="mt-0.5 shrink-0 text-success" />
+              {row.after}
             </div>
           </div>
         ))}
       </div>
     </div>
   );
-};
-
-export default BeforeAfterComparison;
+}

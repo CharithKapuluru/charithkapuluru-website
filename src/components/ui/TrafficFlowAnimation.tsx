@@ -123,18 +123,18 @@ const TrafficFlowAnimation = () => {
   };
 
   const getStepColor = (index: number) => {
-    if (index < currentStep) return "bg-accent-moss text-white";
-    if (index === currentStep) return "bg-amber-500 text-white ring-4 ring-amber-200";
-    return "bg-bg-stone text-text-olive";
+    if (index < currentStep) return "bg-success text-bg";
+    if (index === currentStep) return "bg-tip text-bg ring-4 ring-tip/30";
+    return "bg-surface-2 text-fg-3";
   };
 
   return (
-    <div className="my-8 p-6 bg-bg-cream/50 border border-text-charcoal/10 rounded-xl">
+    <div className="my-8 p-6 bg-bg/50 border border-fg/10 rounded-xl">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-lg bg-info/20 flex items-center justify-center">
             <svg
-              className="w-5 h-5 text-blue-600"
+              className="w-5 h-5 text-info"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -148,10 +148,10 @@ const TrafficFlowAnimation = () => {
             </svg>
           </div>
           <div>
-            <h3 className="text-xl font-serif text-text-charcoal">
+            <h3 className="text-xl font-display text-fg">
               Traffic Flow Animation
             </h3>
-            <p className="text-sm text-text-olive">
+            <p className="text-sm text-fg-3">
               Step through how requests flow through your infrastructure
             </p>
           </div>
@@ -161,8 +161,8 @@ const TrafficFlowAnimation = () => {
         <div className="flex items-center gap-2">
           <button
             onClick={handlePlay}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-accent-moss text-white
-                       rounded-lg hover:bg-accent-moss/90 transition-colors text-sm"
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-accent text-bg
+                       rounded-lg hover:bg-accent/90 transition-colors text-sm"
           >
             <svg
               className="w-4 h-4"
@@ -179,9 +179,9 @@ const TrafficFlowAnimation = () => {
       {/* Flow Diagram */}
       <div className="relative mb-6">
         {/* Connection Line */}
-        <div className="absolute top-6 left-6 right-6 h-0.5 bg-bg-stone" />
+        <div className="absolute top-6 left-6 right-6 h-0.5 bg-border" />
         <motion.div
-          className="absolute top-6 left-6 h-0.5 bg-amber-500"
+          className="absolute top-6 left-6 h-0.5 bg-tip"
           initial={{ width: "0%" }}
           animate={{
             width: `${(currentStep / (flowSteps.length - 1)) * 100}%`,
@@ -212,8 +212,8 @@ const TrafficFlowAnimation = () => {
               <p
                 className={`mt-2 text-xs text-center max-w-16 ${
                   index === currentStep
-                    ? "text-text-charcoal font-medium"
-                    : "text-text-olive"
+                    ? "text-fg font-medium"
+                    : "text-fg-3"
                 }`}
               >
                 {step.component}
@@ -224,39 +224,39 @@ const TrafficFlowAnimation = () => {
       </div>
 
       {/* Step Details */}
-      <AnimatePresence mode="wait">
+      <AnimatePresence mode="wait" initial={false}>
         <motion.div
           key={currentStep}
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -10 }}
           transition={{ duration: 0.2 }}
-          className="bg-bg-paper p-6 rounded-lg border border-text-charcoal/10"
+          className="bg-surface p-6 rounded-lg border border-fg/10"
         >
           <div className="flex items-start justify-between mb-4">
             <div>
-              <span className="text-xs text-amber-600 font-medium">
+              <span className="text-xs text-tip font-medium">
                 Step {currentStep + 1} of {flowSteps.length}
               </span>
-              <h4 className="text-lg font-serif text-text-charcoal">
+              <h4 className="text-lg font-display text-fg">
                 {flowSteps[currentStep].title}
               </h4>
-              <p className="text-text-taupe">
+              <p className="text-fg-2">
                 {flowSteps[currentStep].description}
               </p>
             </div>
             {flowSteps[currentStep].port && (
-              <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded font-mono">
+              <span className="px-2 py-1 bg-info-soft text-fg text-xs rounded font-mono">
                 Port {flowSteps[currentStep].port}
               </span>
             )}
           </div>
 
           {flowSteps[currentStep].security && (
-            <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+            <div className="mb-4 p-3 bg-tip-soft border border-tip/30 rounded-lg">
               <div className="flex items-center gap-2">
                 <svg
-                  className="w-4 h-4 text-amber-600"
+                  className="w-4 h-4 text-tip"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -268,7 +268,7 @@ const TrafficFlowAnimation = () => {
                     d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
                   />
                 </svg>
-                <span className="text-sm text-amber-700 font-medium">
+                <span className="text-sm text-tip font-medium">
                   {flowSteps[currentStep].security}
                 </span>
               </div>
@@ -282,11 +282,11 @@ const TrafficFlowAnimation = () => {
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.1 }}
-                className="flex items-start gap-2 text-sm text-text-olive"
+                className="flex items-start gap-2 text-sm text-fg-3"
               >
-                <span className="w-1.5 h-1.5 rounded-full bg-amber-500 mt-2 flex-shrink-0" />
+                <span className="w-1.5 h-1.5 rounded-full bg-tip mt-2 flex-shrink-0" />
                 {detail.startsWith("{") ? (
-                  <code className="font-mono text-xs bg-bg-cream px-2 py-1 rounded">
+                  <code className="font-mono text-xs bg-bg px-2 py-1 rounded">
                     {detail}
                   </code>
                 ) : (
@@ -303,8 +303,8 @@ const TrafficFlowAnimation = () => {
         <button
           onClick={() => handleStep("prev")}
           disabled={currentStep === 0}
-          className="flex items-center gap-1 px-3 py-1.5 text-sm text-text-taupe
-                     hover:text-text-charcoal disabled:opacity-40 disabled:cursor-not-allowed"
+          className="flex items-center gap-1 px-3 py-1.5 text-sm text-fg-2
+                     hover:text-fg disabled:opacity-40 disabled:cursor-not-allowed"
         >
           <svg
             className="w-4 h-4"
@@ -331,7 +331,7 @@ const TrafficFlowAnimation = () => {
                 setCurrentStep(index);
               }}
               className={`w-2 h-2 rounded-full transition-colors ${
-                index === currentStep ? "bg-amber-500" : "bg-bg-stone"
+                index === currentStep ? "bg-tip" : "bg-fg-3"
               }`}
             />
           ))}
@@ -340,8 +340,8 @@ const TrafficFlowAnimation = () => {
         <button
           onClick={() => handleStep("next")}
           disabled={currentStep === flowSteps.length - 1}
-          className="flex items-center gap-1 px-3 py-1.5 text-sm text-text-taupe
-                     hover:text-text-charcoal disabled:opacity-40 disabled:cursor-not-allowed"
+          className="flex items-center gap-1 px-3 py-1.5 text-sm text-fg-2
+                     hover:text-fg disabled:opacity-40 disabled:cursor-not-allowed"
         >
           Next
           <svg

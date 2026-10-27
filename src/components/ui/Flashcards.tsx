@@ -117,76 +117,46 @@ interface FlashcardsProps {
   title?: string;
 }
 
-const Flashcards = ({ cards, title }: FlashcardsProps = {}) => {
-  const [flippedCards, setFlippedCards] = useState<number[]>([]);
-
-  // Convert incoming cards to internal format or use defaults
-  const displayCards: Flashcard[] = cards
-    ? cards.map((card, index) => ({ id: index + 1, front: card.front, back: card.back }))
-    : flashcardsData;
-
-  const toggleCard = (id: number) => {
-    setFlippedCards((prev) =>
-      prev.includes(id) ? prev.filter((cardId) => cardId !== id) : [...prev, id]
-    );
-  };
+export default function Flashcards({ cards, title }: FlashcardsProps = {}) {
+  const [flipped, setFlipped] = useState<number[]>([]);
+  const deck: Flashcard[] = cards ? cards.map((c, i) => ({ id: i + 1, front: c.front, back: c.back })) : flashcardsData;
+  const toggle = (id: number) => setFlipped((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
 
   return (
-    <div className="my-16">
-      <h2 className="text-3xl font-serif text-text-charcoal mb-8">
-        {title || "Key Concepts Flashcards"}
-      </h2>
-      <p className="text-text-taupe mb-8">
-        Click any card to flip and reveal the definition.
-      </p>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {displayCards.map((card) => {
-          const isFlipped = flippedCards.includes(card.id);
-
+    <section className="my-12" aria-label={title || "Flashcards"}>
+      <h3 className="text-h3 text-fg">{title || "Key concepts"}</h3>
+      <p className="mt-2 text-small text-fg-3">Select a card to flip it.</p>
+      <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        {deck.map((card) => {
+          const isFlipped = flipped.includes(card.id);
           return (
-            <div
+            <button
               key={card.id}
-              onClick={() => toggleCard(card.id)}
-              className={`perspective-1000 cursor-pointer h-[220px] ${isFlipped ? "z-10" : "z-0"}`}
-              style={{ perspective: "1000px" }}
+              type="button"
+              aria-pressed={isFlipped}
+              aria-label={isFlipped ? card.back : card.front}
+              onClick={() => toggle(card.id)}
+              className="h-[200px] text-left [perspective:1000px] print:break-inside-avoid print:[perspective:none]"
             >
               <div
-                className="relative w-full h-full transition-transform duration-500"
-                style={{
-                  transformStyle: "preserve-3d",
-                  transform: isFlipped ? "rotateY(180deg)" : "rotateY(0deg)",
-                }}
+                className="relative h-full w-full transition-transform duration-300 ease-out-quint motion-reduce:transition-none [transform-style:preserve-3d] print:transform-none! print:transition-none"
+                style={{ transform: isFlipped ? "rotateY(180deg)" : "rotateY(0deg)" }}
               >
-                {/* Front */}
-                <div
-                  className="absolute inset-0 bg-bg-cream rounded-lg shadow-md border border-text-charcoal/10 p-6 flex items-center justify-center overflow-hidden"
-                  style={{ backfaceVisibility: "hidden" }}
-                >
-                  <p className="text-lg font-serif text-text-charcoal text-center">
-                    {card.front}
-                  </p>
+                <div aria-hidden={isFlipped} className="absolute inset-0 flex items-center justify-center rounded-lg border border-border bg-surface p-5 [backface-visibility:hidden]">
+                  <p className="text-center font-display text-body font-medium text-fg">{card.front}</p>
                 </div>
-
-                {/* Back */}
                 <div
-                  className="absolute inset-0 bg-accent-moss/10 rounded-lg shadow-md border border-accent-moss/20 p-4 flex items-center justify-center overflow-hidden"
-                  style={{
-                    backfaceVisibility: "hidden",
-                    transform: "rotateY(180deg)",
-                  }}
+                  aria-hidden={!isFlipped}
+                  className="absolute inset-0 flex items-center justify-center overflow-y-auto rounded-lg border border-accent/30 bg-accent-soft p-4 [backface-visibility:hidden] print:hidden"
+                  style={{ transform: "rotateY(180deg)" }}
                 >
-                  <p className="text-xs text-text-taupe leading-relaxed text-center overflow-y-auto max-h-full">
-                    {card.back}
-                  </p>
+                  <p className="text-center text-caption leading-relaxed text-fg-2">{card.back}</p>
                 </div>
               </div>
-            </div>
+            </button>
           );
         })}
       </div>
-    </div>
+    </section>
   );
-};
-
-export default Flashcards;
+}

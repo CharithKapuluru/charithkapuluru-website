@@ -1,214 +1,247 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme inline {
-  /* Daylight palette. Token NAMES preserved so existing components re-theme automatically. */
-  --color-bg-paper: #ffffff;   /* paper panels */
-  --color-bg-cream: #f0f9ff;   /* sky-tinted section bg */
-  --color-bg-stone: #e0f2fe;   /* deeper sky tint */
+  /* Semantic colors (values live on :root and .dark below) */
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-fg: var(--fg);
+  --color-fg-2: var(--fg-2);
+  --color-fg-3: var(--fg-3);
+  --color-accent: var(--accent);
+  --color-accent-strong: var(--accent-strong);
+  --color-accent-soft: var(--accent-soft);
+  --color-primary: var(--primary);
+  --color-primary-fg: var(--primary-fg);
 
-  --color-text-charcoal: #0f172a;
-  --color-text-taupe: #334155;
-  --color-text-olive: #475569;
+  --color-tip: var(--tip);
+  --color-tip-soft: var(--tip-soft);
+  --color-info: var(--info);
+  --color-info-soft: var(--info-soft);
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
 
-  --color-accent-moss: #15803d;        /* THE interactive accent (grass green) */
-  --color-accent-terracotta: #dc2626;  /* errors/warnings only */
-  --color-accent-sand: #eab308;        /* sun yellow, decorative badges */
-  --color-accent-sage: #86efac;        /* light grass, decorative */
+  /* Terminal surfaces are always dark, in both themes */
+  --color-terminal: #0f0f12;
+  --color-terminal-fg: #e4e4e7;
+  --color-terminal-accent: #eb9b63;
+  --color-terminal-ok: #6fcb9b;
+  --color-terminal-info: #8fb0ee;
+  --color-terminal-danger: #ef8a83;
 
-  --font-sans: var(--font-nunito);
-  --font-serif: var(--font-fredoka); /* display font; old font-serif headings become Fredoka */
-  --font-mono: var(--font-jetbrains);
+  --font-display: var(--font-bricolage);
+  --font-sans: var(--font-geist);
+  --font-mono: var(--font-geist-mono);
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 14px;
+  --radius-2xl: 14px;
+  --radius-3xl: 14px;
+  --radius-4xl: 14px;
+
+  --text-display-xl: clamp(2.5rem, 1.5rem + 4.2vw, 4.75rem);
+  --text-display-xl--line-height: 1.02;
+  --text-display-xl--letter-spacing: -0.025em;
+  --text-display-xl--font-weight: 600;
+  --text-display-lg: clamp(2.125rem, 1.4rem + 3vw, 3.5rem);
+  --text-display-lg--line-height: 1.05;
+  --text-display-lg--letter-spacing: -0.02em;
+  --text-display-lg--font-weight: 600;
+  --text-h2: clamp(1.625rem, 1.25rem + 1.5vw, 2.25rem);
+  --text-h2--line-height: 1.15;
+  --text-h2--letter-spacing: -0.015em;
+  --text-h2--font-weight: 600;
+  --text-h3: clamp(1.25rem, 1.1rem + 0.6vw, 1.5rem);
+  --text-h3--line-height: 1.25;
+  --text-h3--letter-spacing: -0.01em;
+  --text-h3--font-weight: 600;
+  --text-figure: clamp(2rem, 1.5rem + 2vw, 3rem);
+  --text-figure--line-height: 1;
+  --text-figure--letter-spacing: -0.02em;
+  --text-figure--font-weight: 600;
+  --text-lede: 1.25rem;
+  --text-lede--line-height: 1.5;
+  --text-body-read: 1.0625rem;
+  --text-body-read--line-height: 1.7;
+  --text-body: 1rem;
+  --text-body--line-height: 1.6;
+  --text-small: 0.875rem;
+  --text-small--line-height: 1.5;
+  --text-caption: 0.8125rem;
+  --text-caption--line-height: 1.4;
+
+  --ease-out-quint: cubic-bezier(0.16, 1, 0.3, 1);
+  --shadow-float: var(--shadow-float-value);
+}
+
+/* CSS entrance for server-rendered content: visible on first paint and with JavaScript off */
+@theme {
+  --animate-rise: rise 320ms cubic-bezier(0.16, 1, 0.3, 1) both;
+
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
 }
 
 :root {
-  --bg-paper: #ffffff;
-  --bg-cream: #f0f9ff;
-  --bg-stone: #e0f2fe;
-
-  --text-charcoal: #0f172a;
-  --text-taupe: #334155;
-  --text-olive: #475569;
-
-  --accent-moss: #15803d;
-  --accent-terracotta: #dc2626;
-  --accent-sand: #eab308;
-  --accent-sage: #86efac;
-
-  --sky-top: #bfdbfe;
-  --sky-bottom: #dbeafe;
-  --grass: #bbf7d0;
+  color-scheme: light;
+  --bg: #f7f7f8;
+  --surface: #fcfcfd;
+  --surface-2: #efeff1;
+  --border: #e4e4e7;
+  --border-strong: #d4d4d8;
+  --fg: #18181b;
+  --fg-2: #52525b;
+  --fg-3: #6b6b74;
+  --accent: #a84d18;
+  --accent-strong: #8f3f12;
+  --accent-soft: #f9e8dc;
+  --primary: #18181b;
+  --primary-fg: #fafafa;
+  --tip: #a84d18;
+  --tip-soft: #f9e8dc;
+  --info: #4f7fd9;
+  --info-soft: #e9f0fb;
+  --success: #1f7a50;
+  --success-soft: #e4f5ec;
+  --danger: #bf3a31;
+  --danger-soft: #fbe7e5;
+  --shadow-float-value: 0 12px 32px -12px rgb(24 24 27 / 0.18);
 }
 
-/* Theme lock: dark mode deferred until the day/night toggle ships.
-   .dark intentionally mirrors daylight so any lingering toggle is a no-op. */
 .dark {
-  --bg-paper: #ffffff;
-  --bg-cream: #f0f9ff;
-  --bg-stone: #e0f2fe;
-  --text-charcoal: #0f172a;
-  --text-taupe: #334155;
-  --text-olive: #475569;
-  --accent-moss: #15803d;
-  --accent-terracotta: #dc2626;
-  --accent-sand: #eab308;
-  --accent-sage: #86efac;
+  color-scheme: dark;
+  --bg: #0b0b0d;
+  --surface: #131316;
+  --surface-2: #1b1b1f;
+  --border: #26262b;
+  --border-strong: #35353b;
+  --fg: #f2f2f4;
+  --fg-2: #a7a7b0;
+  --fg-3: #86868f;
+  --accent: #eb9b63;
+  --accent-strong: #f4b07f;
+  --accent-soft: rgb(235 155 99 / 0.12);
+  --primary: #f2f2f4;
+  --primary-fg: #0b0b0d;
+  --tip: #eb9b63;
+  --tip-soft: rgb(235 155 99 / 0.12);
+  --info: #8fb0ee;
+  --info-soft: rgb(79 127 217 / 0.14);
+  --success: #6fcb9b;
+  --success-soft: rgb(47 158 106 / 0.16);
+  --danger: #ef8a83;
+  --danger-soft: rgb(209 72 63 / 0.16);
+  --shadow-float-value: 0 12px 32px -12px rgb(0 0 0 / 0.6);
 }
 
 @layer base {
   html {
-    scroll-behavior: smooth;
+    scroll-padding-top: 5rem;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
   body {
+    background-color: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-sans);
     overflow-x: hidden;
-    background-color: var(--bg-paper);
-    color: var(--text-charcoal);
-    transition: background-color 0.3s ease, color 0.3s ease;
   }
 
-  /* Premium fix: Replace all pure black with warm charcoal */
-  *::selection {
-    background-color: var(--accent-moss);
-    color: var(--bg-paper);
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    text-wrap: balance;
   }
 
-  /* Focus rings use charcoal instead of pure black */
-  *:focus-visible {
-    outline-color: var(--text-charcoal);
+  p {
+    text-wrap: pretty;
   }
 
-  /* Ensure SVG icons inherit color properly */
+  *, *::before, *::after {
+    border-color: var(--border);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  ::selection {
+    background-color: var(--accent-soft);
+    color: var(--fg);
+  }
+
   svg {
     color: inherit;
   }
 
-  /* Default border color */
-  *,
-  *::before,
-  *::after {
-    border-color: var(--text-charcoal);
+  /* Native dialogs used for the nav sheet, sections sheet and tool dialogs */
+  dialog::backdrop {
+    background-color: rgb(11 11 13 / 0.5);
   }
 }
 
 @layer utilities {
-  .sky-gradient {
-    background: linear-gradient(180deg, var(--sky-top) 0%, var(--sky-bottom) 60%, var(--grass) 100%);
+  .reading-body p,
+  .reading-body li {
+    max-width: 70ch;
   }
-  .paper-shadow {
-    box-shadow: 0 8px 30px -8px rgb(15 23 42 / 0.12);
-  }
-}
-
-/* Lenis Scroll */
-html.lenis, html.lenis body {
-  height: auto;
-}
-
-.lenis.lenis-smooth {
-  scroll-behavior: auto !important;
-}
-
-.lenis.lenis-smooth [data-lenis-prevent] {
-  overscroll-behavior: contain;
-}
-
-.lenis.lenis-stopped {
-  overflow: hidden;
-}
-
-.lenis.lenis-scrolling iframe {
-  pointer-events: none;
-}
-
-/* Utility animations */
-@keyframes fade-in {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+  .tabular {
+    font-variant-numeric: tabular-nums;
   }
 }
 
-.animate-fade-in {
-  animation: fade-in 0.3s ease-out;
-}
-
-/* Print Styles */
 @media print {
-  /* Hide interactive elements */
-  button,
-  .fixed,
-  nav,
-  [data-print-hide] {
-    display: none !important;
+  /* Print is always the light theme on paper, whichever theme is on screen: redeclare the light token values over .dark. */
+  :root, .dark {
+    color-scheme: light;
+    --bg: #f7f7f8;
+    --surface: #fcfcfd;
+    --surface-2: #efeff1;
+    --border: #e4e4e7;
+    --border-strong: #d4d4d8;
+    --fg: #18181b;
+    --fg-2: #52525b;
+    --fg-3: #6b6b74;
+    --accent: #a84d18;
+    --accent-strong: #8f3f12;
+    --accent-soft: #f9e8dc;
+    --primary: #18181b;
+    --primary-fg: #fafafa;
+    --tip: #a84d18;
+    --tip-soft: #f9e8dc;
+    --info: #4f7fd9;
+    --info-soft: #e9f0fb;
+    --success: #1f7a50;
+    --success-soft: #e4f5ec;
+    --danger: #bf3a31;
+    --danger-soft: #fbe7e5;
   }
 
-  /* Reset colors for print */
-  body {
-    background: white !important;
-    color: black !important;
-  }
-
-  /* Ensure content is full width */
-  .container {
-    max-width: 100% !important;
-    margin: 0 !important;
-    padding: 1rem !important;
-  }
-
-  /* Show links as URLs */
-  a[href]::after {
-    content: " (" attr(href) ")";
-    font-size: 0.8em;
-    color: #666;
-  }
-
-  /* Page breaks */
-  h2, h3 {
-    page-break-after: avoid;
-  }
-
-  pre, blockquote {
-    page-break-inside: avoid;
-  }
-
-  /* Collapse collapsible sections for print */
-  [data-collapsible] {
-    max-height: none !important;
-    opacity: 1 !important;
-  }
-
-  /* Print-friendly colors */
-  .bg-bg-cream,
-  .bg-bg-paper,
-  .bg-bg-stone {
-    background: #f5f5f5 !important;
-  }
-
-  .text-accent-moss,
-  .text-accent-terracotta,
-  .text-accent-sand {
-    color: #333 !important;
-  }
-
-  /* Ensure code blocks are readable */
-  pre {
-    background: #f5f5f5 !important;
-    border: 1px solid #ddd !important;
-    padding: 1rem !important;
-    white-space: pre-wrap !important;
-    word-wrap: break-word !important;
-  }
-
-  /* Footer for print */
-  @page {
-    margin: 2cm;
-  }
+  /* Chrome only: bare header/aside/button selectors also hid the page H1, its lede and every callout. Mark what should not print with data-print-hide. */
+  .fixed, nav, dialog, [data-print-hide] { display: none !important; }
+  body { background: #f7f7f8 !important; color: #18181b !important; }
+  a[href]::after { content: " (" attr(href) ")"; font-size: 0.8em; color: #52525b; }
+  h2, h3 { page-break-after: avoid; }
+  pre, blockquote { page-break-inside: avoid; }
+  @page { margin: 2cm; }
 }
 
 @media (prefers-reduced-motion: reduce) {
